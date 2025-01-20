@@ -1,0 +1,32 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-wildlifeapp-dev-260d7-authRole",
+      "UnauthRoleArn": "arn:aws:iam::976193243317:role/amplify-wildlifeapp-dev-260d7-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::976193243317:role/amplify-wildlifeapp-dev-260d7-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-wildlifeapp-dev-260d7-deployment",
+      "UnauthRoleName": "amplify-wildlifeapp-dev-260d7-unauthRole",
+      "StackName": "amplify-wildlifeapp-dev-260d7",
+      "StackId": "arn:aws:cloudformation:us-east-1:976193243317:stack/amplify-wildlifeapp-dev-260d7/a6fb9230-d713-11ef-b19e-0affe38651ad",
+      "AmplifyAppId": "d1hih7jskxsvbh"
+    },
+    "categories": {
+      "function": {
+        "GetCustomer": {
+          "deploymentBucketName": "amplify-wildlifeapp-dev-260d7-deployment",
+          "s3Key": "amplify-builds/GetCustomer-78477468306165737641-build.zip"
+        }
+      },
+      "api": {
+        "api0f8c2291": {}
+      },
+      "hosting": {
+        "amplifyhosting": {
+          "appId": "d1hih7jskxsvbh",
+          "type": "manual"
+        }
+      }
+    }
+  }
+}
