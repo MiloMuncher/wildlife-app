@@ -10,7 +10,7 @@ function Home() {
 
         <div>
 
-            <Parallax bgImage="../Images/background.png" strength={300}>
+            <Parallax bgImage="src\images\background.png" strength={300}>
                 <div className='content'>
                     <div className='content-text'>
                         <Typography variant="h4" style={{ fontWeight: "bold", fontSize: '150px' }}>
@@ -22,7 +22,7 @@ function Home() {
                     </div>
                 </div>
             </Parallax>
-            <Parallax bgImage="../Images/bg2.png" strength={200} blur={{min: -5, max: 15 }}>
+            <Parallax bgImage="src\images\bg2.png" strength={200} blur={{min: -5, max: 15 }}>
                 <div className='content'>
                     <div className='content-text'>
                         <Typography variant="h6" style={{ color: 'white' }}>
@@ -34,7 +34,7 @@ function Home() {
                     </div>
                 </div>
             </Parallax>
-            <Parallax bgImage="../Images/background.png" strength={200}>
+            <Parallax bgImage="src\images\background.png" strength={200}>
                 <div className='content'>
                     <div className='content-text'>
                     <Typography variant="h4" style={{ fontWeight: "bold", fontSize: '100px' }}>

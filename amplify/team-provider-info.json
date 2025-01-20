@@ -15,7 +15,7 @@
       "function": {
         "GetCustomer": {
           "deploymentBucketName": "amplify-wildlifeapp-dev-260d7-deployment",
-          "s3Key": "amplify-builds/GetCustomer-78477468306165737641-build.zip"
+          "s3Key": "amplify-builds/GetCustomer-384a31462f5a62554849-build.zip"
         }
       },
       "api": {
