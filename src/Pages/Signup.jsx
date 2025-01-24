@@ -1,9 +1,9 @@
 import React from 'react'
-import { Container, Box, Paper, Grid, Typography, Button, Divider, Card, CardContent, TextField } from '@mui/material'
+import { Container, Box, Paper, Grid, Typography, Button, Divider, TextField } from '@mui/material'
 import { Link, useNavigate } from 'react-router-dom'
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import http from '../http.js';
+import { signUp } from 'aws-amplify/auth';
 
 function Signup() {
 
@@ -11,7 +11,7 @@ function Signup() {
     const loginbtnstyle = { backgroundColor: '#FF4E00', fontWeight: 'bold', color: 'white' }
 
     const navigate = useNavigate();
-    const regEx = /^[89]{1}\d{7}$/
+    const regEx = /^[89]{1}\d{7}$/;
     const formik = useFormik({
         initialValues: {
             name: '',
@@ -25,29 +25,35 @@ function Signup() {
             password: Yup.string().trim().min(8, 'Minimum 8 characters').required('Required'),
             contact: Yup.string().trim().min(8).max(8).matches(regEx, "Contact is Invalid").required('Required'),
         }),
-        onSubmit: (data) => {
+        onSubmit: async (data) => {
+            // Clean up the input data
             data.name = data.name.trim();
             data.email = data.email.trim();
             data.password = data.password.trim();
             data.contact = data.contact.trim();
-            http.post('/User/register', data)
-                .then((res) => {
-                    console.log(res.data)
-                    navigate("/login")
-                }).catch((error) => {
-                    if (error.response && error.response.status === 400) {
-                        const errorMessages = error.response.data.errors;
 
-                        const formikErrors = {};
-                        for (const field in errorMessages) {
-                            const lowercaseField = field.toLowerCase();
-                            formikErrors[lowercaseField] = errorMessages[field];
-                        }
-                        const combinedErrors = { ...formikErrors, email: error.response.data.message }; 
-                        formik.setErrors(combinedErrors);
+            try {
+                // Call AWS Amplify signUp API
+                await signUp({
+                    username: data.email,
+                    password: data.password,
+                    attributes: {
+                        email: data.email,
+                        phone_number: data.contact,
                     }
-                })
-
+                });
+                
+                navigate("/login");
+            } catch (error) {
+                console.error('Error signing up:', error);
+                if (error.code === 'UsernameExistsException') {
+                    // Handle username already exists error
+                    formik.setFieldError('email', 'Email is already in use');
+                } else {
+                    // Handle other errors
+                    formik.setFieldError('email', 'An error occurred, please try again later');
+                }
+            }
         },
     })
 
@@ -134,4 +140,5 @@ function Signup() {
         </Container>
     )
 }
-export default Signup
+
+export default Signup;

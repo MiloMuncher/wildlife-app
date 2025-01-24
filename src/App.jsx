@@ -20,6 +20,7 @@ import MerchantLogin from './Pages/MerchantLogin';
 import RaisedRequest from './Pages/RaisedRequest';
 import ViewPost from './Pages/ViewPost';
 import Cart from './Pages/Cart';
+import ConfirmSignup from './Pages/ConfirmSignUp.jsx';
 
 
 //Other routes
@@ -31,6 +32,9 @@ import AdminRoutes from './Pages/Admin/AdminRoutes';
 import Navbar from './Components/Navbar';
 import Checkout_Success from './Pages/Checkout_Success.jsx';
 
+import { Amplify } from 'aws-amplify';
+import config from './amplifyconfiguration.json';
+Amplify.configure(config);
 
 function App() {
 
@@ -85,6 +89,7 @@ function App() {
         }
 
         <Route path="/signup" element={<Signup />} />
+        <Route path="/confirm-signup" element={<ConfirmSignup />} />
         <Route path="/addpost" element={<AddPost />} />
         <Route path="/merchantlogin" element={<MerchantLogin />} />
         <Route path="/contactus/raisedrequest" element={<RaisedRequest />} />
