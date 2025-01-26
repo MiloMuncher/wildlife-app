@@ -1,10 +1,10 @@
 {
   "version": "1",
   "cognitoConfig": {
-    "identityPoolName": "wildlifeappfb8e0101_identitypool_fb8e0101",
+    "identityPoolName": "wildlifeapp02467b3a_identitypool_02467b3a",
     "allowUnauthenticatedIdentities": false,
-    "resourceNameTruncated": "wildlifb8e0101",
-    "userPoolName": "wildlifeappfb8e0101_userpool_fb8e0101",
+    "resourceNameTruncated": "wildli02467b3a",
+    "userPoolName": "wildlifeapp02467b3a_userpool_02467b3a",
     "autoVerifiedAttributes": [
       "email"
     ],
@@ -31,16 +31,15 @@
     "userpoolClientReadAttributes": [
       "email"
     ],
-    "userpoolClientLambdaRole": "wildlifb8e0101_userpoolclient_lambda_role",
+    "userpoolClientLambdaRole": "wildli02467b3a_userpoolclient_lambda_role",
     "userpoolClientSetAttributes": false,
-    "sharedId": "fb8e0101",
-    "resourceName": "wildlifeappfb8e0101",
+    "sharedId": "02467b3a",
+    "resourceName": "wildlifeapp02467b3a",
     "authSelections": "identityPoolAndUserPool",
     "useDefault": "default",
     "usernameAttributes": [
       "email"
     ],
-    "triggers": {},
     "userPoolGroupList": [],
     "serviceName": "Cognito",
     "usernameCaseSensitive": false,

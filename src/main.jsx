@@ -4,6 +4,7 @@ import App from './App.jsx'
 import './index.css'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
 import { BrowserRouter } from 'react-router-dom'
+import '@aws-amplify/ui-react/styles.css'
 import { Amplify } from 'aws-amplify';
 import config from './amplifyconfiguration.json';
 Amplify.configure(config);

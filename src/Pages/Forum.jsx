@@ -78,7 +78,7 @@ function Forum() {
                         )}
                     </Grid>
                     <Grid item xs={12} md={4} marginRight={10}>
-                        <img src="../images/calender.png" style={{ width: '100%', borderRadius: '10px' }} />
+                        <img src="src\Images\calender.png" style={{ width: '100%', borderRadius: '10px' }} />
                     </Grid>
                 </Grid>
             </Box>
