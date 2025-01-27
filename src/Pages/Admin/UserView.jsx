@@ -68,7 +68,7 @@ function RenderButton(props) {
                     </Button>
                     <Button variant="contained" color="error"
                         onClick={() => {
-                            http.delete(`/AdminUser/${user.id}`).then((res) => {
+                            http.delete(`https://v9c358horj.execute-api.us-east-1.amazonaws.com/dev/employees/${user.id}`).then((res) => {
                                 console.log(res.data)
                                 handleClose()
                                 getUsers();
@@ -89,10 +89,10 @@ function UserView() {
     const [userList, setUserList] = useState([]);
 
     const rows = userList.map((user) => ({
-        id: user.id,
-        name: user.name,
+        id: user.employee_ID,
+        name: `${user.fname} ${user.lname}`,
         email: user.email,
-        phone: user.contact,
+        phone: user.phone_number,
     }));
 
     const columns = [
@@ -105,7 +105,7 @@ function UserView() {
     
 
     const getUsers = () => {
-        http.get(`/AdminUser/allusers`).then((res) => {
+        http.get(`https://v9c358horj.execute-api.us-east-1.amazonaws.com/dev/employees`).then((res) => {
             setUserList(res.data);
         });
     };
