@@ -8,7 +8,7 @@ import { AccountCircle } from '@mui/icons-material';
 
 function Navbar() {
     const [isOpen, setIsOpen] = useState(false);
-    const [isSignedIn, setIsSignedIn] = useState(true);
+    const [isSignedIn, setIsSignedIn] = useState(false);
 
     useEffect(() => {
         // Check if user is signed in on component mount
