@@ -33,7 +33,7 @@ function Navbar() {
 
 
                     <Box marginLeft={"1rem"} display={["none", "none", "flex"]} sx={{ flexGrow: 1 }}>
-                        <img src="../../Images/logo_uplay.png" alt="logo" style={{ height: "30px", width: "90px", padding: 15     }} />
+                        <img src="src\Images\logo_uplay.png" alt="logo" style={{ height: "30px", width: "90px", padding: 15     }} />
                         {(isCustomer || !user) && (
                             <>
                                 <Button color="inherit" LinkComponent={Link} to='/' sx={{ fontWeight: 'bold' }}>Home</Button>
