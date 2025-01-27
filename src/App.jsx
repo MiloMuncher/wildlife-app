@@ -16,6 +16,7 @@ import Description from './Pages/Description';
 import RaisedRequest from './Pages/RaisedRequest';
 import ViewPost from './Pages/ViewPost';
 import Cart from './Pages/Cart';
+import Login from './Pages/Login'
 
 
 //Other routes
@@ -52,6 +53,7 @@ function App() {
       <ToastContainer />
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
         <Route path="/categories" element={<Categories />} />
         <Route path="/description/:id" element={<Description />} />
         <Route path="/forum" element={<Forum />} />

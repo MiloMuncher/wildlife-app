@@ -98,6 +98,24 @@ function ProfileRoutes() {
                                     <ListItemText primary="View Merchant Events" />
                                 </ListItemButton>
                             </ListItem>
+                            <Divider />
+                            <ListItem>
+                                <ListItemIcon>
+                                    <EventIcon color='primary' />
+                                </ListItemIcon>
+                                <ListItemButton LinkComponent={Link} to='/admin/viewevents' >
+                                    <ListItemText primary="View Merchant Events" />
+                                </ListItemButton>
+                            </ListItem>
+                            <Divider />
+                            <ListItem>
+                                <ListItemIcon>
+                                    <EventIcon color='primary' />
+                                </ListItemIcon>
+                                <ListItemButton LinkComponent={Link} to='/admin/viewevents' >
+                                    <ListItemText primary="View Merchant Events" />
+                                </ListItemButton>
+                            </ListItem>
                         </List>
                     </Card>
                 </Grid>
