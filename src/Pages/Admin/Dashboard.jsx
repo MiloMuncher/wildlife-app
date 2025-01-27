@@ -1,12 +1,17 @@
-import React, { useEffect, useState } from 'react'
-import { Typography, Grid, Container, TextField, Box, Button, Card, CardContent } from '@mui/material'
+import React from 'react';
+import { Typography, Grid, Container, Card, CardContent } from '@mui/material';
 import OrdersChart from '../Charts/OrdersChart';
 import UserChart from '../Charts/UserChart';
-import http from '../../http'
 import EventChart from '../Charts/EventChart';
+import { withAuthenticator } from '@aws-amplify/ui-react';
+import '@aws-amplify/ui-react/styles.css';
+import { fetchAuthSession } from 'aws-amplify/auth';
 
-function Dashboard() {
-    const itemcolor = { backgroundColor: '#8a8a88' }
+function Dashboard({ signOut }) {
+    const itemcolor = { backgroundColor: '#FAF6E3' }
+    const session = fetchAuthSession();
+    console.log(session);
+    
 
     return (
         <Container maxWidth='xl'>
@@ -14,7 +19,7 @@ function Dashboard() {
                 <Grid item xs={12} md={12}>
                     <Card style={itemcolor}>
                         <CardContent>
-                            <Typography variant='h6' color="white" marginBottom={2} align='center'>
+                            <Typography variant='h6' color="black" marginBottom={2} align='center'>
                                 Total Orders
                             </Typography>
                             <OrdersChart />
@@ -24,7 +29,7 @@ function Dashboard() {
                 <Grid item xs={12} md={6}>
                     <Card style={itemcolor}>
                         <CardContent>
-                            <Typography variant='h6' color="white" marginBottom={2} align='center'>
+                            <Typography variant='h6' color="black" marginBottom={2} align='center'>
                                 Total Customers
                             </Typography>
                             <UserChart />
@@ -34,7 +39,7 @@ function Dashboard() {
                 <Grid item xs={12} md={6}>
                     <Card style={itemcolor}>
                         <CardContent>
-                            <Typography variant='h6' color="white" marginBottom={2} align='center'>
+                            <Typography variant='h6' color="black" marginBottom={2} align='center'>
                                 Total Events Created
                             </Typography>
                             <EventChart />
@@ -42,9 +47,12 @@ function Dashboard() {
                     </Card>
                 </Grid>
             </Grid>
-
+            <button onClick={signOut}>Sign Out</button>
         </Container>
-    )
+    );
 }
 
-export default Dashboard
+// Disable sign-up functionality by setting the 'signUp' option to false
+export default withAuthenticator(Dashboard, {
+    hideSignUp: true
+});

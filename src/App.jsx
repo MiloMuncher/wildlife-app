@@ -4,19 +4,15 @@ import { Route, Routes } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import './App.css';
 import UserContext from './contexts/UserContext.js';
-import http from './http';
 
 // Import pages
 import Home from './Pages/Home';
 import Categories from './Pages/Categories';
 import Forum from './Pages/Forum';
 import ContactUs from './Pages/ContactUs';
-import Login from './Pages/Login';
-import Signup from './Pages/Signup';
 import AddPost from './Pages/AddPost';
 import EditPost from './Pages/EditPost';
 import Description from './Pages/Description';
-import MerchantLogin from './Pages/MerchantLogin';
 import RaisedRequest from './Pages/RaisedRequest';
 import ViewPost from './Pages/ViewPost';
 import Cart from './Pages/Cart';
@@ -31,18 +27,20 @@ import AdminRoutes from './Pages/Admin/AdminRoutes';
 import Navbar from './Components/Navbar';
 import Checkout_Success from './Pages/Checkout_Success.jsx';
 
+import { Amplify } from 'aws-amplify';
+import config from './amplifyconfiguration.json';
+Amplify.configure(config);
 
 function App() {
 
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    if (localStorage.getItem("accessToken")) {
-      http.get('/User/auth').then((res) => {
-        setUser(res.data.user);
-      });
-    }
-  }, []);
+    const user = JSON.parse(localStorage.getItem('user'));
+        if (user) {
+            setUser(user);
+        }
+  }, [setUser]);
 
   const isAdmin = user && user.role === 'Admin';
   const isMerchant = user && user.role === 'Merchant';
@@ -59,9 +57,6 @@ function App() {
         <Route path="/forum" element={<Forum />} />
         <Route path="/contactus" element={<ContactUs />} />
 
-        {!user && (
-          <Route path="/login" element={<Login />} />
-        )}
 
         {
           isCustomer && (
@@ -78,15 +73,8 @@ function App() {
             <Route path="/merchant/*" element={<MerchantRoutes />} />
           )
         }
-        {
-          isAdmin && (
-            <Route path="/admin/*" element={<AdminRoutes />} />
-          )
-        }
-
-        <Route path="/signup" element={<Signup />} />
+        <Route path="/admin/*" element={<AdminRoutes />} />
         <Route path="/addpost" element={<AddPost />} />
-        <Route path="/merchantlogin" element={<MerchantLogin />} />
         <Route path="/contactus/raisedrequest" element={<RaisedRequest />} />
         <Route path="/forum/viewpost/:id" element={<ViewPost />} />
         <Route path="/cart" element={<Cart />} />

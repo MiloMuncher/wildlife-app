@@ -12,20 +12,15 @@
       "AmplifyAppId": "d1hih7jskxsvbh"
     },
     "categories": {
-      "function": {
-        "GetCustomer": {
-          "deploymentBucketName": "amplify-wildlifeapp-dev-260d7-deployment",
-          "s3Key": "amplify-builds/GetCustomer-78477468306165737641-build.zip"
-        }
-      },
-      "api": {
-        "api0f8c2291": {}
-      },
       "hosting": {
         "amplifyhosting": {
           "appId": "d1hih7jskxsvbh",
           "type": "manual"
         }
+      },
+      "auth": {
+        "wildlifeapp18062273": {},
+        "wildlifeapp02467b3a": {}
       }
     }
   }

@@ -1,28 +1,34 @@
 {
-  "api": {
-    "api0f8c2291": {
-      "dependsOn": [
-        {
-          "attributes": [
-            "Name",
-            "Arn"
-          ],
-          "category": "function",
-          "resourceName": "GetCustomer"
-        }
-      ],
-      "providerPlugin": "awscloudformation",
-      "service": "API Gateway"
-    }
-  },
-  "function": {
-    "GetCustomer": {
-      "build": true,
+  "api": {},
+  "auth": {
+    "wildlifeapp02467b3a": {
+      "customAuth": false,
       "dependsOn": [],
+      "frontendAuthConfig": {
+        "mfaConfiguration": "OFF",
+        "mfaTypes": [
+          "SMS"
+        ],
+        "passwordProtectionSettings": {
+          "passwordPolicyCharacters": [],
+          "passwordPolicyMinLength": 8
+        },
+        "signupAttributes": [
+          "EMAIL"
+        ],
+        "socialProviders": [],
+        "usernameAttributes": [
+          "EMAIL"
+        ],
+        "verificationMechanisms": [
+          "EMAIL"
+        ]
+      },
       "providerPlugin": "awscloudformation",
-      "service": "Lambda"
+      "service": "Cognito"
     }
   },
+  "function": {},
   "hosting": {
     "amplifyhosting": {
       "providerPlugin": "awscloudformation",
@@ -31,22 +37,6 @@
     }
   },
   "parameters": {
-    "AMPLIFY_function_GetCustomer_deploymentBucketName": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "GetCustomer"
-        }
-      ]
-    },
-    "AMPLIFY_function_GetCustomer_s3Key": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "GetCustomer"
-        }
-      ]
-    },
     "AMPLIFY_hosting_amplifyhosting_appId": {
       "usedBy": [
         {

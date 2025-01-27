@@ -53,7 +53,7 @@ function ContactUs() {
 
     return (
         <Container maxWidth="xl" >
-            <Box style={{ backgroundImage: 'url("../Images/contactusbgimage.png")', backgroundSize: 'cover', borderRadius: 15 }} display={'flex'} flexDirection={'column'}>
+            <Box style={{ backgroundImage: 'url("src/Images/contactusbgimage.png")', backgroundSize: 'cover', borderRadius: 15 }} display={'flex'} flexDirection={'column'}>
                 <Typography variant="h4" style={{ textAlign: "left", fontWeight: "bold", paddingTop: 100, fontSize: '60px' }}>
                     Contact Us!
                 </Typography>
@@ -80,7 +80,7 @@ function ContactUs() {
                         <Grid item xs={12} md={4} >
                             <Box style={{ backgroundSize: 'cover', borderRadius: 15, backgroundColor: 'white' }} display={'flex'} flexDirection={'column'}>
                                 <Box style={{ justifyContent: "center", paddingTop: 30 }} display={'flex'} >
-                                    <img src="../images/ContactUsLogo1.png" style={{ width: '20%', borderRadius: '10px' }} />
+                                    <img src="src\Images\ContactUsLogo1.png" style={{ width: '20%', borderRadius: '10px' }} />
                                 </Box>
                                 <Typography variant="h5" style={{ textAlign: "center", fontWeight: "bold", paddingTop: 60, color: "black", paddingLeft: 20, paddingRight: 20, }}>
                                     Talk to a member of our Sales team
@@ -101,7 +101,7 @@ function ContactUs() {
                         <Grid item xs={12} md={4} >
                             <Box style={{ backgroundSize: 'cover', borderRadius: 15, backgroundColor: 'white' }} display={'flex'} flexDirection={'column'}>
                                 <Box style={{ justifyContent: "center", paddingTop: 30 }} display={'flex'} >
-                                    <img src="../images/ContactUsLogo2.png" style={{ width: '20%', borderRadius: '10px' }} />
+                                    <img src="src\Images\ContactUsLogo2.png" style={{ width: '20%', borderRadius: '10px' }} />
                                 </Box>
                                 <Typography variant="h5" style={{ textAlign: "center", fontWeight: "bold", paddingTop: 60, color: "black", paddingLeft: 20, paddingRight: 20, }}>
                                     Chat with Annie
