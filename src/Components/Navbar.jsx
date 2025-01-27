@@ -111,14 +111,6 @@ function Navbar() {
                             style={{ height: '90px', width: '90px' }}
                         />
                     </Box>
-
-                    {/* Profile and Other Links */}
-                    <>
-                        <AccountCircle style={{ color: 'black' }} />
-                        <Button color="inherit" LinkComponent={Link} to="/profile/profile" sx={{ fontWeight: 'bold' }}>
-                            Profile
-                        </Button>
-                    </>
                 </Toolbar>
             </AppBar>
         </Box>
