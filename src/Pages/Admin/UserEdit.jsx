@@ -10,40 +10,43 @@ import { useFormik } from 'formik';
 function UserEdit() {
     const btnstyle = { margin: '30px 0', fontWeight: 'bold', color: 'white', backgroundColor: '#FF4E00' };
 
-    const {id} = useParams()
+    const { id } = useParams();
     const [u, setU] = useState({
-        name: "",
+        fname: "",
+        lname: "",  
         email: "",
-        contact: "",
+        phone_number: "",
     });
 
     useEffect(() => {
-        http.get(`/user/${id}`).then((res) => {
+        http.get(`https://v9c358horj.execute-api.us-east-1.amazonaws.com/dev/employees/${id}`).then((res) => {
             setU(res.data);
         });
-    }, []);
+    }, [id]);
 
-    const navigate = useNavigate()
+    const navigate = useNavigate();
 
-    const regEx = /^[89]{1}\d{7}$/
+    const regEx = /^[89]{1}\d{7}$/;
     const formik = useFormik({
         initialValues: u,
         enableReinitialize: true,
         validationSchema: Yup.object({
-            name: Yup.string().trim().min(5, 'Minimum 5 characters').required('Required'),
+            fname: Yup.string().trim().min(3, 'Minimum 3 characters').required('Required'),
+            lname: Yup.string().trim().min(3, 'Minimum 3 characters').required('Required'),  // Added lname validation
             email: Yup.string().trim().email('Invalid email format').required('Required'),
-            contact: Yup.string().trim().min(8).max(8).matches(regEx, "Phone is Invalid").required('Required'),
+            phone_number: Yup.string().trim().min(8).max(8).matches(regEx, "Phone is Invalid").required('Required'),
         }),
         onSubmit: (data) => {
-            data.name = data.name.trim();
+            data.fname = data.fname.trim();
+            data.lname = data.lname.trim();  // Trim the last name
             data.email = data.email.trim();
-            data.contact = data.contact.trim();
-            http.put(`/AdminUser/${id}`, data)
+            data.phone_number = data.phone_number.trim();
+            http.put(`https://v9c358horj.execute-api.us-east-1.amazonaws.com/dev/employees/${id}`, data)
                 .then((res) => {
                     console.log(res.data);
                     navigate(`/admin/viewusers`);
                 }).catch((error) => {
-                    console.log(error)
+                    console.log(error);
                     if (error.response && error.response.status === 400) {
                         const errorMessages = error.response.data.errors;
                         const formikErrors = {};
@@ -69,12 +72,23 @@ function UserEdit() {
                         <Grid container spacing={2}>
                             <Grid item xs={12} md={4}>
                                 <TextField
-                                    label="Name"
-                                    name="name"
-                                    value={formik.values.name}
+                                    label="First Name"  // Updated label
+                                    name="fname"
+                                    value={formik.values.fname}
                                     onChange={formik.handleChange}
-                                    error={formik.touched.name && Boolean(formik.errors.name)}
-                                    helperText={formik.touched.name && formik.errors.name}
+                                    error={formik.touched.fname && Boolean(formik.errors.fname)}
+                                    helperText={formik.touched.fname && formik.errors.fname}
+                                    fullWidth
+                                />
+                            </Grid>
+                            <Grid item xs={12} md={4}>
+                                <TextField
+                                    label="Last Name"  // New field for last name
+                                    name="lname"
+                                    value={formik.values.lname}
+                                    onChange={formik.handleChange}
+                                    error={formik.touched.lname && Boolean(formik.errors.lname)}
+                                    helperText={formik.touched.lname && formik.errors.lname}
                                     fullWidth
                                 />
                             </Grid>
@@ -92,22 +106,21 @@ function UserEdit() {
                             <Grid item xs={12} md={4}>
                                 <TextField
                                     label="Phone"
-                                    name="contact"
-                                    value={formik.values.contact}
+                                    name="phone_number"
+                                    value={formik.values.phone_number}
                                     onChange={formik.handleChange}
-                                    error={formik.touched.contact && Boolean(formik.errors.contact)}
-                                    helperText={formik.touched.contact && formik.errors.contact}
+                                    error={formik.touched.phone_number && Boolean(formik.errors.phone_number)}
+                                    helperText={formik.touched.phone_number && formik.errors.phone_number}
                                     fullWidth
                                 />
                             </Grid>
                         </Grid>
-
                     </CardContent>
                 </Card>
                 <Button type="submit" variant='contained' style={btnstyle}>Save Details</Button>
             </Box>
         </Container>
-    )
+    );
 }
 
 export default UserEdit
