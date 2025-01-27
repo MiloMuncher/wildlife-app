@@ -1,0 +1,14 @@
+{
+  "resourceName": "wildlifegraphdataresource",
+  "policyUUID": "499ea398",
+  "bucketName": "wildlife-graph-data-bucket",
+  "storageAccess": "auth",
+  "guestAccess": [],
+  "authAccess": [
+    "CREATE_AND_UPDATE",
+    "READ",
+    "DELETE"
+  ],
+  "triggerFunction": "NONE",
+  "groupAccess": {}
+}
