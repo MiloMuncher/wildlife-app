@@ -47,15 +47,30 @@ function UserEdit() {
                     navigate(`/admin/viewusers`);
                 }).catch((error) => {
                     console.log(error);
-                    if (error.response && error.response.status === 400) {
-                        const errorMessages = error.response.data.errors;
-                        const formikErrors = {};
-                        for (const field in errorMessages) {
-                            const lowercaseField = field.toLowerCase();
-                            formikErrors[lowercaseField] = errorMessages[field];
+                    console.log(error.response.status);
+                    if (error.response) {
+                        // Check if the response status is 200
+                        if (error.response.status === 200) {
+                            // If there are no errors in the response, navigate to the view users page
+                            if (!error.response.data.errors) {
+                                navigate(`/admin/viewusers`);
+                            } else {
+                                // Handle the error if the response contains errors
+                                console.log('Error in response:', error.response.data.errors);
+                                const formikErrors = {};
+                                for (const field in error.response.data.errors) {
+                                    const lowercaseField = field.toLowerCase();
+                                    formikErrors[lowercaseField] = error.response.data.errors[field];
+                                }
+                                formik.setErrors(formikErrors);
+                            }
+                        } else {
+                            // Handle non-200 responses here if needed
+                            console.log('Unexpected status code:', error.response.status);
                         }
-                        const combinedErrors = { ...formikErrors };
-                        formik.setErrors(combinedErrors);
+                    } else {
+                        // Handle other types of errors (e.g., network issues)
+                        console.log('Network or unexpected error:', error);
                     }
                 });
         },

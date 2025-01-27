@@ -68,7 +68,7 @@ function RenderButton(props) {
                     </Button>
                     <Button variant="contained" color="error"
                         onClick={() => {
-                            http.delete(`/AdminUser/${user.id}`).then((res) => {
+                            http.delete(`https://v9c358horj.execute-api.us-east-1.amazonaws.com/dev/employees/${user.id}`).then((res) => {
                                 console.log(res.data)
                                 handleClose()
                                 getUsers();
