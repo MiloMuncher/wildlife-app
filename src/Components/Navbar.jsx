@@ -1,13 +1,28 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Box, AppBar, Toolbar, Button, IconButton, Drawer, List, Divider, ListItem, ListItemButton, ListItemText } from '@mui/material';
-import { fetchAuthSession } from 'aws-amplify/auth';
+import { fetchAuthSession, signOut } from 'aws-amplify/auth';
 import MenuIcon from '@mui/icons-material/Menu';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { AccountCircle } from '@mui/icons-material';
 
 function Navbar() {
     const [isOpen, setIsOpen] = useState(false);
+    const [isSignedIn, setIsSignedIn] = useState(false);
+
+    useEffect(() => {
+        // Check if user is signed in on component mount
+        const checkAuthSession = async () => {
+            try {
+                await fetchAuthSession();
+                setIsSignedIn(true);  // Set user as signed in
+            } catch {
+                console.log("Error fetching the session");
+            }
+        };
+
+        checkAuthSession();
+    }, []);
 
     const toggleDrawer = (open) => (event) => {
         if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
@@ -15,7 +30,14 @@ function Navbar() {
         }
         setIsOpen(open);
     };
-
+    const handleLogout = async () => {
+        try {
+            await signOut();
+            setIsSignedIn(false); // Update state to reflect user signed out
+        } catch (error) {
+            console.error('Error signing out:', error);
+        }
+    };
     return (
         <Box sx={{ flexGrow: 1 }}>
             <AppBar position="static" elevation={0} style={{ color: 'black' }}>
@@ -65,10 +87,17 @@ function Navbar() {
                             <Divider />
                             <List>
                                 <ListItem disablePadding>
-                                    <ListItemButton component={Link} to="/admin/dashboard">
-                                        <AccountCircle style={{ color: 'black' }} />
-                                        <ListItemText primary="Login" />
-                                    </ListItemButton>
+                                    {isSignedIn ? (
+                                        <ListItemButton onClick={handleLogout} component={Link} to="/">
+                                            <AccountCircle style={{ color: 'black' }} />
+                                            <ListItemText primary="Logout" />
+                                        </ListItemButton>
+                                    ) : (
+                                        <ListItemButton component={Link} to="/login">
+                                            <AccountCircle style={{ color: 'black' }} />
+                                            <ListItemText primary="Login" />
+                                        </ListItemButton>
+                                    )}
                                 </ListItem>
                             </List>
                         </Box>

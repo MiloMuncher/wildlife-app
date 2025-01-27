@@ -3,14 +3,11 @@ import { Typography, Grid, Container, Card, CardContent } from '@mui/material';
 import OrdersChart from '../Charts/OrdersChart';
 import UserChart from '../Charts/UserChart';
 import EventChart from '../Charts/EventChart';
-import { withAuthenticator } from '@aws-amplify/ui-react';
 import '@aws-amplify/ui-react/styles.css';
 import { fetchAuthSession } from 'aws-amplify/auth';
 
-function Dashboard({ signOut }) {
-    const itemcolor = { backgroundColor: '#FAF6E3' }
-    const session = fetchAuthSession();
-    console.log(session);
+function Dashboard() {
+    const itemcolor = { backgroundColor: 'white' }
     
 
     return (
@@ -47,12 +44,9 @@ function Dashboard({ signOut }) {
                     </Card>
                 </Grid>
             </Grid>
-            <button onClick={signOut}>Sign Out</button>
+
         </Container>
     );
 }
 
-// Disable sign-up functionality by setting the 'signUp' option to false
-export default withAuthenticator(Dashboard, {
-    hideSignUp: true
-});
+export default Dashboard
