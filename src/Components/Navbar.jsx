@@ -17,9 +17,9 @@ function Navbar() {
     };
 
     return (
-        <Box sx={{ flexGrow: 1 }} style={{ backgroundColor: '#FAF6E3' }}>
-            <AppBar position="static" elevation={0} style={{ backgroundColor: '#FAF6E3', color: 'black' }}>
-                <Toolbar style={{ backgroundColor: '#FAF6E3' }}>
+        <Box sx={{ flexGrow: 1 }}>
+            <AppBar position="static" elevation={0} style={{ color: 'black' }}>
+                <Toolbar style={{ backgroundColor: 'white' }}>
                     {/* Menu Icon Button */}
                     <IconButton
                         size="large"
@@ -47,7 +47,7 @@ function Navbar() {
                                     </ListItemButton>
                                 </ListItem>
                                 <ListItem disablePadding>
-                                    <ListItemButton component={Link} to="/categories">
+                                    <ListItemButton component={Link} to="/supportus">
                                         <ListItemText primary="Support Us" />
                                     </ListItemButton>
                                 </ListItem>
@@ -75,7 +75,7 @@ function Navbar() {
                     </Drawer>
 
                     {/* Logo and Navbar Links */}
-                    <Box style={{ backgroundColor: '#FAF6E3' }} marginLeft="1rem" display="flex" sx={{ flexGrow: 1 }}>
+                    <Box marginLeft="1rem" display="flex" sx={{ flexGrow: 1 }}>
                         <img
                             src="..\src\Images\logo.png"
                             alt="logo"
