@@ -86,6 +86,7 @@ function RenderButton(props) {
 }
 
 function UserView() {
+    const btnstyle = { margin: '30px 0', fontWeight: 'bold', color: 'white', backgroundColor: '#496A72' };
     const [userList, setUserList] = useState([]);
 
     const rows = userList.map((user) => ({
@@ -116,6 +117,7 @@ function UserView() {
 
     return (
         <>
+            <Button variant='contained' style={btnstyle} LinkComponent={Link} to={`/admin/addemployee`}>Onboard Employee</Button>
             <div style={{ width: '100%', backgroundColor: 'white' }}>
                 <DataGrid
                     rows={rows}

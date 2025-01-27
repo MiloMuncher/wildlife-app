@@ -11,6 +11,7 @@ import OrdersView from './OrdersView'
 import OrderItems from './OrderItems'
 import PostsView from './PostsView'
 import AddAdminPost from './AddAdminPost'
+import AddEmployee from './AddEmployee'
 import AdminEditPost from './AdminEditPost'
 import EventsView from './EventsView'
 import CustomerServiceTickets from './CustomerServiceTickets'
@@ -50,7 +51,7 @@ function ProfileRoutes() {
                                     <CreateIcon color='primary' />
                                 </ListItemIcon>
                                 <ListItemButton LinkComponent={Link} to='/admin/viewusers' >
-                                    <ListItemText primary="View All Users" />
+                                    <ListItemText primary="View All Employees" />
                                 </ListItemButton>
                             </ListItem>
                             <Divider />
@@ -127,6 +128,7 @@ function ProfileRoutes() {
                         <Route path='/vieworders' element={<OrdersView />} />
                         <Route path='/orderitems/:id' element={<OrderItems />} />
                         <Route path='/viewposts' element={<PostsView />} />
+                        <Route path='/addemployee' element={<AddEmployee />} />
                         <Route path='/addadminpost' element={<AddAdminPost />} />
                         <Route path='/admineditpost/:id' element={<AdminEditPost />} />
                         <Route path='/customerserviceticket' element={<CustomerServiceTickets />} />
