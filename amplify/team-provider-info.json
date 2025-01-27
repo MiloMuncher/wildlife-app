@@ -21,6 +21,9 @@
       "auth": {
         "wildlifeapp18062273": {},
         "wildlifeapp02467b3a": {}
+      },
+      "storage": {
+        "wildlifegraphdataresource": {}
       }
     }
   }
