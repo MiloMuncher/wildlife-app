@@ -33,8 +33,8 @@ function UploadTranscripts() {
     const checkAuthSession = async () => {
       try {
         const { tokens } = await fetchAuthSession();
-        const group = tokens.accessToken.payload['cognito:groups'];
-        setUserGroup(group)
+        const groups = tokens.accessToken.payload['cognito:groups'];
+        setUserGroup(groups ? groups[0] : null); // Assuming the user belongs to a single group
         const userEmail = tokens.idToken.payload['email']; // Get the email from the tokens
         setEmail(userEmail); // Set the email dynamically
       } catch (error) {
