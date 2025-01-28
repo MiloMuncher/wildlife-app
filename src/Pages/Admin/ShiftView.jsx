@@ -1,12 +1,12 @@
-import React, { useEffect, useState, useContext } from 'react'
-import { Button } from '@mui/material'
+import React, { useEffect, useState } from 'react';
+import { Button } from '@mui/material';
 import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@mui/material';
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom';
 import { DataGrid } from '@mui/x-data-grid';
-import http from '../../http'
+import http from '../../http';
 
 function RenderButton(props) {
-    const { hasFocus, value, user, getUsers } = props;
+    const { hasFocus, value, user, getShifts } = props;
     const buttonElement = React.useRef(null);
     const rippleRef = React.useRef(null);
 
@@ -19,8 +19,6 @@ function RenderButton(props) {
         }
     }, [hasFocus]);
 
-    const navigate = useNavigate();
-
     const [open, setOpen] = useState(false);
     const handleOpen = () => {
         setOpen(true);
@@ -31,12 +29,12 @@ function RenderButton(props) {
 
     return (
         <>
-            <Button
+            {/* <Button
                 ref={buttonElement}
                 variant="contained"
                 size="small"
                 style={{ backgroundColor: '#6CA0DC' }}
-                LinkComponent={Link} to={`/admin/viewusers/edit/${user.id}`}
+                LinkComponent={Link} to={`/admin/viewshifts/edit/${user.id}`}
             >
                 Edit
             </Button>
@@ -51,73 +49,74 @@ function RenderButton(props) {
                 Delete
             </Button>
 
-
             <Dialog open={open} onClose={handleClose}>
                 <DialogTitle>
-                    Delete User
+                    Delete Shift
                 </DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                        Are you sure you want to delete this user?
+                        Are you sure you want to delete this shift?
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                    <Button variant="contained" color="inherit"
-                        onClick={handleClose}>
+                    <Button variant="contained" color="inherit" onClick={handleClose}>
                         Cancel
                     </Button>
-                    <Button variant="contained" color="error"
+                    <Button
+                        variant="contained" color="error"
                         onClick={() => {
-                            http.delete(`https://v9c358horj.execute-api.us-east-1.amazonaws.com/dev/employees/${user.id}`).then((res) => {
-                                console.log(res.data)
-                                handleClose()
-                                getUsers();
+                            http.delete(`https://kvhdoqjcua.execute-api.us-east-1.amazonaws.com/dev/shifts/${user.id}`).then((res) => {
+                                console.log(res.data);
+                                handleClose();
+                                getShifts();
                             });
-                        }}>
+                        }}
+                    >
                         Delete
                     </Button>
                 </DialogActions>
-            </Dialog>
-
+            </Dialog> */}
         </>
-
-
     );
 }
 
-function UserView() {
+function ShiftView() {
     const btnstyle = { margin: '30px 0', fontWeight: 'bold', color: 'white', backgroundColor: '#496A72' };
-    const [userList, setUserList] = useState([]);
+    const [shiftList, setShiftList] = useState([]);
 
-    const rows = userList.map((user) => ({
-        id: user.employee_ID,
-        name: `${user.fname} ${user.lname}`,
-        email: user.email,
-        phone: user.phone_number,
+    const rows = shiftList.map((shift) => ({
+        id: shift.schedule_ID,
+        employee_id: shift.employee_ID,
+        name: `${shift.fname} ${shift.lname}`,
+        date: shift.date,
+        shift_start: shift.shift_start,
+        shift_duration: shift.shift_duration,
     }));
 
     const columns = [
-        { field: 'id', headerName: 'ID', width: 70 },
+        { field: 'id', headerName: 'Schedule ID', width: 120 },
+        { field: 'employee_id', headerName: 'Employee ID', width: 120 },
         { field: 'name', headerName: 'Name', width: 200 },
-        { field: 'phone', headerName: 'Phone', width: 100 },
-        { field: 'email', headerName: 'Email', width: 200 },
-        { field: 'action', headerName: 'Actions', width: 200, renderCell: (params) => <RenderButton user={params.row} getUsers={getUsers} /> },
+        { field: 'date', headerName: 'Date', width: 150 },
+        { field: 'shift_start', headerName: 'Shift Start', width: 150 },
+        { field: 'shift_duration', headerName: 'Duration (hrs)', width: 130 },
+        // { field: 'action', headerName: 'Actions', width: 200, renderCell: (params) => <RenderButton user={params.row} getShifts={getAllShifts} /> },
     ];
-    
 
-    const getUsers = () => {
-        http.get(`https://v9c358horj.execute-api.us-east-1.amazonaws.com/dev/employees`).then((res) => {
-            setUserList(res.data);
+    const getAllShifts = () => {
+        http.get(`https://v9c358horj.execute-api.us-east-1.amazonaws.com/dev/shifts`).then((res) => {
+            console.log(res.data);
+            setShiftList(res.data);
         });
     };
 
     useEffect(() => {
-        getUsers();
+        getAllShifts();
     }, []);
 
     return (
         <>
-            <Button variant='contained' style={btnstyle} LinkComponent={Link} to={`/admin/addemployee`}>Onboard Employee</Button>
+            <Button variant='contained' style={btnstyle} LinkComponent={Link} to={`/admin/addshift`}>New Shift</Button>
             <div style={{ width: '100%', backgroundColor: 'white' }}>
                 <DataGrid
                     rows={rows}
@@ -133,7 +132,7 @@ function UserView() {
                 />
             </div>
         </>
-    )
+    );
 }
 
-export default UserView
+export default ShiftView;

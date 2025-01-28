@@ -17,6 +17,10 @@ import EventsView from './EventsView'
 import CustomerServiceTickets from './CustomerServiceTickets'
 import Dashboard from './Dashboard'
 import EditMerchant from './EditMerchant'
+import FoodView from './FoodView'
+import ShiftView from './ShiftView'
+import PayrollView from './PayrollView'
+import ShiftEdit from './ShiftEdit'
 
 //icons
 import CreateIcon from '@mui/icons-material/Create';
@@ -75,10 +79,10 @@ function ProfileRoutes() {
                                     <ListItemButton sx={{ pl: 4 }} LinkComponent={Link} to="/admin/#viewvets">
                                         <ListItemText primary="View Vets" />
                                     </ListItemButton>
-                                    <ListItemButton sx={{ pl: 4 }} LinkComponent={Link} to="/admin/#viewvets">
+                                    <ListItemButton sx={{ pl: 4 }} LinkComponent={Link} to="/admin/viewshifts">
                                         <ListItemText primary="View Shifts" />
                                     </ListItemButton>
-                                    <ListItemButton sx={{ pl: 4 }} LinkComponent={Link} to="/admin/#viewvets">
+                                    <ListItemButton sx={{ pl: 4 }} LinkComponent={Link} to="/admin/viewpayroll">
                                         <ListItemText primary="Payroll Management" />
                                     </ListItemButton>
                                 </List>
@@ -122,7 +126,7 @@ function ProfileRoutes() {
                                     <ListItemButton sx={{ pl: 4 }} LinkComponent={Link} to="/admin/#animals">
                                         <ListItemText primary="View Medication" />
                                     </ListItemButton>
-                                    <ListItemButton sx={{ pl: 4 }} LinkComponent={Link} to="/admin/#viewvets">
+                                    <ListItemButton sx={{ pl: 4 }} LinkComponent={Link} to="/admin/viewfood">
                                         <ListItemText primary="View Food" />
                                     </ListItemButton>
                                 </List>
@@ -165,6 +169,10 @@ function ProfileRoutes() {
                         <Route path='/viewmerchant' element={<MerchantView />} />
                         <Route path='/addmerchant' element={<AddMerchant />} />
                         <Route path='/editmerchant/:id' element={<EditMerchant />} />
+                        <Route path='/viewfood' element={<FoodView /> } />
+                        <Route path='/viewshifts' element={<ShiftView /> } />
+                        <Route path='/viewpayroll' element={<PayrollView /> } />
+                        <Route path="/viewshifts/edit/:id" element={<ShiftEdit />} />
                     </Routes>
                 </Grid>
             </Grid>
