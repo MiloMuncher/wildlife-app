@@ -15,6 +15,10 @@ import CustomerServiceTickets from './CustomerServiceTickets';
 import Dashboard from './Dashboard';
 import EditMerchant from './EditMerchant';
 import AddEmployee from './AddEmployee';
+import FoodView from './FoodView'
+import ShiftView from './ShiftView'
+import PayrollView from './PayrollView'
+import ShiftEdit from './ShiftEdit'
 
 // Icons
 import CreateIcon from '@mui/icons-material/Create';
@@ -86,10 +90,10 @@ function ProfileRoutes() {
                       <ListItemButton sx={{ pl: 4 }} LinkComponent={Link} to="/admin/viewusers">
                         <ListItemText primary="View Employees" />
                       </ListItemButton>
-                      <ListItemButton sx={{ pl: 4 }} LinkComponent={Link} to="/admin/#viewvets">
+                      <ListItemButton sx={{ pl: 4 }} LinkComponent={Link} to="/admin/viewshifts">
                         <ListItemText primary="View Shifts" />
                       </ListItemButton>
-                      <ListItemButton sx={{ pl: 4 }} LinkComponent={Link} to="/admin/#viewvets">
+                      <ListItemButton sx={{ pl: 4 }} LinkComponent={Link} to="/admin/payrollview">
                         <ListItemText primary="Payroll Management" />
                       </ListItemButton>
                     </List>
@@ -192,6 +196,8 @@ function ProfileRoutes() {
               <>
                 <Route path="/viewusers/edit/:id" element={<UserEdit />} />
                 <Route path='/viewusers' element={<UserView />} />
+                <Route path='/viewshifts' element={<ShiftView />} />
+                <Route path='/payrollview' element={<PayrollView />} />
                 <Route path='/vieworders' element={<OrdersView />} />
                 <Route path='/orderitems/:id' element={<OrderItems />} />
                 <Route path='/viewposts' element={<PostsView />} />

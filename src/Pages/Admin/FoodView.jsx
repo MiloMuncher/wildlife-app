@@ -85,41 +85,44 @@ function RenderButton(props) {
     );
 }
 
-function UserView() {
+function FoodView() {
     const btnstyle = { margin: '30px 0', fontWeight: 'bold', color: 'white', backgroundColor: '#496A72' };
-    const [userList, setUserList] = useState([]);
+    const [foodList, setFoodList] = useState([]);
 
-    const rows = userList.map((user) => ({
-        id: user.employee_ID,
-        name: `${user.fname} ${user.lname}`,
-        email: user.email,
-        phone: user.phone_number,
-        job_title: user.job_title
+    const rows = foodList.map((food) => ({
+        id: food.food_ID,
+        name: food.name,
+        description: food.description,
+        expiration_date: food.expiration_date,
+        available_quantity: food.available_quantity,
+        batch_number: food.batch_number,
     }));
 
     const columns = [
         { field: 'id', headerName: 'ID', width: 70 },
-        { field: 'name', headerName: 'Name', width: 200 },
-        { field: 'phone', headerName: 'Phone', width: 100 },
-        { field: 'email', headerName: 'Email', width: 200 },
-        { field: 'job_title', headerName: 'Job Title', width: 200 },
+        { field: 'name', headerName: 'Name', width: 100 },
+        { field: 'description', headerName: 'Description', width: 100 },
+        { field: 'expiration_date', headerName: 'Expiry Date', width: 200 },
+        { field: 'available_quantity', headerName: 'Quantity', width: 200 },
+        { field: 'batch_number', headerName: 'Batch No.', width: 200 },
         { field: 'action', headerName: 'Actions', width: 200, renderCell: (params) => <RenderButton user={params.row} getUsers={getUsers} /> },
     ];
     
 
-    const getUsers = () => {
-        http.get(`https://v9c358horj.execute-api.us-east-1.amazonaws.com/dev/employees`).then((res) => {
-            setUserList(res.data);
+    const getAllFood = () => {
+        http.get(`https://kvhdoqjcua.execute-api.us-east-1.amazonaws.com/dev/food`).then((res) => {
+            console.log(res.data);
+            setFoodList(res.data);
         });
     };
 
     useEffect(() => {
-        getUsers();
+        getAllFood();
     }, []);
 
     return (
         <>
-            <Button variant='contained' style={btnstyle} LinkComponent={Link} to={`/admin/addemployee`}>Onboard Employee</Button>
+            <Button variant='contained' style={btnstyle} LinkComponent={Link} to={`/admin/addemployee`}>New Feed Variety</Button>
             <div style={{ width: '100%', backgroundColor: 'white' }}>
                 <DataGrid
                     rows={rows}
@@ -138,4 +141,4 @@ function UserView() {
     )
 }
 
-export default UserView
+export default FoodView
