@@ -8,8 +8,6 @@ import { fetchAuthSession } from 'aws-amplify/auth';
 
 function Dashboard() {
     const itemcolor = { backgroundColor: 'white' }
-    
-
     return (
         <Container maxWidth='xl'>
             <Grid container spacing={2}>
