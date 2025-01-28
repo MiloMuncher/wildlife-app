@@ -10,6 +10,8 @@ function UploadTranscripts() {
   const [selectedFile, setSelectedFile] = useState(null);
   const [description, setDescription] = useState('');
   const [email, setEmail] = useState('');
+  const [userGroup, setUserGroup] = useState(null);
+
 
   // Columns for DataGrid
   const columns = [
@@ -31,6 +33,8 @@ function UploadTranscripts() {
     const checkAuthSession = async () => {
       try {
         const { tokens } = await fetchAuthSession();
+        const group = tokens.accessToken.payload['cognito:groups'];
+        setUserGroup(group)
         const userEmail = tokens.idToken.payload['email']; // Get the email from the tokens
         setEmail(userEmail); // Set the email dynamically
       } catch (error) {
@@ -97,14 +101,18 @@ function UploadTranscripts() {
   return (
     <div>
       {/* Upload Button */}
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={() => setOpenDialog(true)}
-        style={{ marginBottom: '20px' }}
-      >
-        Upload Transcription
-      </Button>
+      {userGroup === 'Vets' && (
+        <>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => setOpenDialog(true)}
+            style={{ marginBottom: '20px' }}
+          >
+            Upload Transcription
+          </Button>
+        </>
+      )}
 
       {/* Dialog for Upload */}
       <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
