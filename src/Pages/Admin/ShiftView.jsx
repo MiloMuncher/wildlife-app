@@ -116,7 +116,7 @@ function ShiftView() {
 
     return (
         <>
-            <Button variant='contained' style={btnstyle} LinkComponent={Link} to={`/admin/addshift`}>New Shift</Button>
+            {/* <Button variant='contained' style={btnstyle} LinkComponent={Link} to={`/admin/addshift`}>New Shift</Button> */}
             <div style={{ width: '100%', backgroundColor: 'white' }}>
                 <DataGrid
                     rows={rows}
