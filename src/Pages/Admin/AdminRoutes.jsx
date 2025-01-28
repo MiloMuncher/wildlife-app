@@ -16,6 +16,8 @@ import EventsView from './EventsView'
 import CustomerServiceTickets from './CustomerServiceTickets'
 import Dashboard from './Dashboard'
 import EditMerchant from './EditMerchant'
+import AddAnimal from './AddAnimal'
+import ViewAnimals from './ViewAnimals'
 
 //icons
 import CreateIcon from '@mui/icons-material/Create';
@@ -23,6 +25,7 @@ import EventIcon from '@mui/icons-material/Event';
 import ChatBubbleIcon from '@mui/icons-material/ChatBubble';
 import ConfirmationNumberIcon from '@mui/icons-material/ConfirmationNumber';
 import DashboardIcon from '@mui/icons-material/Dashboard';
+
 
 
 
@@ -42,6 +45,15 @@ function ProfileRoutes() {
                                 </ListItemIcon>
                                 <ListItemButton LinkComponent={Link} to='/admin/dashboard' >
                                     <ListItemText primary="Dashboard" />
+                                </ListItemButton>
+                            </ListItem>
+                            <Divider />
+                            <ListItem>
+                                <ListItemIcon>
+                                    <DashboardIcon color='primary' />
+                                </ListItemIcon>
+                                <ListItemButton LinkComponent={Link} to='/admin/viewanimals' >
+                                    <ListItemText primary="View All Animal Rescues" />
                                 </ListItemButton>
                             </ListItem>
                             <Divider />
@@ -134,6 +146,8 @@ function ProfileRoutes() {
                         <Route path='/viewmerchant' element={<MerchantView />} />
                         <Route path='/addmerchant' element={<AddMerchant />} />
                         <Route path='/editmerchant/:id' element={<EditMerchant/>} />
+                        <Route path='/addanimal' element={<AddAnimal />} />
+                        <Route path='/viewanimals' element={<ViewAnimals />} />
                     </Routes>
                 </Grid>
             </Grid>
