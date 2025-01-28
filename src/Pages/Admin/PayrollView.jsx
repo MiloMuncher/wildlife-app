@@ -1,9 +1,9 @@
-import React, { useEffect, useState, useContext } from 'react'
-import { Button } from '@mui/material'
+import React, { useEffect, useState } from 'react';
+import { Button } from '@mui/material';
 import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@mui/material';
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom';
 import { DataGrid } from '@mui/x-data-grid';
-import http from '../../http'
+import http from '../../http';
 
 function RenderButton(props) {
     const { hasFocus, value, user, getUsers } = props;
@@ -19,8 +19,6 @@ function RenderButton(props) {
         }
     }, [hasFocus]);
 
-    const navigate = useNavigate();
-
     const [open, setOpen] = useState(false);
     const handleOpen = () => {
         setOpen(true);
@@ -31,12 +29,12 @@ function RenderButton(props) {
 
     return (
         <>
-            <Button
+            {/* <Button
                 ref={buttonElement}
                 variant="contained"
                 size="small"
                 style={{ backgroundColor: '#6CA0DC' }}
-                LinkComponent={Link} to={`/admin/viewusers/edit/${user.id}`}
+                LinkComponent={Link} to={`/admin/viewpayroll/edit/${user.id}`}
             >
                 Edit
             </Button>
@@ -51,75 +49,72 @@ function RenderButton(props) {
                 Delete
             </Button>
 
-
             <Dialog open={open} onClose={handleClose}>
                 <DialogTitle>
-                    Delete User
+                    Delete Payroll Entry
                 </DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                        Are you sure you want to delete this user?
+                        Are you sure you want to delete this payroll entry?
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                    <Button variant="contained" color="inherit"
-                        onClick={handleClose}>
+                    <Button variant="contained" color="inherit" onClick={handleClose}>
                         Cancel
                     </Button>
-                    <Button variant="contained" color="error"
+                    <Button
+                        variant="contained" color="error"
                         onClick={() => {
-                            http.delete(`https://v9c358horj.execute-api.us-east-1.amazonaws.com/dev/employees/${user.id}`).then((res) => {
-                                console.log(res.data)
-                                handleClose()
+                            http.delete(`https://kvhdoqjcua.execute-api.us-east-1.amazonaws.com/dev/payroll/${user.id}`).then((res) => {
+                                console.log(res.data);
+                                handleClose();
                                 getUsers();
                             });
-                        }}>
+                        }}
+                    >
                         Delete
                     </Button>
                 </DialogActions>
-            </Dialog>
-
+            </Dialog> */}
         </>
-
-
     );
 }
 
-function UserView() {
-    const btnstyle = { margin: '30px 0', fontWeight: 'bold', color: 'white', backgroundColor: '#496A72' };
-    const [userList, setUserList] = useState([]);
+function PayrollView() {
+    // const btnstyle = { margin: '30px 0', fontWeight: 'bold', color: 'white', backgroundColor: '#496A72' };
+    const [payrollList, setPayrollList] = useState([]);
 
-    const rows = userList.map((user) => ({
-        id: user.employee_ID,
-        name: `${user.fname} ${user.lname}`,
-        email: user.email,
-        phone: user.phone_number,
-        job_title: user.job_title
+    const rows = payrollList.map((payroll) => ({
+        id: payroll.payroll_ID,
+        employee_id: payroll.employee_ID,
+        name: `${payroll.fname} ${payroll.lname}`, 
+        payroll_month: payroll.payroll_month,
+        total_hours: payroll.total_hours,
+        payroll_processed: payroll.payroll_processed ? 'Yes' : 'No',  // Convert boolean to Yes/No for readability
     }));
 
     const columns = [
-        { field: 'id', headerName: 'ID', width: 70 },
+        { field: 'id', headerName: 'Payroll ID', width: 130 },
+        { field: 'employee_id', headerName: 'Employee ID', width: 150 },
         { field: 'name', headerName: 'Name', width: 200 },
-        { field: 'phone', headerName: 'Phone', width: 100 },
-        { field: 'email', headerName: 'Email', width: 200 },
-        { field: 'job_title', headerName: 'Job Title', width: 200 },
-        { field: 'action', headerName: 'Actions', width: 200, renderCell: (params) => <RenderButton user={params.row} getUsers={getUsers} /> },
+        { field: 'payroll_month', headerName: 'Month', width: 150 },
+        { field: 'total_hours', headerName: 'Total Hours', width: 180 },
+        { field: 'payroll_processed', headerName: 'Processed', width: 180 },
     ];
-    
 
-    const getUsers = () => {
-        http.get(`https://v9c358horj.execute-api.us-east-1.amazonaws.com/dev/employees`).then((res) => {
-            setUserList(res.data);
+    const getAllPayroll = () => {
+        http.get(`https://v9c358horj.execute-api.us-east-1.amazonaws.com/dev/payroll`).then((res) => {
+            console.log(res.data);
+            setPayrollList(res.data);
         });
     };
 
     useEffect(() => {
-        getUsers();
+        getAllPayroll();
     }, []);
 
     return (
         <>
-            <Button variant='contained' style={btnstyle} LinkComponent={Link} to={`/admin/addemployee`}>Onboard Employee</Button>
             <div style={{ width: '100%', backgroundColor: 'white' }}>
                 <DataGrid
                     rows={rows}
@@ -135,7 +130,7 @@ function UserView() {
                 />
             </div>
         </>
-    )
+    );
 }
 
-export default UserView
+export default PayrollView;

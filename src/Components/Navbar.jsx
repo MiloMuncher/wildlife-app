@@ -106,19 +106,11 @@ function Navbar() {
                     {/* Logo and Navbar Links */}
                     <Box marginLeft="1rem" display="flex" sx={{ flexGrow: 1 }}>
                         <img
-                            src="..\src\Images\logo.png"
+                            src="\logo.png"
                             alt="logo"
                             style={{ height: '90px', width: '90px' }}
                         />
                     </Box>
-
-                    {/* Profile and Other Links */}
-                    <>
-                        <AccountCircle style={{ color: 'black' }} />
-                        <Button color="inherit" LinkComponent={Link} to="/profile/profile" sx={{ fontWeight: 'bold' }}>
-                            Profile
-                        </Button>
-                    </>
                 </Toolbar>
             </AppBar>
         </Box>

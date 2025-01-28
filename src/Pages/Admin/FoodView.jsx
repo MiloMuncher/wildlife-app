@@ -36,7 +36,7 @@ function RenderButton(props) {
                 variant="contained"
                 size="small"
                 style={{ backgroundColor: '#6CA0DC' }}
-                LinkComponent={Link} to={`/admin/editmerchant/${user.id}`}
+                LinkComponent={Link} to={`/admin/viewusers/edit/${user.id}`}
             >
                 Edit
             </Button>
@@ -68,7 +68,7 @@ function RenderButton(props) {
                     </Button>
                     <Button variant="contained" color="error"
                         onClick={() => {
-                            http.delete(`/AdminUser/${user.id}`).then((res) => {
+                            http.delete(`https://v9c358horj.execute-api.us-east-1.amazonaws.com/dev/employees/${user.id}`).then((res) => {
                                 console.log(res.data)
                                 handleClose()
                                 getUsers();
@@ -84,42 +84,45 @@ function RenderButton(props) {
 
     );
 }
-function MerchantView() {
-    const btnstyle = { margin: '30px 0', fontWeight: 'bold', color: 'white', backgroundColor: '#FF4E00' };
 
-    const [userList, setUserList] = useState([]);
+function FoodView() {
+    const btnstyle = { margin: '30px 0', fontWeight: 'bold', color: 'white', backgroundColor: '#496A72' };
+    const [foodList, setFoodList] = useState([]);
 
-    const rows = userList.map((user) => ({
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        phone: user.contact,
-        companyId: user.companyId
+    const rows = foodList.map((food) => ({
+        id: food.food_ID,
+        name: food.name,
+        description: food.description,
+        expiration_date: food.expiration_date,
+        available_quantity: food.available_quantity,
+        batch_number: food.batch_number,
     }));
 
     const columns = [
         { field: 'id', headerName: 'ID', width: 70 },
-        { field: 'name', headerName: 'Name', width: 200 },
-        { field: 'phone', headerName: 'Phone', width: 100 },
-        { field: 'email', headerName: 'Email', width: 200 },
-        { field: 'companyId', headerName: 'Company ID', width: 150 },
+        { field: 'name', headerName: 'Name', width: 100 },
+        { field: 'description', headerName: 'Description', width: 100 },
+        { field: 'expiration_date', headerName: 'Expiry Date', width: 200 },
+        { field: 'available_quantity', headerName: 'Quantity', width: 200 },
+        { field: 'batch_number', headerName: 'Batch No.', width: 200 },
         { field: 'action', headerName: 'Actions', width: 200, renderCell: (params) => <RenderButton user={params.row} getUsers={getUsers} /> },
     ];
+    
 
-    const getUsers = () => {
-        http.get(`/AdminUser/allmerchants`).then((res) => {
-            setUserList(res.data);
-            console.log(res.data)
+    const getAllFood = () => {
+        http.get(`https://kvhdoqjcua.execute-api.us-east-1.amazonaws.com/dev/food`).then((res) => {
+            console.log(res.data);
+            setFoodList(res.data);
         });
     };
 
     useEffect(() => {
-        getUsers();
+        getAllFood();
     }, []);
 
     return (
         <>
-            <Button variant='contained' style={btnstyle} LinkComponent={Link} to={`/admin/addmerchant`}>Add Merchant</Button>
+            <Button variant='contained' style={btnstyle} LinkComponent={Link} to={`/admin/addemployee`}>New Feed Variety</Button>
             <div style={{ width: '100%', backgroundColor: 'white' }}>
                 <DataGrid
                     rows={rows}
@@ -138,4 +141,4 @@ function MerchantView() {
     )
 }
 
-export default MerchantView
+export default FoodView
