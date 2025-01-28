@@ -106,7 +106,7 @@ function Navbar() {
                     {/* Logo and Navbar Links */}
                     <Box marginLeft="1rem" display="flex" sx={{ flexGrow: 1 }}>
                         <img
-                            src="..\src\Images\logo.png"
+                            src="\logo.png"
                             alt="logo"
                             style={{ height: '90px', width: '90px' }}
                         />
