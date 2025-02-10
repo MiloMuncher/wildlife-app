@@ -6,7 +6,7 @@ import { DataGrid } from '@mui/x-data-grid';
 import http from '../../http'
 
 function RenderButton(props) {
-    const { hasFocus, value, food, getFood } = props;
+    const { hasFocus, value, food, getAllFood } = props;
     const buttonElement = React.useRef(null);
     const rippleRef = React.useRef(null);
 
@@ -36,7 +36,7 @@ function RenderButton(props) {
                 variant="contained"
                 size="small"
                 style={{ backgroundColor: '#6CA0DC' }}
-                LinkComponent={Link} to={`/admin/viewusers/edit/${user.id}`}
+                LinkComponent={Link} to={`/admin/viewusers/edit/${food.id}`}
             >
                 Edit
             </Button>
@@ -71,7 +71,7 @@ function RenderButton(props) {
                             http.delete(`https://kvhdoqjcua.execute-api.us-east-1.amazonaws.com/dev/food/${food.id}`).then((res) => {
                                 console.log(res.data)
                                 handleClose()
-                                getFood();
+                                getAllFood();
                             });
                         }}>
                         Delete
@@ -101,11 +101,11 @@ function FoodView() {
     const columns = [
         { field: 'id', headerName: 'ID', width: 70 },
         { field: 'name', headerName: 'Name', width: 100 },
-        { field: 'description', headerName: 'Description', width: 100 },
+        { field: 'description', headerName: 'Description', width: 200 },
         { field: 'expiration_date', headerName: 'Expiry Date', width: 200 },
-        { field: 'available_quantity', headerName: 'Quantity', width: 200 },
+        { field: 'available_quantity', headerName: 'Quantity', width: 100 },
         { field: 'batch_number', headerName: 'Batch No.', width: 200 },
-        { field: 'action', headerName: 'Actions', width: 200, renderCell: (params) => <RenderButton food={params.row} getFood={getFood} /> },
+        { field: 'action', headerName: 'Actions', width: 200, renderCell: (params) => <RenderButton food={params.row} getAllFood={getAllFood} /> },
     ];
     
 
@@ -122,7 +122,7 @@ function FoodView() {
 
     return (
         <>
-            <Button variant='contained' style={btnstyle} LinkComponent={Link} to={`/admin/addemployee`}>New Feed Variety</Button>
+            <Button variant='contained' style={btnstyle} LinkComponent={Link} to={`/admin/addfood`}>New Feed Variety</Button>
             <div style={{ width: '100%', backgroundColor: 'white' }}>
                 <DataGrid
                     rows={rows}

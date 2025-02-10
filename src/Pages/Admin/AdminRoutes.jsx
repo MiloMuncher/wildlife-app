@@ -20,6 +20,7 @@ import ShiftView from './ShiftView'
 import PayrollView from './PayrollView'
 import ShiftEdit from './ShiftEdit'
 import MedicationView from './MedicationView';
+import AddFood from './AddFood';
 
 // Icons
 import CreateIcon from '@mui/icons-material/Create';
@@ -211,6 +212,7 @@ function ProfileRoutes() {
                 <Route path="/uploadtranscripts" element={<UploadTranscripts />} />
                 <Route path="/viewmedications" element={<MedicationView />} />
                 <Route path="/viewfood" element={<FoodView />} />
+                <Route path="/addfood" element={<AddFood />} />
               </>
             )}
             {userGroup === 'Vets' && <Route path="/uploadtranscripts" element={<UploadTranscripts />} />}
