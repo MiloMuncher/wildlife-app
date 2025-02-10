@@ -6,7 +6,7 @@ import { DataGrid } from '@mui/x-data-grid';
 import http from '../../http'
 
 function RenderButton(props) {
-    const { hasFocus, value, food, getFood } = props;
+    const { hasFocus, value, user, getUsers } = props;
     const buttonElement = React.useRef(null);
     const rippleRef = React.useRef(null);
 
@@ -68,10 +68,10 @@ function RenderButton(props) {
                     </Button>
                     <Button variant="contained" color="error"
                         onClick={() => {
-                            http.delete(`https://kvhdoqjcua.execute-api.us-east-1.amazonaws.com/dev/food/${food.id}`).then((res) => {
+                            http.delete(`https://v9c358horj.execute-api.us-east-1.amazonaws.com/dev/employees/${user.id}`).then((res) => {
                                 console.log(res.data)
                                 handleClose()
-                                getFood();
+                                getUsers();
                             });
                         }}>
                         Delete
@@ -85,44 +85,41 @@ function RenderButton(props) {
     );
 }
 
-function FoodView() {
+function MedicationView() {
     const btnstyle = { margin: '30px 0', fontWeight: 'bold', color: 'white', backgroundColor: '#496A72' };
-    const [foodList, setFoodList] = useState([]);
+    const [userList, setUserList] = useState([]);
 
-    const rows = foodList.map((food) => ({
-        id: food.food_ID,
-        name: food.name,
-        description: food.description,
-        expiration_date: food.expiration_date,
-        available_quantity: food.available_quantity,
-        batch_number: food.batch_number,
+    const rows = userList.map((user) => ({
+        id: user.employee_ID,
+        name: `${user.fname} ${user.lname}`,
+        email: user.email,
+        phone: user.phone_number,
+        job_title: user.job_title
     }));
 
     const columns = [
         { field: 'id', headerName: 'ID', width: 70 },
-        { field: 'name', headerName: 'Name', width: 100 },
-        { field: 'description', headerName: 'Description', width: 100 },
-        { field: 'expiration_date', headerName: 'Expiry Date', width: 200 },
-        { field: 'available_quantity', headerName: 'Quantity', width: 200 },
-        { field: 'batch_number', headerName: 'Batch No.', width: 200 },
-        { field: 'action', headerName: 'Actions', width: 200, renderCell: (params) => <RenderButton food={params.row} getFood={getFood} /> },
+        { field: 'name', headerName: 'Name', width: 200 },
+        { field: 'phone', headerName: 'Phone', width: 100 },
+        { field: 'email', headerName: 'Email', width: 200 },
+        { field: 'job_title', headerName: 'Job Title', width: 200 },
+        { field: 'action', headerName: 'Actions', width: 200, renderCell: (params) => <RenderButton user={params.row} getUsers={getUsers} /> },
     ];
     
 
-    const getAllFood = () => {
-        http.get(`https://kvhdoqjcua.execute-api.us-east-1.amazonaws.com/dev/food`).then((res) => {
-            console.log(res.data);
-            setFoodList(res.data);
+    const getUsers = () => {
+        http.get(`https://v9c358horj.execute-api.us-east-1.amazonaws.com/dev/employees`).then((res) => {
+            setUserList(res.data);
         });
     };
 
     useEffect(() => {
-        getAllFood();
+        getUsers();
     }, []);
 
     return (
         <>
-            <Button variant='contained' style={btnstyle} LinkComponent={Link} to={`/admin/addemployee`}>New Feed Variety</Button>
+            <Button variant='contained' style={btnstyle} LinkComponent={Link} to={`/admin/addemployee`}>Onboard Employee</Button>
             <div style={{ width: '100%', backgroundColor: 'white' }}>
                 <DataGrid
                     rows={rows}
@@ -141,4 +138,4 @@ function FoodView() {
     )
 }
 
-export default FoodView
+export default MedicationView
