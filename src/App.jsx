@@ -7,15 +7,11 @@ import UserContext from './contexts/UserContext.js';
 
 // Import pages
 import Home from './Pages/Home';
-import Categories from './Pages/Categories';
 import AboutUs from './Pages/AboutUs.jsx';
 import Donation from './Pages/Donation.jsx';
-import AddPost from './Pages/AddPost';
-import Description from './Pages/Description';
-import RaisedRequest from './Pages/RaisedRequest';
-import Cart from './Pages/Cart';
 import Login from './Pages/Login'
 import Footer  from './Components/Footer.jsx';
+import HowWeOperate from './Pages/HowWeOperate.jsx';
 
 //Other routes
 import MerchantRoutes from './Pages/Merchant/MerchantRoutes';
@@ -23,10 +19,9 @@ import AdminRoutes from './Pages/Admin/AdminRoutes';
 
 // Import components
 import Navbar from './Components/Navbar';
-import Checkout_Success from './Pages/Checkout_Success.jsx';
-
 import { Amplify } from 'aws-amplify';
 import config from './amplifyconfiguration.json';
+
 Amplify.configure(config);
 
 function App() {
@@ -52,12 +47,9 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/categories" element={<Categories />} />
-        <Route path="/description/:id" element={<Description />} />
         <Route path="/aboutus" element={<AboutUs />} />
         <Route path="/supportus" element={<Donation />} />
-
-
+        <Route path="/howweoperate" element={<HowWeOperate />} />
         {
           isCustomer && (
             <Route path="/profile/*" element={<ProfileRoutes />} />
@@ -74,11 +66,6 @@ function App() {
           )
         }
         <Route path="/admin/*" element={<AdminRoutes />} />
-        <Route path="/addpost" element={<AddPost />} />
-        <Route path="/contactus/raisedrequest" element={<RaisedRequest />} />
-        <Route path="/cart" element={<Cart />} />
-        <Route path="/success" element={<Checkout_Success />} />
-
       </Routes>
       <Footer />
     </UserContext.Provider>
