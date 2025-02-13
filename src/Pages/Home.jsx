@@ -20,7 +20,7 @@ function Home() {
 
     return (
         <Box sx={{ backgroundImage: "url('/Paw Print Background Pattern.jpg')" }}>
-            <Container maxWidth="xl" >
+            <Container maxWidth="x2" >
                 {/* Hero Section with Parallax Effect */}
                 <Box sx={{
                     backgroundImage: "url('/background.jpg')",
