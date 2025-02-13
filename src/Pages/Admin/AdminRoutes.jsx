@@ -23,6 +23,9 @@ import MedicationView from './MedicationView';
 import AddFood from './AddFood';
 import QR from './QRCodePages/QR';
 import SupplyDetails from './QRCodePages/SupplyDetails';
+import AddAnimal from './AddAnimal';
+import ViewAnimals from './ViewAnimals';
+import EditAnimal from './EditAnimal';
 
 // Icons
 import CreateIcon from '@mui/icons-material/Create';
@@ -125,7 +128,7 @@ function ProfileRoutes() {
                   </ListItemButton>
                   <Collapse in={openAnimals} timeout="auto" unmountOnExit>
                     <List component="div">
-                      <ListItemButton sx={{ pl: 4 }} LinkComponent={Link} to="/admin/#animals">
+                      <ListItemButton sx={{ pl: 4 }} LinkComponent={Link} to="/admin/viewanimals">
                         <ListItemText primary="View Animals" />
                       </ListItemButton>
                       <ListItemButton sx={{ pl: 4 }} LinkComponent={Link} to="/admin/#viewvets">
@@ -233,6 +236,9 @@ function ProfileRoutes() {
 
                 <Route path="/qr/:id" element={<QR />} />
                 <Route path="/supplydetails/:id" element={<SupplyDetails />} />
+                <Route path="/viewanimals" element={<ViewAnimals />} />
+                <Route path="/addanimal" element={<AddAnimal />} />
+                <Route path="/viewanimals/edit/:id" element={<EditAnimal />} />
 
               </>
             )}

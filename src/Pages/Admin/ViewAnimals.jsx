@@ -6,7 +6,7 @@ import { DataGrid } from '@mui/x-data-grid';
 import http from '../../http'
 
 function RenderButton(props) {
-    const { post } = props;
+    const { animal } = props;
     const buttonElement = React.useRef(null);
     const navigate = useNavigate();
     const [open, setOpen] = useState(false);
@@ -15,6 +15,7 @@ function RenderButton(props) {
     };
     const handleClose = () => {
         setOpen(false);
+        window.location.reload();
     };
 
     return (
@@ -24,9 +25,9 @@ function RenderButton(props) {
                 variant="contained"
                 size="small"
                 style={{ backgroundColor: '#6CA0DC' }}
-                LinkComponent={Link} to={`/admin/admineditpost/${post.id}`}
+                LinkComponent={Link} to={`/admin/viewanimals/edit/${animal.id}`}
             >
-                Edit Post
+                Edit Animal
             </Button>
 
             <Button
@@ -40,11 +41,11 @@ function RenderButton(props) {
 
             <Dialog open={open} onClose={handleClose}>
                 <DialogTitle>
-                    Delete Post
+                    Delete Animal
                 </DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                        Are you sure you want to delete this Post?
+                        Are you sure you want to delete this Animal?
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
@@ -54,7 +55,7 @@ function RenderButton(props) {
                     </Button>
                     <Button variant="contained" color="error"
                         onClick={() => {
-                            http.delete(`/Post/admin/${post.id}`).then((res) => {
+                            http.delete(`https://i1mu51yxbd.execute-api.us-east-1.amazonaws.com/dev/animal_CRUD/animals?animal_id=${animal.id}`).then((res) => {
                                 console.log(res.data)
                                 handleClose()
                             });
@@ -69,41 +70,41 @@ function RenderButton(props) {
 
 function ViewAnimals() {
     const btnstyle = { margin: '30px 0', fontWeight: 'bold', color: 'white', backgroundColor: '#FF4E00' };
-    const [postList, setPostList] = useState([]);
+    const [animalList, setAnimalList] = useState([]);
 
     const columns = [
         { field: 'id', headerName: 'ID', width: 70 },
         { field: 'species', headerName: 'Species', width: 100 },
-        { field: 'weight', headerName: 'Weight', width: 100 },
-        { field: 'date_of_rescue', headerName: 'Date of Rescue', width: 100 },
+        { field: 'weight', headerName: 'Weight (kg)', width: 100 },
+        { field: 'date_of_rescue', headerName: 'Rescue Date', width: 100 },
         { field: 'initial_condition', headerName: 'Initial Condition', width: 100 },
         { field: 'current_health_status', headerName: 'Current Health Status', width: 100 },
-        { field: 'location_found', headerName: 'Location Found', width: 100 },
-        { field: 'outcome_type: "",', headerName: 'Outcome Type', width: 100 },
+        { field: 'outcome_type', headerName: 'Outcome Type', width: 140 },
         { field: 'required_food_amount', headerName: 'Required Food Amount', width: 100 },
-
-        { field: 'action', headerName: 'Actions', width: 200, renderCell: (params) => <RenderButton post={params.row} /> },
-
+        { field: 'action', headerName: 'Actions', width: 200, renderCell: (params) => <RenderButton animal={params.row} /> },
     ];
 
-    const rows = postList.map((post) => ({
-        id: post.id,
-        title: post.title,
-        description: post.description,
-        likes: post.likes,
-        createdAt: new Date(post.createdAt).toLocaleDateString(),
-        user: post.user.name,
+    const rows = animalList.map((animal) => ({
+        id: animal.animal_id,
+        species: animal.species,
+        weight: animal.weight,
+        date_of_rescue: animal.date_of_rescue,
+        initial_condition: animal.initial_condition,
+        current_health_status: animal.current_health_status,
+        outcome_type: animal.outcome_type,
+        required_food_amount: animal.required_food_amount,
     }));
 
-    const getPosts = () => {
-        http.get(`/Post/All`).then((res) => {
-            setPostList(res.data);
+    const getAnimals = () => {
+        http.get(`https://i1mu51yxbd.execute-api.us-east-1.amazonaws.com/dev/animal_CRUD`).then((res) => {
+            console.log("Data: ",res.data);
+            setAnimalList(res.data);
         });
     };
 
     useEffect(() => {
-        getPosts();
-    }, [postList]);
+        getAnimals();
+    }, []);
 
     return (
         <>

@@ -10,20 +10,19 @@ import {
   CardContent,
   MenuItem,
 } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import * as yup from "yup";
 import { useFormik } from "formik";
 import http from "../../http.js";
+import { useState, useEffect, useContext } from "react";
 
-function AddAnimal() {
+function EditAnimal() {
   const btnstyle = {
     margin: "30px 0",
     fontWeight: "bold",
     color: "white",
     backgroundColor: "#FF4E00",
   };
-
-  const navigate = useNavigate();
 
   const singaporeTowns = [
     "Ang Mo Kio",
@@ -52,18 +51,33 @@ function AddAnimal() {
     "Yishun",
   ];
 
+  const { id } = useParams();
+  const [u, setU] = useState({
+    species: "",
+    weight: "",
+    age_class: "",
+    date_of_rescue: "",
+    initial_condition: "",
+    current_health_status: "",
+    location_found: "",
+    outcome_type: "",
+    required_food_amount: "",
+  });
+
+  useEffect(() => {
+    http
+      .get(
+        `https://i1mu51yxbd.execute-api.us-east-1.amazonaws.com/dev/animal_CRUD/animals?animal_id=${id}`
+      )
+      .then((res) => {
+        setU(res.data);
+      });
+  }, [id]);
+
+  const navigate = useNavigate();
   const formik = useFormik({
-    initialValues: {
-      species: "",
-      weight: "",
-      age_class: "",
-      date_of_rescue: "",
-      initial_condition: "",
-      current_health_status: "",
-      location_found: "",
-      outcome_type: "",
-      required_food_amount: "",
-    },
+    initialValues: u,
+    enableReinitialize: true,
     validationSchema: yup.object({
       species: yup
         .string()
@@ -116,8 +130,8 @@ function AddAnimal() {
     }),
     onSubmit: (data) => {
       http
-        .post(
-          "https://i1mu51yxbd.execute-api.us-east-1.amazonaws.com/dev/animal_CRUD",
+        .put(
+          `https://i1mu51yxbd.execute-api.us-east-1.amazonaws.com/dev/animal_CRUD/animals?animal_id=${id}`,
           data
         )
         .then((res) => {
@@ -130,7 +144,7 @@ function AddAnimal() {
 
   return (
     <Container maxWidth="lg">
-      <Typography variant="h6">Add New Animal Rescue</Typography>
+      <Typography variant="h6">Edit Animal Details</Typography>
       <Card>
         <CardContent>
           <Box component="form" onSubmit={formik.handleSubmit}>
@@ -141,7 +155,10 @@ function AddAnimal() {
                   label="Species"
                   name="species"
                   onChange={formik.handleChange}
-                  value={formik.values.species.charAt(0).toUpperCase() + formik.values.species.slice(1).toLowerCase()}
+                  value={
+                    formik.values.species.charAt(0).toUpperCase() +
+                    formik.values.species.slice(1).toLowerCase()
+                  }
                   error={
                     formik.touched.species && Boolean(formik.errors.species)
                   }
@@ -209,7 +226,10 @@ function AddAnimal() {
                   label="Initial Condition"
                   name="initial_condition"
                   onChange={formik.handleChange}
-                  value={formik.values.initial_condition.charAt(0).toUpperCase() + formik.values.initial_condition.slice(1).toLowerCase()}
+                  value={
+                    formik.values.initial_condition.charAt(0).toUpperCase() +
+                    formik.values.initial_condition.slice(1).toLowerCase()
+                  }
                   error={
                     formik.touched.initial_condition &&
                     Boolean(formik.errors.initial_condition)
@@ -226,7 +246,12 @@ function AddAnimal() {
                   label="Current Health Status"
                   name="current_health_status"
                   onChange={formik.handleChange}
-                  value={formik.values.current_health_status.charAt(0).toUpperCase() + formik.values.current_health_status.slice(1).toLowerCase()}
+                  value={
+                    formik.values.current_health_status
+                      .charAt(0)
+                      .toUpperCase() +
+                    formik.values.current_health_status.slice(1).toLowerCase()
+                  }
                   error={
                     formik.touched.current_health_status &&
                     Boolean(formik.errors.current_health_status)
@@ -268,7 +293,10 @@ function AddAnimal() {
                   label="Outcome Type"
                   name="outcome_type"
                   onChange={formik.handleChange}
-                  value={formik.values.outcome_type.charAt(0).toUpperCase() + formik.values.outcome_type.slice(1).toLowerCase()}
+                  value={
+                    formik.values.outcome_type.charAt(0).toUpperCase() +
+                    formik.values.outcome_type.slice(1).toLowerCase()
+                  }
                   error={
                     formik.touched.outcome_type &&
                     Boolean(formik.errors.outcome_type)
@@ -298,7 +326,7 @@ function AddAnimal() {
               </Grid>
             </Grid>
             <Button type="submit" variant="contained" style={btnstyle}>
-              Add Animal
+              Update Details
             </Button>
           </Box>
         </CardContent>
@@ -307,4 +335,4 @@ function AddAnimal() {
   );
 }
 
-export default AddAnimal;
+export default EditAnimal;
