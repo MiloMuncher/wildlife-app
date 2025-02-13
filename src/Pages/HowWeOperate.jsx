@@ -6,7 +6,7 @@ import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 
-function Home() {
+function HowWeOperate() {
     // Testimonials Data
     const testimonials = [
         { name: "Sarah M.", text: "This organization changed my life! Seeing wildlife recover is truly rewarding." },
@@ -19,7 +19,7 @@ function Home() {
     const contentInView = useInView(contentRef, { triggerOnce: true, margin: "-100px" });
 
     return (
-        <Box sx={{  backgroundImage: "url('/Paw Print Background Pattern.jpg')" }}>
+        <Box sx={{ backgroundImage: "url('/Paw Print Background Pattern.jpg')" }}>
             <Container maxWidth="x2" >
                 {/* Hero Section with Parallax Effect */}
                 <Box sx={{
@@ -97,7 +97,7 @@ function Home() {
                             ].map((item, index) => (
                                 <Grid item xs={12} sm={6} md={4} key={index}>
                                     <motion.div whileHover={{ scale: 1.05 }}>
-                                        <Card sx={{ boxShadow: 5, borderRadius: 3, height: 350 }}>
+                                        <Card sx={{ boxShadow: 5, borderRadius: 3, height: 320 }}>
                                             <img
                                                 src={item.img}
                                                 alt={item.title}
@@ -133,7 +133,7 @@ function Home() {
                 <Divider sx={{ my: 10 }} />
 
                 {/* Call to Action Section */}
-                <Box sx={{ mt: 5, textAlign: "center", backgroundColor: "white", padding: "40px 0", borderRadius: 5 }}>
+                <Box sx={{ mt: 5, textAlign: "center", backgroundColor: "#f9f9f9", padding: "40px 0", borderRadius: '5' }}>
                     <Typography variant="h4" fontWeight="bold" gutterBottom>
                         Get Involved
                     </Typography>
@@ -149,4 +149,4 @@ function Home() {
     );
 }
 
-export default Home;
+export default HowWeOperate;

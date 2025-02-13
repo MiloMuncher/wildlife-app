@@ -1,180 +1,509 @@
-import React, { useState } from 'react';
-import { Container, Box, Grid, Typography, Button, TextField, Card, CardContent, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio } from '@mui/material';
-import { useFormik } from 'formik';
-import * as yup from 'yup';
+import React, { useState } from "react";
+import {
+  Container,
+  Box,
+  Grid,
+  Typography,
+  Button,
+  TextField,
+  Card,
+  CardContent,
+  FormControl,
+  FormLabel,
+  RadioGroup,
+  FormControlLabel,
+  Radio,
+  Dialog,
+  DialogContent,
+  DialogActions,
+  CircularProgress,
+} from "@mui/material";
+import { useFormik } from "formik";
+import * as yup from "yup";
+import { loadStripe } from "@stripe/stripe-js";
+import {
+  Elements,
+  CardElement,
+  useStripe,
+  useElements,
+} from "@stripe/react-stripe-js";
+import { useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-function ContactUs() {
-    const btnstyle = { margin: '30px 0', fontWeight: 'bold', color: 'white', backgroundColor: '#FF4E00' };
+const stripePromise = loadStripe(
+  "pk_test_51Qrdhu2N2ApkaYzFWgke5qVVDsFaUkSywPRo1pdV8dcgbQ94HzPmVz9JjWMSzcANlTPVWqZwknTSI67RFi43pXK700EkYL6JuM"
+);
 
-    const [showChatbot, setShowChatbot] = useState(false);
+const CheckoutForm = () => {
+  const btnstyle = {
+    margin: "30px 0",
+    fontWeight: "bold",
+    color: "white",
+    backgroundColor: "#FF4E00",
+  };
 
-    const toggleChatbot = () => {
-        setShowChatbot(!showChatbot);
-    };
+  const [showChatbot, setShowChatbot] = useState(false);
 
-    const formik = useFormik({
-        initialValues: {
-            name: '',
-            email: '',
-            address: '',
-            postal: '',
-            category: 'Donate',
-            emailUpdates: '',
-            donationAmount: '',
-        },
-        validationSchema: yup.object({
-            name: yup.string().trim().min(3).max(100).required(),
-            email: yup.string().trim().email('Email must be valid')
-                .max(50, 'Email must be at most 50 characters')
-                .required('Email is required'),
-            address: yup.string().trim().required(),
-            postal: yup.string().trim().required(),
-            emailUpdates: yup.string().oneOf(['Yes', 'No'], 'Invalid selection').required('This field is required'),
-            donationAmount: yup.string().required('Please select a donation amount'),
-        }),
-        onSubmit: (data) => {
-            data.name = data.name.trim();
-            data.email = data.email.trim();
-            data.address = data.address.trim();
-            data.postal = data.postal.trim();
-            data.category = "Donate";
-            console.log('Form data submitted:', data);
-        },
-    });
+  const toggleChatbot = () => {
+    setShowChatbot(!showChatbot);
+  };
 
-    const donationAmounts = ["$10", "$25", "$50", "$100", "$250", "$500"];
+  const stripe = useStripe();
+  const elements = useElements();
 
-    return (
-        <Container maxWidth="xl">
-            <Box style={{ backgroundSize: 'cover', borderRadius: 15 }} display={'flex'} flexDirection={'column'}>
-                <Typography variant="h4" style={{ textAlign: "left", fontWeight: "bold", paddingTop: 100, fontSize: '60px' }}>
-                    Donate To Wildlife Rehab
-                </Typography>
-                <Typography variant="h6" style={{ textAlign: "left", paddingTop: 20 }}>
-                    Together, we can protect vulnerable wildlife,
-                </Typography>
-                <Typography variant="h6" style={{ textAlign: "left" }}>
-                    conserve vital habitats, and build a future where
-                </Typography>
-                <Typography variant="h6" style={{ textAlign: "left" }}>
-                    people live in harmony with nature.
-                </Typography>
+  const [customAmount, setCustomAmount] = useState("");
+  const [openModal, setOpenModal] = useState(false); // State for controlling modal visibility
+  const [loadingMessage, setLoadingMessage] = useState(
+    "Processing your donation..."
+  );
+  const [donationStatus, setDonationStatus] = useState(null); // Track donation status
+  const navigate = useNavigate(); // Initialize useNavigate
 
-                <Box display={'flex'} flexDirection={'column'}>
-                    <Grid container spacing={0} marginTop={5} justifyContent="center">
-                        <Grid item xs={12} md={5}>
-                            <Box style={{ backgroundSize: 'cover', borderRadius: 15, backgroundColor: 'white' }} display={'flex'} flexDirection={'column'}>
-                                
+  const formik = useFormik({
+    initialValues: {
+      email: "",
+      donationAmount: "",
+    },
+    validationSchema: yup.object({
+      email: yup
+        .string()
+        .trim()
+        .email("Email must be valid")
+        .max(50, "Email must be at most 50 characters")
+        .required("Email is required"),
+      donationAmount: yup.string().required("Please select a donation amount"),
+    }),
+    onSubmit: async (values) => {
+      values.email = values.email.trim();
+      values.donationAmount = values.donationAmount.trim();
+      // Handle custom amount
+      if (values.donationAmount === "custom") {
+        values.donationAmount = customAmount.trim();
+        values.donationAmount = parseInt(values.donationAmount) * 100;
+      } else {
+        values.donationAmount =
+          parseInt(values.donationAmount.replace("$", ""), 10) * 100;
+      }
 
-                                <Box display="flex" justifyContent="center" flexWrap="wrap" gap={2} paddingTop={2}>
-                                    {donationAmounts.map((amount, index) => (
-                                        <Button
-                                            key={index}
-                                            variant={formik.values.donationAmount === amount ? "contained" : "outlined"}
-                                            style={{
-                                                fontWeight: 'bold',
-                                                borderColor: '#FF4E00',
-                                                color: formik.values.donationAmount === amount ? 'white' : '#FF4E00',
-                                                backgroundColor: formik.values.donationAmount === amount ? '#FF4E00' : 'transparent',
-                                            }}
-                                            onClick={() => formik.setFieldValue('donationAmount', amount)}
-                                        >
-                                            {amount}
-                                        </Button>
-                                    ))}
-                                </Box>
-                                {formik.touched.donationAmount && formik.errors.donationAmount && (
-                                    <Typography color="error" variant="body2" align="center" paddingTop={1}>
-                                        {formik.errors.donationAmount}
-                                    </Typography>
-                                )}
-                                <Typography variant="h5" style={{ textAlign: "center", fontWeight: "bold", paddingTop: 60, color: "black", paddingLeft: 20, paddingRight: 20 }}>
-                                    Your Information
-                                </Typography>
-                                <Box component="form" onSubmit={formik.handleSubmit} display={'flex'} flexDirection={'column'}>
-                                    <Card>
-                                        <CardContent>
-                                            <Grid container spacing={2}>
-                                                <Grid item xs={12} md={6}>
-                                                    <TextField
-                                                        label="Name"
-                                                        name='name'
-                                                        fullWidth
-                                                        onChange={formik.handleChange}
-                                                        value={formik.values.name}
-                                                        error={formik.touched.name && Boolean(formik.errors.name)}
-                                                        helperText={formik.touched.name && formik.errors.name}
-                                                    />
-                                                </Grid>
-                                                <Grid item xs={12} md={6}>
-                                                    <TextField
-                                                        label="Email"
-                                                        name='email'
-                                                        fullWidth
-                                                        onChange={formik.handleChange}
-                                                        value={formik.values.email}
-                                                        error={formik.touched.email && Boolean(formik.errors.email)}
-                                                        helperText={formik.touched.email && formik.errors.email}
-                                                    />
-                                                </Grid>
-                                                <Grid item xs={12} md={12}>
-                                                    <TextField
-                                                        label="Address"
-                                                        name='address'
-                                                        fullWidth
-                                                        onChange={formik.handleChange}
-                                                        value={formik.values.address}
-                                                        error={formik.touched.address && Boolean(formik.errors.address)}
-                                                        helperText={formik.touched.address && formik.errors.address}
-                                                    />
-                                                </Grid>
-                                                <Grid item xs={12} md={12}>
-                                                    <TextField
-                                                        label="Postal Code"
-                                                        name='postal'
-                                                        multiline
-                                                        fullWidth
-                                                        onChange={formik.handleChange}
-                                                        value={formik.values.postal}
-                                                        error={formik.touched.postal && Boolean(formik.errors.postal)}
-                                                        helperText={formik.touched.postal && formik.errors.postal}
-                                                    />
-                                                </Grid>
+      if (!stripe || !elements) {
+        return; // Make sure Stripe and Elements are loaded
+      }
 
-                                                <Grid item xs={12} md={12}>
-                                                    <FormControl component="fieldset">
-                                                        <FormLabel component="legend">I would like to get (or continue to get) email updates:</FormLabel>
-                                                        <RadioGroup
-                                                            row
-                                                            name="emailUpdates"
-                                                            value={formik.values.emailUpdates}
-                                                            onChange={formik.handleChange}
-                                                        >
-                                                            <FormControlLabel value="Yes" control={<Radio />} label="Yes" />
-                                                            <FormControlLabel value="No" control={<Radio />} label="No" />
-                                                        </RadioGroup>
-                                                        {formik.touched.emailUpdates && formik.errors.emailUpdates && (
-                                                            <Typography color="error" variant="body2">
-                                                                {formik.errors.emailUpdates}
-                                                            </Typography>
-                                                        )}
-                                                    </FormControl>
-                                                </Grid>
-                                            </Grid>
-                                        </CardContent>
-                                    </Card>
-                                    <Button type='submit' color='btn' variant="contained" style={btnstyle} justifyContent="center">
-                                        Donate Now!
-                                    </Button>
-                                </Box>
-                            </Box>
-                        </Grid>
-                    </Grid>
+      const cardElement = elements.getElement(CardElement);
+      const { token, error } = await stripe.createToken(cardElement);
+
+      if (error) {
+        console.log(error.message);
+        return;
+      }
+
+      setOpenModal(true);
+      setLoadingMessage("Processing your donation...");
+
+      // Send payment method and donation info to the backend (API Gateway URL)
+      const paymentData = {
+        payment_method_data: {
+          type: "card",
+          card: {
+            token: token.id,
+          },
+        }, // Get payment method from token
+        email: values.email,
+        amount: values.donationAmount, // Stripe requires amount in cents
+      };
+
+      console.log("Payment data:", paymentData);
+
+      setTimeout(async () => {
+        const response = await fetch(
+          "https://pn0ridlp81.execute-api.us-east-1.amazonaws.com/dev/stripe",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(paymentData),
+          }
+        );
+
+        if (response.ok) {
+          setLoadingMessage("Donation successful!");
+          setDonationStatus("success");
+        } else {
+          setLoadingMessage("Donation failed. Please try again later.");
+          setDonationStatus("failure");
+        }
+      }, 2000); // Simulating delay for loading
+    },
+  });
+
+  const donationAmounts = ["$10", "$25", "$50", "$100", "$250", "$500"];
+
+  const handleCloseModal = () => {
+    setOpenModal(false);
+    formik.resetForm();
+    if (donationStatus === "success") {
+        toast.success("Thank you for your donation! 🎉", {
+            position: "bottom-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            theme: "colored",
+          });
+        navigate("/");
+    } else if (donationStatus === "failure") {
+      // Optional: Redirect after failure
+      window.location.reload();
+    }
+  };
+
+  return (
+    
+    <Container maxWidth="xl">
+      <ToastContainer /> {/* Add this line to render toast notifications */}
+      <Box
+        style={{ backgroundSize: "cover", borderRadius: 15 }}
+        display={"flex"}
+        flexDirection={"column"}
+      >
+        <Typography
+          variant="h4"
+          style={{
+            textAlign: "left",
+            fontWeight: "bold",
+            paddingTop: 100,
+            fontSize: "60px",
+          }}
+        >
+          Donate To Wildlife Rehab
+        </Typography>
+        <Typography variant="h6" style={{ textAlign: "left", paddingTop: 20 }}>
+          Together, we can protect vulnerable wildlife,
+        </Typography>
+        <Typography variant="h6" style={{ textAlign: "left" }}>
+          conserve vital habitats, and build a future where
+        </Typography>
+        <Typography variant="h6" style={{ textAlign: "left" }}>
+          people live in harmony with nature.
+        </Typography>
+
+        <Box display={"flex"} flexDirection={"column"}>
+          <Grid container spacing={0} marginTop={5} justifyContent="center">
+            <Grid item xs={12} md={5}>
+              <Box
+                style={{
+                  backgroundSize: "cover",
+                  borderRadius: 15,
+                  backgroundColor: "white",
+                }}
+                display={"flex"}
+                flexDirection={"column"}
+              >
+                <Box
+                  display="flex"
+                  justifyContent="center"
+                  flexWrap="wrap"
+                  gap={2}
+                  paddingTop={2}
+                >
+                  {donationAmounts.map((amount, index) => (
+                    <Button
+                      key={index}
+                      variant={
+                        formik.values.donationAmount === amount
+                          ? "contained"
+                          : "outlined"
+                      }
+                      style={{
+                        fontWeight: "bold",
+                        borderColor: "#FF4E00",
+                        color:
+                          formik.values.donationAmount === amount
+                            ? "white"
+                            : "#FF4E00",
+                        backgroundColor:
+                          formik.values.donationAmount === amount
+                            ? "#FF4E00"
+                            : "transparent",
+                      }}
+                      onClick={() =>
+                        formik.setFieldValue("donationAmount", amount)
+                      }
+                    >
+                      {amount}
+                    </Button>
+                  ))}
+                  <Button
+                    variant={
+                      formik.values.donationAmount === "custom"
+                        ? "contained"
+                        : "outlined"
+                    }
+                    onClick={() =>
+                      formik.setFieldValue("donationAmount", "custom")
+                    }
+                    style={{
+                      fontWeight: "bold",
+                      borderColor: "#FF4E00",
+                      color:
+                        formik.values.donationAmount === "custom"
+                          ? "white"
+                          : "#FF4E00",
+                      backgroundColor:
+                        formik.values.donationAmount === "custom"
+                          ? "#FF4E00"
+                          : "transparent",
+                    }}
+                  >
+                    Custom Amount
+                  </Button>
                 </Box>
+                {formik.values.donationAmount === "custom" && (
+                  <div
+                    style={{
+                      paddingTop: 30,
+                      width: "50%",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      display: "flex",
+                      margin: "auto",
+                      flexDirection: "column",
+                    }}
+                  >
+                    <TextField
+                      label="Custom Donation Amount"
+                      name="customAmount"
+                      value={customAmount}
+                      onChange={(e) => setCustomAmount(e.target.value)}
+                      error={
+                        formik.touched.donationAmount &&
+                        Boolean(formik.errors.donationAmount)
+                      }
+                      helperText={
+                        formik.touched.donationAmount &&
+                        formik.errors.donationAmount
+                      }
+                      type="number"
+                      InputProps={{
+                        startAdornment: <span>$&nbsp;</span>,
+                      }}
+                    />
+                    <div>
+                      {customAmount && customAmount <= 1 && (
+                        <Typography
+                          color="error"
+                          variant="body2"
+                          align="center"
+                          paddingTop={1}
+                          fontWeight={600}
+                        >
+                          Amount must be greater than $1
+                        </Typography>
+                      )}
+                    </div>
+                  </div>
+                )}
 
-            </Box>
-        </Container>
-    );
-}
+                {formik.touched.donationAmount &&
+                  formik.errors.donationAmount && (
+                    <Typography
+                      color="error"
+                      variant="body2"
+                      align="center"
+                      paddingTop={1}
+                    >
+                      {formik.errors.donationAmount}
+                    </Typography>
+                  )}
+                <Typography
+                  variant="h5"
+                  style={{
+                    textAlign: "center",
+                    fontWeight: "bold",
+                    paddingTop: 30,
+                    color: "black",
+                    paddingLeft: 20,
+                    paddingRight: 20,
+                    paddingBottom: 20,
+                  }}
+                >
+                  Your Information
+                </Typography>
+                <Box
+                  component="form"
+                  onSubmit={formik.handleSubmit}
+                  display={"flex"}
+                  flexDirection={"column"}
+                >
+                  <Card>
+                    <CardContent>
+                      <Grid container spacing={1}>
+                        <Grid item xs={12} md={12}>
+                          <TextField
+                            label="Email"
+                            name="email"
+                            fullWidth
+                            onChange={formik.handleChange}
+                            value={formik.values.email}
+                            error={
+                              formik.touched.email &&
+                              Boolean(formik.errors.email)
+                            }
+                            helperText={
+                              formik.touched.email && formik.errors.email
+                            }
+                          />
+                        </Grid>
+
+                        <Grid item xs={12} md={12}>
+                          <div
+                            style={{
+                              border: "1px solid #ccc",
+                              padding: "16px",
+                              borderRadius: "5px",
+                              marginTop: "15px",
+                            }}
+                          >
+                            <CardElement
+                              options={{
+                                disableLink: true,
+                                style: {
+                                  base: {
+                                    fontSize: "16px",
+                                    color: "#424770",
+                                    "::placeholder": {
+                                      color: "#aab7c4",
+                                    } 
+                                  },
+                                  invalid: {
+                                    color: "#9e2146",
+                                  },
+                                },
+                              }}
+                            />
+                          </div>
+                        </Grid>
+                      </Grid>
+                    </CardContent>
+                  </Card>
+                  <Button
+                    type="submit"
+                    color="btn"
+                    variant="contained"
+                    style={btnstyle}
+                    justifyContent="center"
+                    disabled={!stripe}
+                  >
+                    Donate Now!
+                  </Button>
+                </Box>
+              </Box>
+            </Grid>
+          </Grid>
+        </Box>
+      </Box>
+      {/* Modal for Loading/Success/Failure */}
+
+      <Dialog
+        open={openModal}
+        onClose={handleCloseModal}
+        sx={{
+          "& .MuiPaper-root": {
+            width: "50%", // Applying border-radius to the dialog
+          },
+        }}
+      >
+        <DialogContent
+          style={{
+            textAlign: "center",
+            paddingTop: 50,
+            paddingBottom: 50,
+          }}
+        >
+          {donationStatus === "success" ? (
+            <div
+              style={{
+                textAlign: "center",
+                alignContent: "center",
+                justifyContent: "center",
+                alignItems: "center",
+                display: "flex",
+                flexDirection: "column",
+              }}
+            >
+              <img src="public\success.jpg" alt="" style={{ width: "20%" }} />
+              <Typography variant="h6" color="green">
+                <strong>Thank you for your gift!</strong> <br />
+                Your donation will help local wildlife thrive.
+              </Typography>
+              <DialogActions style={{ paddingTop: 50 }}>
+                <Button
+                  onClick={handleCloseModal}
+                  color="primary"
+                  style={{
+                    backgroundColor: "#228B22",
+                    color: "white",
+                    width: 120,
+                  }}
+                >
+                  Redirect
+                </Button>
+              </DialogActions>
+            </div>
+          ) : donationStatus === "failure" ? (
+            <div
+              style={{
+                textAlign: "center",
+                alignContent: "center",
+                justifyContent: "center",
+                alignItems: "center",
+                display: "flex",
+                flexDirection: "column",
+              }}
+            >
+              <img src="public\fail.png" alt="" style={{ width: "20%" }} />
+              <Typography variant="h6" color="red" style={{ paddingTop: 40 }}>
+                <strong>Donation Failed</strong> <br />
+                Something went wrong.<br />Please try again later.
+              </Typography>
+              <DialogActions style={{ paddingTop: 50 }}>
+                <Button
+                  onClick={handleCloseModal}
+                  color="primary"
+                  style={{
+                    backgroundColor: "#DC143C",
+                    color: "white",
+                    width: 120,
+                  }}
+                >
+                  Close
+                </Button>
+              </DialogActions>
+            </div>
+          ) : (
+            <>
+              <CircularProgress size={50} />
+              <Typography
+                variant="body1"
+                style={{ marginTop: 20, paddingTop: 30 }}
+              >
+                {loadingMessage}
+              </Typography>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
+    </Container>
+  );
+};
+
+const ContactUs = () => (
+  <Elements stripe={stripePromise}>
+    <CheckoutForm />
+  </Elements>
+);
 
 export default ContactUs;

@@ -23,6 +23,9 @@ import MedicationView from './MedicationView';
 import AddFood from './AddFood';
 import QR from './QRCodePages/QR';
 import SupplyDetails from './QRCodePages/SupplyDetails';
+import AddAnimal from './AddAnimal';
+import ViewAnimals from './ViewAnimals';
+import EditAnimal from './EditAnimal';
 
 // Icons
 import CreateIcon from '@mui/icons-material/Create';
@@ -35,6 +38,8 @@ import UploadTranscripts from './UploadTranscripts';
 import InventoryIcon from '@mui/icons-material/Inventory';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import { Logout } from '@mui/icons-material';
+
 
 function ProfileRoutes() {
   const [openUsers, setOpenUsers] = useState(false);
@@ -61,6 +66,13 @@ function ProfileRoutes() {
 
     checkAuthSession();
   }, []);
+  const handleLogout = async () => {
+    try {
+      localStorage.clear();
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
+  };
   return (
     <Container maxWidth='xl'>
       <Grid container spacing={2} marginTop={10}>
@@ -116,7 +128,7 @@ function ProfileRoutes() {
                   </ListItemButton>
                   <Collapse in={openAnimals} timeout="auto" unmountOnExit>
                     <List component="div">
-                      <ListItemButton sx={{ pl: 4 }} LinkComponent={Link} to="/admin/#animals">
+                      <ListItemButton sx={{ pl: 4 }} LinkComponent={Link} to="/admin/viewanimals">
                         <ListItemText primary="View Animals" />
                       </ListItemButton>
                       <ListItemButton sx={{ pl: 4 }} LinkComponent={Link} to="/admin/#viewvets">
@@ -189,6 +201,12 @@ function ProfileRoutes() {
                   </Collapse>
                 </>
               )}
+              <ListItem>
+                <ListItemButton component={Link} to="/" style={{ paddingLeft: '20px' }} onClick={handleLogout}>
+                  <Logout sx={{ marginRight: '10px' }} />
+                  <ListItemText primary="Logout" />
+                </ListItemButton>
+              </ListItem>
             </List>
           </Card>
         </Grid>
@@ -218,6 +236,10 @@ function ProfileRoutes() {
 
                 <Route path="/qr/:id" element={<QR />} />
                 <Route path="/supplydetails/:id" element={<SupplyDetails />} />
+                <Route path="/viewanimals" element={<ViewAnimals />} />
+                <Route path="/addanimal" element={<AddAnimal />} />
+                <Route path="/viewanimals/edit/:id" element={<EditAnimal />} />
+
               </>
             )}
             {userGroup === 'Vets' && <Route path="/uploadtranscripts" element={<UploadTranscripts />} />}
@@ -226,7 +248,7 @@ function ProfileRoutes() {
       </Grid>
 
 
-    </Container>
+    </Container >
   )
 }
 
