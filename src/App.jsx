@@ -7,29 +7,21 @@ import UserContext from './contexts/UserContext.js';
 
 // Import pages
 import Home from './Pages/Home';
-import Categories from './Pages/Categories';
-import Forum from './Pages/Forum';
+import AboutUs from './Pages/AboutUs.jsx';
 import Donation from './Pages/Donation.jsx';
-import AddPost from './Pages/AddPost';
-import EditPost from './Pages/EditPost';
-import Description from './Pages/Description';
-import RaisedRequest from './Pages/RaisedRequest';
-import ViewPost from './Pages/ViewPost';
-import Cart from './Pages/Cart';
 import Login from './Pages/Login'
-
+import Footer  from './Components/Footer.jsx';
+import HowWeOperate from './Pages/HowWeOperate.jsx';
 
 //Other routes
-import ProfileRoutes from './Pages/Profile/ProfileRoutes';
 import MerchantRoutes from './Pages/Merchant/MerchantRoutes';
 import AdminRoutes from './Pages/Admin/AdminRoutes';
 
 // Import components
 import Navbar from './Components/Navbar';
-import Checkout_Success from './Pages/Checkout_Success.jsx';
-
 import { Amplify } from 'aws-amplify';
 import config from './amplifyconfiguration.json';
+
 Amplify.configure(config);
 
 function App() {
@@ -51,15 +43,13 @@ function App() {
     <UserContext.Provider value={{ user, setUser }}>
       <Navbar />
       <ToastContainer />
+      
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/categories" element={<Categories />} />
-        <Route path="/description/:id" element={<Description />} />
-        <Route path="/forum" element={<Forum />} />
+        <Route path="/aboutus" element={<AboutUs />} />
         <Route path="/supportus" element={<Donation />} />
-
-
+        <Route path="/howweoperate" element={<HowWeOperate />} />
         {
           isCustomer && (
             <Route path="/profile/*" element={<ProfileRoutes />} />
@@ -76,13 +66,8 @@ function App() {
           )
         }
         <Route path="/admin/*" element={<AdminRoutes />} />
-        <Route path="/addpost" element={<AddPost />} />
-        <Route path="/contactus/raisedrequest" element={<RaisedRequest />} />
-        <Route path="/forum/viewpost/:id" element={<ViewPost />} />
-        <Route path="/cart" element={<Cart />} />
-        <Route path="/success" element={<Checkout_Success />} />
-
       </Routes>
+      <Footer />
     </UserContext.Provider>
   );
 }

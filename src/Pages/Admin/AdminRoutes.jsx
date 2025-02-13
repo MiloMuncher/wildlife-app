@@ -35,6 +35,8 @@ import UploadTranscripts from './UploadTranscripts';
 import InventoryIcon from '@mui/icons-material/Inventory';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import { Logout } from '@mui/icons-material';
+
 
 function ProfileRoutes() {
   const [openUsers, setOpenUsers] = useState(false);
@@ -61,6 +63,13 @@ function ProfileRoutes() {
 
     checkAuthSession();
   }, []);
+  const handleLogout = async () => {
+    try {
+      localStorage.clear();
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
+  };
   return (
     <Container maxWidth='xl'>
       <Grid container spacing={2} marginTop={10}>
@@ -189,6 +198,12 @@ function ProfileRoutes() {
                   </Collapse>
                 </>
               )}
+              <ListItem>
+                <ListItemButton component={Link} to="/" style={{ paddingLeft: '20px' }} onClick={handleLogout}>
+                  <Logout sx={{ marginRight: '10px' }} />
+                  <ListItemText primary="Logout" />
+                </ListItemButton>
+              </ListItem>
             </List>
           </Card>
         </Grid>
@@ -218,6 +233,7 @@ function ProfileRoutes() {
 
                 <Route path="/qr/:id" element={<QR />} />
                 <Route path="/supplydetails/:id" element={<SupplyDetails />} />
+
               </>
             )}
             {userGroup === 'Vets' && <Route path="/uploadtranscripts" element={<UploadTranscripts />} />}
@@ -226,7 +242,7 @@ function ProfileRoutes() {
       </Grid>
 
 
-    </Container>
+    </Container >
   )
 }
 

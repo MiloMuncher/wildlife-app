@@ -1,26 +1,36 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Box, AppBar, Toolbar, Button, IconButton, Drawer, List, Divider, ListItem, ListItemButton, ListItemText } from '@mui/material';
-import { fetchAuthSession, signOut } from 'aws-amplify/auth';
+import {
+    Box,
+    AppBar,
+    Toolbar,
+    IconButton,
+    Drawer,
+    List,
+    ListItem,
+    ListItemButton,
+    ListItemText,
+    Divider,
+    Typography,
+} from '@mui/material';
+import { Login } from '@mui/icons-material';
 import MenuIcon from '@mui/icons-material/Menu';
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import { AccountCircle } from '@mui/icons-material';
 
 function Navbar() {
     const [isOpen, setIsOpen] = useState(false);
     const [isSignedIn, setIsSignedIn] = useState(false);
+    const [userEmail, setUserEmail] = useState('');
+    const [isHovered, setIsHovered] = useState(false);
 
     useEffect(() => {
-        // Check if user is signed in on component mount
         const checkAuthSession = async () => {
             try {
                 await fetchAuthSession();
                 setIsSignedIn(true);  // Set user as signed in
             } catch {
-                console.log("Error fetching the session");
+                console.log('Error fetching the session');
             }
         };
-
         checkAuthSession();
     }, []);
 
@@ -30,86 +40,130 @@ function Navbar() {
         }
         setIsOpen(open);
     };
-    const handleLogout = async () => {
-        try {
-            await signOut();
-            setIsSignedIn(false); // Update state to reflect user signed out
-        } catch (error) {
-            console.error('Error signing out:', error);
-        }
+    const handleCloseDrawer = () => {
+        setIsOpen(false);
+    };
+    const handleLogout = () => {
+        // Handle logout logic (e.g., clear session, redirect)
+        setIsSignedIn(false);
+        setUserEmail('');
+        console.log('Logged out');
     };
     return (
         <Box sx={{ flexGrow: 1 }}>
             <AppBar position="static" elevation={0} style={{ color: 'black' }}>
                 <Toolbar style={{ backgroundColor: 'white' }}>
-                    {/* Menu Icon Button */}
-                    <IconButton
-                        size="large"
-                        edge="start"
-                        color="inherit"
-                        aria-label="menu"
-                        sx={{ mr: 2 }}
-                        onClick={toggleDrawer(true)}
-                    >
+                    <IconButton size="large" edge="start" color="inherit" aria-label="menu" sx={{ mr: 2 }} onClick={toggleDrawer(true)}>
                         <MenuIcon />
                     </IconButton>
 
-                    {/* Drawer for the Sidebar Menu */}
                     <Drawer anchor="left" open={isOpen} onClose={toggleDrawer(false)}>
-                        <Box
-                            sx={{ width: 250 }}
-                            role="presentation"
-                            onClick={toggleDrawer(false)}
-                            onKeyDown={toggleDrawer(false)}
-                        >
-                            <List>
-                                <ListItem disablePadding>
-                                    <ListItemButton component={Link} to="/">
-                                        <ListItemText primary="Home" />
-                                    </ListItemButton>
-                                </ListItem>
-                                <ListItem disablePadding>
-                                    <ListItemButton component={Link} to="/supportus">
-                                        <ListItemText primary="Support Us" />
-                                    </ListItemButton>
-                                </ListItem>
-                                <ListItem disablePadding>
-                                    <ListItemButton component={Link} to="/contactus">
-                                        <ListItemText primary="How We Operate" />
-                                    </ListItemButton>
-                                </ListItem>
-                                <ListItem disablePadding>
-                                    <ListItemButton component={Link} to="/forum">
-                                        <ListItemText primary="About" />
-                                    </ListItemButton>
-                                </ListItem>
-                            </List>
+                        <Box sx={{ width: 250, backgroundColor: '#f9f9f9', height: '100%', display: 'flex', flexDirection: 'column' }}>
+                            {/* Logo at the top */}
+                            <Box sx={{ p: 2, textAlign: 'center' }}>
+                                <img
+                                    src="/logo.png"
+                                    alt="Home"
+                                    style={{
+                                        marginRight: '10px',
+                                        transition: 'transform 0.3s ease',
+                                    }}
+                                />
+                                <Typography color="textSecondary">
+                                    Isiolo Wildlife Rehab Centre
+                                </Typography>
+                            </Box>
                             <Divider />
-                            <List>
+
+                            {/* Main List */}
+                            <Box sx={{ flexGrow: 1 }}>
+                                <List>
+                                    <ListItem disablePadding>
+                                        <ListItemButton component={Link} to="/" style={{ paddingLeft: '20px' }} onClick={handleCloseDrawer}>
+                                            <img
+                                                src="/Home.png"
+                                                alt="Home"
+                                                style={{
+                                                    marginRight: '10px',
+                                                    transition: 'transform 0.3s ease',
+                                                }}
+                                            />
+                                            <ListItemText primary="Home" />
+                                        </ListItemButton>
+                                    </ListItem>
+                                    <ListItem disablePadding>
+                                        <ListItemButton component={Link} to="/supportus" style={{ paddingLeft: '20px' }} onClick={handleCloseDrawer}>
+                                            <img
+                                                src="/Star.png"
+                                                alt="Support Us"
+                                                style={{
+                                                    marginRight: '10px',
+                                                    transition: 'transform 0.3s ease',
+                                                }}
+                                            />
+                                            <ListItemText primary="Support Us" />
+                                        </ListItemButton>
+                                    </ListItem>
+                                    <ListItem disablePadding>
+                                        <ListItemButton component={Link} to="/howweoperate" style={{ paddingLeft: '20px' }} onClick={handleCloseDrawer}>
+                                            <img
+                                                src="/Suitcase.png"
+                                                alt="How We Operate"
+                                                style={{
+                                                    marginRight: '10px',
+                                                    transition: 'transform 0.3s ease',
+                                                }}
+                                            />
+                                            <ListItemText primary="How We Operate" />
+                                        </ListItemButton>
+                                    </ListItem>
+                                    <ListItem disablePadding>
+                                        <ListItemButton component={Link} to="/aboutus" style={{ paddingLeft: '20px' }} onClick={handleCloseDrawer}>
+                                            <img
+                                                src="/Book.png"
+                                                alt="About"
+                                                style={{
+                                                    marginRight: '10px',
+                                                    transition: 'transform 0.3s ease',
+                                                }}
+                                            />
+                                            <ListItemText primary="About" />
+                                        </ListItemButton>
+                                    </ListItem>
+                                </List>
+                            </Box>
+
+                            {/* Login Button at the Bottom */}
+                            <Box sx={{ borderTop: '1px solid #ddd' }}>
                                 <ListItem disablePadding>
                                     {isSignedIn ? (
-                                        <ListItemButton onClick={handleLogout} component={Link} to="/">
-                                            <AccountCircle style={{ color: 'black' }} />
-                                            <ListItemText primary="Logout" />
-                                        </ListItemButton>
+
+                                        <Typography variant="body1" style={{ flex: 1 }}>
+
+                                        </Typography>
                                     ) : (
-                                        <ListItemButton component={Link} to="/login">
-                                            <AccountCircle style={{ color: 'black' }} />
+                                        <ListItemButton component={Link} to="/login" style={{ paddingLeft: '20px' }} onClick={handleCloseDrawer}>
+                                            <Login sx={{ marginRight: '10px' }} />
                                             <ListItemText primary="Login" />
                                         </ListItemButton>
                                     )}
                                 </ListItem>
-                            </List>
+                            </Box>
                         </Box>
                     </Drawer>
 
-                    {/* Logo and Navbar Links */}
-                    <Box marginLeft="1rem" display="flex" sx={{ flexGrow: 1 }}>
-                        <img
-                            src="\logo.png"
-                            alt="logo"
-                            style={{ height: '90px', width: '90px' }}
-                        />
+                    <Box
+                        marginLeft="1rem"
+                        display="flex"
+                        flexDirection="column"
+                        alignItems="center"
+                        sx={{ flexGrow: 1 }}
+                        mb={2}
+                    >
+                        <img src="/logo.png" alt="logo" style={{ height: '90px', width: '90px' }} />
+                        <Typography color="textSecondary" fontWeight="bold">
+                            Isiolo Wildlife Rehab Centre
+                        </Typography>
                     </Box>
                 </Toolbar>
             </AppBar>
