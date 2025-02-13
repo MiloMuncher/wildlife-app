@@ -18,10 +18,11 @@ function Login() {
             justifyContent: 'center',
             backgroundColor: '#000',
             color: '#fff',
-        }}>
+        }}
+        >
         </div>
     );
 }
 
 // Wrap the LoginPage with the Authenticator
-export default withAuthenticator(Login, { hideSignUp: true });
+export default withAuthenticator(Login, { hideSignUp: true, className:'custom-login' });
