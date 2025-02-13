@@ -19,6 +19,10 @@ import FoodView from './FoodView'
 import ShiftView from './ShiftView'
 import PayrollView from './PayrollView'
 import ShiftEdit from './ShiftEdit'
+import MedicationView from './MedicationView';
+import AddFood from './AddFood';
+import QR from './QRCodePages/QR';
+import SupplyDetails from './QRCodePages/SupplyDetails';
 
 // Icons
 import CreateIcon from '@mui/icons-material/Create';
@@ -143,10 +147,10 @@ function ProfileRoutes() {
                   </ListItemButton>
                   <Collapse in={openInventory} timeout="auto" unmountOnExit>
                     <List component="div">
-                      <ListItemButton sx={{ pl: 4 }} LinkComponent={Link} to="/admin/#animals">
+                      <ListItemButton sx={{ pl: 4 }} LinkComponent={Link} to="/admin/viewmedications">
                         <ListItemText primary="View Medication" />
                       </ListItemButton>
-                      <ListItemButton sx={{ pl: 4 }} LinkComponent={Link} to="/admin/#viewvets">
+                      <ListItemButton sx={{ pl: 4 }} LinkComponent={Link} to="/admin/viewfood">
                         <ListItemText primary="View Food" />
                       </ListItemButton>
                     </List>
@@ -223,7 +227,13 @@ function ProfileRoutes() {
                 <Route path='/addmerchant' element={<AddMerchant />} />
                 <Route path='/editmerchant/:id' element={<EditMerchant />} />
                 <Route path="/uploadtranscripts" element={<UploadTranscripts />} />
+                <Route path="/viewmedications" element={<MedicationView />} />
                 <Route path="/viewfood" element={<FoodView />} />
+                <Route path="/addfood" element={<AddFood />} />
+
+                <Route path="/qr/:id" element={<QR />} />
+                <Route path="/supplydetails/:id" element={<SupplyDetails />} />
+
               </>
             )}
             {userGroup === 'Vets' && <Route path="/uploadtranscripts" element={<UploadTranscripts />} />}
