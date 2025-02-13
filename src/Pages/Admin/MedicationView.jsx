@@ -1,12 +1,12 @@
-import React, { useEffect, useState, useContext } from 'react'
-import { Button } from '@mui/material'
+import React, { useEffect, useState } from 'react';
+import { Button } from '@mui/material';
 import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@mui/material';
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom';
 import { DataGrid } from '@mui/x-data-grid';
-import http from '../../http'
+import http from '../../http';
 
 function RenderButton(props) {
-    const { hasFocus, value, user, getUsers } = props;
+    const { hasFocus, value, medication, getMedications } = props;
     const buttonElement = React.useRef(null);
     const rippleRef = React.useRef(null);
 
@@ -18,8 +18,6 @@ function RenderButton(props) {
             rippleRef.current.stop({});
         }
     }, [hasFocus]);
-
-    const navigate = useNavigate();
 
     const [open, setOpen] = useState(false);
     const handleOpen = () => {
@@ -36,7 +34,7 @@ function RenderButton(props) {
                 variant="contained"
                 size="small"
                 style={{ backgroundColor: '#6CA0DC' }}
-                LinkComponent={Link} to={`/admin/viewusers/edit/${user.id}`}
+                LinkComponent={Link} to={`/admin/viewmedications/edit/${medication.id}`}
             >
                 Edit
             </Button>
@@ -51,14 +49,13 @@ function RenderButton(props) {
                 Delete
             </Button>
 
-
             <Dialog open={open} onClose={handleClose}>
                 <DialogTitle>
-                    Delete User
+                    Delete Medication
                 </DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                        Are you sure you want to delete this user?
+                        Are you sure you want to delete this medication?
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
@@ -68,58 +65,54 @@ function RenderButton(props) {
                     </Button>
                     <Button variant="contained" color="error"
                         onClick={() => {
-                            http.delete(`https://v9c358horj.execute-api.us-east-1.amazonaws.com/dev/employees/${user.id}`).then((res) => {
+                            http.delete(`https://z40lajab6h.execute-api.us-east-1.amazonaws.com/dev/medications/${medication.id}`).then((res) => {
                                 console.log(res.data)
                                 handleClose()
-                                getUsers();
+                                getMedications();
                             });
                         }}>
                         Delete
                     </Button>
                 </DialogActions>
             </Dialog>
-
         </>
-
-
     );
 }
 
 function MedicationView() {
     const btnstyle = { margin: '30px 0', fontWeight: 'bold', color: 'white', backgroundColor: '#496A72' };
-    const [userList, setUserList] = useState([]);
+    const [medicationList, setMedicationList] = useState([]);
 
-    const rows = userList.map((user) => ({
-        id: user.employee_ID,
-        name: `${user.fname} ${user.lname}`,
-        email: user.email,
-        phone: user.phone_number,
-        job_title: user.job_title
+    const rows = medicationList.map((medication) => ({
+        id: medication.medication_ID, // Updated ID field
+        name: medication.name, // Adjusted to match the medication data structure
+        batch_number: medication.batch_number, // Added batch_number field
+        expiration_date: medication.expiration_date, // Added expiration_date field
+        available_quantity: medication.available_quantity // Added available_quantity field
     }));
 
     const columns = [
         { field: 'id', headerName: 'ID', width: 70 },
         { field: 'name', headerName: 'Name', width: 200 },
-        { field: 'phone', headerName: 'Phone', width: 100 },
-        { field: 'email', headerName: 'Email', width: 200 },
-        { field: 'job_title', headerName: 'Job Title', width: 200 },
-        { field: 'action', headerName: 'Actions', width: 200, renderCell: (params) => <RenderButton user={params.row} getUsers={getUsers} /> },
+        { field: 'batch_number', headerName: 'Batch Number', width: 150 }, // Added Batch Number column
+        { field: 'expiration_date', headerName: 'Expiration Date', width: 150 }, // Added Expiration Date column
+        { field: 'available_quantity', headerName: 'Available Quantity', width: 180 }, // Added Available Quantity column
+        { field: 'action', headerName: 'Actions', width: 200, renderCell: (params) => <RenderButton medication={params.row} getMedications={getMedications} /> },
     ];
-    
 
-    const getUsers = () => {
-        http.get(`https://v9c358horj.execute-api.us-east-1.amazonaws.com/dev/employees`).then((res) => {
-            setUserList(res.data);
+    const getMedications = () => {
+        http.get(`https://z40lajab6h.execute-api.us-east-1.amazonaws.com/dev/medications`).then((res) => {
+            setMedicationList(res.data);
         });
     };
 
     useEffect(() => {
-        getUsers();
+        getMedications();
     }, []);
 
     return (
         <>
-            <Button variant='contained' style={btnstyle} LinkComponent={Link} to={`/admin/addemployee`}>Onboard Employee</Button>
+            <Button variant='contained' style={btnstyle} LinkComponent={Link} to={`/admin/addemployee`}>New Medication</Button>
             <div style={{ width: '100%', backgroundColor: 'white' }}>
                 <DataGrid
                     rows={rows}
@@ -135,7 +128,7 @@ function MedicationView() {
                 />
             </div>
         </>
-    )
+    );
 }
 
-export default MedicationView
+export default MedicationView;

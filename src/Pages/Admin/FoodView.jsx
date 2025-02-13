@@ -9,6 +9,7 @@ function RenderButton(props) {
     const { hasFocus, value, food, getAllFood } = props;
     const buttonElement = React.useRef(null);
     const rippleRef = React.useRef(null);
+    const [id, setId] = useState(null)
 
     React.useLayoutEffect(() => {
         if (hasFocus) {
@@ -67,7 +68,7 @@ function RenderButton(props) {
                 </DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                        Are you sure you want to delete this user?
+                        Are you sure you want to delete this food variety?
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
