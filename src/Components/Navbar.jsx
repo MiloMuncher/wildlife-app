@@ -105,7 +105,7 @@ function Navbar() {
                                         </ListItemButton>
                                     </ListItem>
                                     <ListItem disablePadding>
-                                        <ListItemButton component={Link} to="/contactus" style={{ paddingLeft: '20px' }} onClick={handleCloseDrawer}>
+                                        <ListItemButton component={Link} to="/howweoperate" style={{ paddingLeft: '20px' }} onClick={handleCloseDrawer}>
                                             <img
                                                 src="/Suitcase.png"
                                                 alt="How We Operate"

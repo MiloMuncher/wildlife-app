@@ -1,112 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import { Button } from '@mui/material';
-import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@mui/material';
-import { Link } from 'react-router-dom';
-import { DataGrid } from '@mui/x-data-grid';
+import { Button, TextField } from '@mui/material';
+import FullCalendar from '@fullcalendar/react';
+import dayGridPlugin from '@fullcalendar/daygrid';  // Plugin for the grid view
 import http from '../../http';
-
-function RenderButton(props) {
-    const { hasFocus, value, user, getShifts } = props;
-    const buttonElement = React.useRef(null);
-    const rippleRef = React.useRef(null);
-
-    React.useLayoutEffect(() => {
-        if (hasFocus) {
-            const input = buttonElement.current?.querySelector('input');
-            input?.focus();
-        } else if (rippleRef.current) {
-            rippleRef.current.stop({});
-        }
-    }, [hasFocus]);
-
-    const [open, setOpen] = useState(false);
-    const handleOpen = () => {
-        setOpen(true);
-    };
-    const handleClose = () => {
-        setOpen(false);
-    };
-
-    return (
-        <>
-            {/* <Button
-                ref={buttonElement}
-                variant="contained"
-                size="small"
-                style={{ backgroundColor: '#6CA0DC' }}
-                LinkComponent={Link} to={`/admin/viewshifts/edit/${user.id}`}
-            >
-                Edit
-            </Button>
-
-            <Button
-                ref={buttonElement}
-                variant="contained"
-                size="small"
-                style={{ marginLeft: 16, backgroundColor: '#C70000' }}
-                onClick={handleOpen}
-            >
-                Delete
-            </Button>
-
-            <Dialog open={open} onClose={handleClose}>
-                <DialogTitle>
-                    Delete Shift
-                </DialogTitle>
-                <DialogContent>
-                    <DialogContentText>
-                        Are you sure you want to delete this shift?
-                    </DialogContentText>
-                </DialogContent>
-                <DialogActions>
-                    <Button variant="contained" color="inherit" onClick={handleClose}>
-                        Cancel
-                    </Button>
-                    <Button
-                        variant="contained" color="error"
-                        onClick={() => {
-                            http.delete(`https://kvhdoqjcua.execute-api.us-east-1.amazonaws.com/dev/shifts/${user.id}`).then((res) => {
-                                console.log(res.data);
-                                handleClose();
-                                getShifts();
-                            });
-                        }}
-                    >
-                        Delete
-                    </Button>
-                </DialogActions>
-            </Dialog> */}
-        </>
-    );
-}
 
 function ShiftView() {
     const btnstyle = { margin: '30px 0', fontWeight: 'bold', color: 'white', backgroundColor: '#496A72' };
     const [shiftList, setShiftList] = useState([]);
-
-    const rows = shiftList.map((shift) => ({
-        id: shift.schedule_ID,
-        employee_id: shift.employee_ID,
-        name: `${shift.fname} ${shift.lname}`,
-        date: shift.date,
-        shift_start: shift.shift_start,
-        shift_duration: shift.shift_duration,
-    }));
-
-    const columns = [
-        { field: 'id', headerName: 'Schedule ID', width: 120 },
-        { field: 'employee_id', headerName: 'Employee ID', width: 120 },
-        { field: 'name', headerName: 'Name', width: 200 },
-        { field: 'date', headerName: 'Date', width: 150 },
-        { field: 'shift_start', headerName: 'Shift Start', width: 150 },
-        { field: 'shift_duration', headerName: 'Duration (hrs)', width: 130 },
-        // { field: 'action', headerName: 'Actions', width: 200, renderCell: (params) => <RenderButton user={params.row} getShifts={getAllShifts} /> },
-    ];
+    const [searchTerm, setSearchTerm] = useState('');
+    const [filteredShifts, setFilteredShifts] = useState([]);
 
     const getAllShifts = () => {
         http.get(`https://v9c358horj.execute-api.us-east-1.amazonaws.com/dev/shifts`).then((res) => {
-            console.log(res.data);
             setShiftList(res.data);
+            setFilteredShifts(res.data);  // Initialize filtered shifts with all shifts
         });
     };
 
@@ -114,24 +21,70 @@ function ShiftView() {
         getAllShifts();
     }, []);
 
+    useEffect(() => {
+        // Filter shifts based on the search term
+        if (searchTerm) {
+            const filtered = shiftList.filter(shift =>
+                `${shift.fname} ${shift.lname}`.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+            setFilteredShifts(filtered);
+        } else {
+            setFilteredShifts(shiftList);  // If no search term, show all shifts
+        }
+    }, [searchTerm, shiftList]);
+
+    const formatTime = (time) => {
+        const [hours, minutes] = time.split(':');
+        return `${hours.padStart(2, '0')}:${minutes}`; 
+    };
+
+    const sortedShifts = [...filteredShifts].sort((a, b) => {
+        const aDate = new Date(`${a.date}T${formatTime(a.shift_start)}`);
+        const bDate = new Date(`${b.date}T${formatTime(b.shift_start)}`);
+        return aDate - bDate;
+    });
+
+    const calendarEvents = sortedShifts.map((shift) => {
+        const dateTimeString = `${shift.date}T${formatTime(shift.shift_start)}`;
+        const eventDate = new Date(dateTimeString);
+
+        if (isNaN(eventDate.getTime())) {
+            console.error("Invalid date for shift:", shift);
+        }
+
+        return {
+            title: `${shift.fname} ${shift.lname}`,
+            date: eventDate,
+            extendedProps: {
+                employee_id: shift.employee_ID,
+                shift_start: shift.shift_start,
+                shift_duration: shift.shift_duration,
+            },
+        };
+    });
+
     return (
-        <>
-            {/* <Button variant='contained' style={btnstyle} LinkComponent={Link} to={`/admin/addshift`}>New Shift</Button> */}
-            <div style={{ width: '100%', backgroundColor: 'white' }}>
-                <DataGrid
-                    rows={rows}
-                    columns={columns}
-                    initialState={{
-                        pagination: {
-                            paginationModel: { page: 0, pageSize: 5 },
-                        },
-                    }}
-                    pageSizeOptions={[5, 10]}
-                    checkboxSelection
-                    sx={{ height: 500 }}
-                />
-            </div>
-        </>
+        <div style={{ width: '100%', height: '80%', backgroundColor: 'white' }}>
+            {/* Search Input */}
+            <TextField
+                label="Search by Employee Name"
+                variant="outlined"
+                fullWidth
+                onChange={(e) => setSearchTerm(e.target.value)}
+                value={searchTerm}
+                style={{ marginBottom: '20px' }}
+            />
+            <FullCalendar
+                plugins={[dayGridPlugin]}
+                initialView="dayGridWeek"
+                events={calendarEvents}
+                headerToolbar={{
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,dayGridWeek,dayGridDay',
+                }}
+            />
+        </div>
     );
 }
 
