@@ -35,7 +35,7 @@ function ShiftView() {
 
     const formatTime = (time) => {
         const [hours, minutes] = time.split(':');
-        return `${hours.padStart(2, '0')}:${minutes}`; 
+        return `${hours.padStart(2, '0')}:${minutes}`;
     };
 
     const sortedShifts = [...filteredShifts].sort((a, b) => {
@@ -83,6 +83,7 @@ function ShiftView() {
                     center: 'title',
                     right: 'dayGridMonth,dayGridWeek,dayGridDay',
                 }}
+                className="custom-calendar"
             />
         </div>
     );

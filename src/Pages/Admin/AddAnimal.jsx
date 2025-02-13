@@ -253,6 +253,25 @@ function AddAnimal() {
                     formik.touched.location_found &&
                     formik.errors.location_found
                   }
+                  SelectProps={{
+                    MenuProps: {
+                      anchorOrigin: {
+                        vertical: "bottom",
+                        horizontal: "left"
+                      },
+                      transformOrigin: {
+                        vertical: "top",
+                        horizontal: "left"
+                      },
+                      disablePortal: true, // Ensures the dropdown remains within the form structure
+                      PaperProps: {
+                        style: {
+                          maxHeight: 200, // Set the max height for the dropdown
+                          overflowY: 'auto', // Enables scrolling when content overflows
+                        }
+                      }
+                    }
+                  }}
                 >
                   {singaporeTowns.map((town) => (
                     <MenuItem key={town} value={town}>
