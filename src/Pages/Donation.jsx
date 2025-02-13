@@ -28,6 +28,8 @@ import {
   useElements,
 } from "@stripe/react-stripe-js";
 import { useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const stripePromise = loadStripe(
   "pk_test_51Qrdhu2N2ApkaYzFWgke5qVVDsFaUkSywPRo1pdV8dcgbQ94HzPmVz9JjWMSzcANlTPVWqZwknTSI67RFi43pXK700EkYL6JuM"
@@ -142,6 +144,15 @@ const CheckoutForm = () => {
     setOpenModal(false);
     formik.resetForm();
     if (donationStatus === "success") {
+        toast.success("Thank you for your donation! 🎉", {
+            position: "bottom-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            theme: "colored",
+          });
         navigate("/");
     } else if (donationStatus === "failure") {
       // Optional: Redirect after failure
@@ -150,7 +161,9 @@ const CheckoutForm = () => {
   };
 
   return (
+    
     <Container maxWidth="xl">
+      <ToastContainer /> {/* Add this line to render toast notifications */}
       <Box
         style={{ backgroundSize: "cover", borderRadius: 15 }}
         display={"flex"}
