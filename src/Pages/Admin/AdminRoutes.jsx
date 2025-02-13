@@ -19,6 +19,9 @@ import FoodView from './FoodView'
 import ShiftView from './ShiftView'
 import PayrollView from './PayrollView'
 import ShiftEdit from './ShiftEdit'
+import AddAnimal from './AddAnimal';
+import ViewAnimals from './ViewAnimals';
+import EditAnimal from './EditAnimal';
 
 // Icons
 import CreateIcon from '@mui/icons-material/Create';
@@ -121,7 +124,7 @@ function ProfileRoutes() {
                   </ListItemButton>
                   <Collapse in={openAnimals} timeout="auto" unmountOnExit>
                     <List component="div">
-                      <ListItemButton sx={{ pl: 4 }} LinkComponent={Link} to="/admin/#animals">
+                      <ListItemButton sx={{ pl: 4 }} LinkComponent={Link} to="/admin/viewanimals">
                         <ListItemText primary="View Animals" />
                       </ListItemButton>
                       <ListItemButton sx={{ pl: 4 }} LinkComponent={Link} to="/admin/#viewvets">
@@ -224,6 +227,9 @@ function ProfileRoutes() {
                 <Route path='/editmerchant/:id' element={<EditMerchant />} />
                 <Route path="/uploadtranscripts" element={<UploadTranscripts />} />
                 <Route path="/viewfood" element={<FoodView />} />
+                <Route path="/viewanimals" element={<ViewAnimals />} />
+                <Route path="/addanimal" element={<AddAnimal />} />
+                <Route path="/viewanimals/edit/:id" element={<EditAnimal />} />
               </>
             )}
             {userGroup === 'Vets' && <Route path="/uploadtranscripts" element={<UploadTranscripts />} />}
