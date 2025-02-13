@@ -35,6 +35,15 @@ function RenderButton(props) {
                 ref={buttonElement}
                 variant="contained"
                 size="small"
+                style={{ backgroundColor: '#008CBA', marginRight: 10 }}
+                component={Link} to={`/admin/qr/${food.id}`}
+            >
+                QR 
+            </Button>
+            <Button
+                ref={buttonElement}
+                variant="contained"
+                size="small"
                 style={{ backgroundColor: '#6CA0DC' }}
                 LinkComponent={Link} to={`/admin/viewusers/edit/${food.id}`}
             >
@@ -107,7 +116,7 @@ function FoodView() {
         { field: 'batch_number', headerName: 'Batch No.', width: 200 },
         { field: 'action', headerName: 'Actions', width: 200, renderCell: (params) => <RenderButton food={params.row} getAllFood={getAllFood} /> },
     ];
-    
+
 
     const getAllFood = () => {
         http.get(`https://kvhdoqjcua.execute-api.us-east-1.amazonaws.com/dev/food`).then((res) => {

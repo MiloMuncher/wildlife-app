@@ -21,6 +21,8 @@ import PayrollView from './PayrollView'
 import ShiftEdit from './ShiftEdit'
 import MedicationView from './MedicationView';
 import AddFood from './AddFood';
+import QR from './QRCodePages/QR';
+import SupplyDetails from './QRCodePages/SupplyDetails';
 
 // Icons
 import CreateIcon from '@mui/icons-material/Create';
@@ -213,6 +215,9 @@ function ProfileRoutes() {
                 <Route path="/viewmedications" element={<MedicationView />} />
                 <Route path="/viewfood" element={<FoodView />} />
                 <Route path="/addfood" element={<AddFood />} />
+
+                <Route path="/qr/:id" element={<QR />} />
+                <Route path="/supplydetails/:id" element={<SupplyDetails />} />
               </>
             )}
             {userGroup === 'Vets' && <Route path="/uploadtranscripts" element={<UploadTranscripts />} />}
