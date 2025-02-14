@@ -76,8 +76,6 @@ function ViewAnimals() {
         { field: 'id', headerName: 'ID', width: 70 },
         { field: 'species', headerName: 'Species', width: 100 },
         { field: 'weight', headerName: 'Weight (kg)', width: 100 },
-        { field: 'date_of_rescue', headerName: 'Rescue Date', width: 100 },
-        { field: 'initial_condition', headerName: 'Initial Condition', width: 100 },
         { field: 'current_health_status', headerName: 'Current Health Status', width: 100 },
         { field: 'outcome_type', headerName: 'Outcome Type', width: 140 },
         { field: 'required_food_amount', headerName: 'Required Food Amount', width: 100 },

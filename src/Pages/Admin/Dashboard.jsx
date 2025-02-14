@@ -7,6 +7,7 @@ import "@aws-amplify/ui-react/styles.css";
 import { fetchAuthSession } from "aws-amplify/auth";
 import { list } from "aws-amplify/storage";
 import GraphDisplay from "./GraphDisplay";
+import SpeciesDistributionMap from "./SpeciesDistributionMap";
 
 function Dashboard() {
   const itemcolor = { backgroundColor: "white" };
@@ -14,70 +15,79 @@ function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [imageError, setImageError] = useState(null);
-  useEffect(() => {
-    // Function to list files from the S3 bucket
-    const fetchFiles = async () => {
-      try {
-        const result = await list({
-          path: `private/monthly-intake/`,
-          level: "private",
-        });
-        console.log(result);
 
-        const allFiles = result["items"]; // Get all files from the result
-        console.log(allFiles);
+  // useEffect(() => {
+  //   // Function to list files from the S3 bucket
+  //   const fetchFiles = async () => {
+  //     try {
+  //       const result = await list({
+  //         path: `private/monthly-intake/`,
+  //         level: "private",
+  //       });
+  //       console.log(result);
 
-        console.log(allFiles["lastModified"]);
+  //       const allFiles = result["items"]; // Get all files from the result
+  //       console.log(allFiles);
 
-        const sortedFiles = allFiles.sort(
-          (a, b) => b.lastModified - a.lastModified
-        );
+  //       console.log(allFiles["lastModified"]);
 
-        console.log("Sorted", sortedFiles);
+  //       const sortedFiles = allFiles.sort(
+  //         (a, b) => b.lastModified - a.lastModified
+  //       );
 
-        // const latestImageFile = sortedFiles.find(file => file.key.match(/\.(jpg|jpeg|png|gif)$/i));
+  //       console.log("Sorted", sortedFiles);
 
-        setLatestImage(sortedFiles[3]); // Set the latest image to the first file in the sorted array
-      } catch (err) {
-        setError("Error fetching files: " + err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
+  //       // const latestImageFile = sortedFiles.find(file => file.key.match(/\.(jpg|jpeg|png|gif)$/i));
 
-    fetchFiles(); // Call the listFiles function
-  }, []); // Empty dependency array means it runs once when the component mounts
+  //       setLatestImage(sortedFiles[3]); // Set the latest image to the first file in the sorted array
+  //     } catch (err) {
+  //       setError("Error fetching files: " + err.message);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
 
-  if (loading) return <p>Loading images...</p>;
-  if (error) return <p>{error}</p>;
+  //   fetchFiles(); // Call the listFiles function
+  // }, []); // Empty dependency array means it runs once when the component mounts
+
+  // if (loading) return <p>Loading images...</p>;
+  // if (error) return <p>{error}</p>;
 
   return (
     <Container maxWidth="xl">
-      <Grid container spacing={2}>
-        <Grid item xs={4.8} md={12}>
+      <Grid container spacing={3} alignItems="stretch">
+        <Grid item xs={12}>
           <Card style={itemcolor}>
             <CardContent align="center">
-              <GraphDisplay bucket_folder="monthly-intake" set_width="900px" />
+              <SpeciesDistributionMap />
             </CardContent>
           </Card>
         </Grid>
-        <Grid item xs={12} md={12}>
-          <Card style={itemcolor}>
+
+        <Grid item xs={12} md={8}>
+          <Card sx={{ height: "100%" }} style={itemcolor}>
             <CardContent align="center">
-              <GraphDisplay
-                bucket_folder="outcome-type-distribution"
-                set_width="900px"
-              />
+              <GraphDisplay graph="monthlyIntakeGraph" />
             </CardContent>
           </Card>
         </Grid>
-        <Grid item xs={4.8} md={12}>
-          <Card style={itemcolor}>
+
+        <Grid item xs={12} md={4}>
+          <Card sx={{ height: "100%" }} style={itemcolor}>
+            <CardContent align="center">Total intake count + Current Active Cases</CardContent>
+          </Card>
+        </Grid>
+
+        <Grid item xs={12} md={4}>
+          <Card sx={{ height: "100%" }} style={itemcolor}>
+            <CardContent align="center">Pie Chart - Case Status 2025</CardContent>
+          </Card>
+        </Grid>
+
+        <Grid item xs={12} md={8}>
+          <Card sx={{ height: "100%" }} style={itemcolor}>
             <CardContent align="center">
-              <GraphDisplay
-                bucket_folder="species-distribution"
-                set_width="900px"
-              />
+              <GraphDisplay graph="speciesDistributionGraph" />
             </CardContent>
           </Card>
         </Grid>
