@@ -3,7 +3,7 @@ import http from "../../http";
 import Plot from "react-plotly.js";
 import { MenuItem, Select, FormControl, InputLabel } from "@mui/material";
 
-const SpeciesDistributionMap = () => {
+const LocationDistributionMap = () => {
   const [animalList, setAnimalList] = useState([]);
   const [townCoordinates, setTownCoordinates] = useState({});
   const currentYear = new Date().getFullYear(); // Get current year
@@ -127,4 +127,4 @@ const SpeciesDistributionMap = () => {
   );
 };
 
-export default SpeciesDistributionMap;
+export default LocationDistributionMap;

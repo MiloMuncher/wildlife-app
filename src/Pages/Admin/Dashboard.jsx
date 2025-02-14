@@ -6,52 +6,37 @@ import EventChart from "../Charts/EventChart";
 import "@aws-amplify/ui-react/styles.css";
 import { fetchAuthSession } from "aws-amplify/auth";
 import { list } from "aws-amplify/storage";
+import http from "../../http";
 import GraphDisplay from "./GraphDisplay";
-import SpeciesDistributionMap from "./SpeciesDistributionMap";
+import LocationDistributionMap from "./LocationDistributionMap";
 
 function Dashboard() {
   const itemcolor = { backgroundColor: "white" };
-  const [latestImage, setLatestImage] = useState(null); // Store the latest image
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [imageError, setImageError] = useState(null);
+  const [animalList, setAnimalList] = useState([]);
 
-  // useEffect(() => {
-  //   // Function to list files from the S3 bucket
-  //   const fetchFiles = async () => {
-  //     try {
-  //       const result = await list({
-  //         path: `private/monthly-intake/`,
-  //         level: "private",
-  //       });
-  //       console.log(result);
+  const getAnimals = () => {
+    http
+      .get(
+        `https://i1mu51yxbd.execute-api.us-east-1.amazonaws.com/dev/animal_CRUD`
+      )
+      .then((res) => {
+        setAnimalList(res.data);
+      });
+  };
 
-  //       const allFiles = result["items"]; // Get all files from the result
-  //       console.log(allFiles);
+  const currentYear = new Date().getFullYear(); // Get current year
+  const getIntakeCount = () => {
+    const filteredAnimals = animalList.filter((animal) => {
+      const rescueYear = new Date(animal.date_of_rescue).getFullYear(); // Extract the year from the rescue date
+      return rescueYear === currentYear; // Check if the rescue year matches the current year
+    });
 
-  //       console.log(allFiles["lastModified"]);
+    return filteredAnimals.length; // Return the count of animals rescued in the current year
+  };
 
-  //       const sortedFiles = allFiles.sort(
-  //         (a, b) => b.lastModified - a.lastModified
-  //       );
-
-  //       console.log("Sorted", sortedFiles);
-
-  //       // const latestImageFile = sortedFiles.find(file => file.key.match(/\.(jpg|jpeg|png|gif)$/i));
-
-  //       setLatestImage(sortedFiles[3]); // Set the latest image to the first file in the sorted array
-  //     } catch (err) {
-  //       setError("Error fetching files: " + err.message);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-
-  //   fetchFiles(); // Call the listFiles function
-  // }, []); // Empty dependency array means it runs once when the component mounts
-
-  // if (loading) return <p>Loading images...</p>;
-  // if (error) return <p>{error}</p>;
+  useEffect(() => {
+    getAnimals();
+  }, []);
 
   return (
     <Container maxWidth="xl">
@@ -59,12 +44,12 @@ function Dashboard() {
         <Grid item xs={12}>
           <Card style={itemcolor}>
             <CardContent align="center">
-              <SpeciesDistributionMap />
+              <LocationDistributionMap />
             </CardContent>
           </Card>
         </Grid>
 
-        <Grid item xs={12} md={8}>
+        <Grid item xs={12} md={9}>
           <Card sx={{ height: "100%" }} style={itemcolor}>
             <CardContent align="center">
               <GraphDisplay graph="monthlyIntakeGraph" />
@@ -72,15 +57,75 @@ function Dashboard() {
           </Card>
         </Grid>
 
-        <Grid item xs={12} md={4}>
-          <Card sx={{ height: "100%" }} style={itemcolor}>
-            <CardContent align="center">Total intake count + Current Active Cases</CardContent>
+        <Grid
+          item
+          xs={12}
+          md={3}
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-between",
+          }}
+        >
+          <Card sx={{ height: "30%" }} style={itemcolor}>
+            <CardContent align="center">
+              <Typography fontSize={{ md: 14, xl: 18 }} fontWeight="800">
+                Total Intake Count for {currentYear}
+              </Typography>
+              <Typography
+                fontSize={{ md: 26, xl: 30 }}
+                style={{
+                  paddingTop: "5px",
+                  color: "skyblue",
+                  fontWeight: "600",
+                }}
+              >
+                {getIntakeCount()}
+              </Typography>
+            </CardContent>
+          </Card>
+
+          <Card sx={{ height: "30%" }} style={itemcolor}>
+            <CardContent align="center">
+              <Typography fontSize={{ md: 14, xl: 18 }} fontWeight="800">
+                Current Active Cases for {currentYear}
+              </Typography>
+              <Typography
+                fontSize={{ md: 26, xl: 30 }}
+                style={{
+                  paddingTop: "5px",
+                  color: "red",
+                  fontWeight: "600",
+                }}
+              >
+                9
+              </Typography>
+            </CardContent>
+          </Card>
+          <Card sx={{ height: "30%" }} style={itemcolor}>
+            <CardContent align="center">
+              <Typography fontSize={{ md: 14, xl: 18 }} fontWeight="800">
+                Random Number Count for {currentYear}
+              </Typography>
+              <Typography
+                fontSize={{ md: 26, xl: 30 }}
+                style={{
+                  paddingTop: "5px",
+                  color: "green",
+                  fontWeight: "600",
+                }}
+              >
+                34
+              </Typography>
+            </CardContent>
           </Card>
         </Grid>
 
         <Grid item xs={12} md={4}>
           <Card sx={{ height: "100%" }} style={itemcolor}>
-            <CardContent align="center">Pie Chart - Case Status 2025</CardContent>
+            <CardContent align="center">
+              Pie Chart - Case Status 2025
+            </CardContent>
           </Card>
         </Grid>
 
