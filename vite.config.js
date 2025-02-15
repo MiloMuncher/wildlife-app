@@ -4,6 +4,7 @@ import react from '@vitejs/plugin-react';
 export default defineConfig({
   plugins: [react()],
   optimizeDeps: {
-    include: ['aws-amplify']
+    include: ['aws-amplify'],
+    exclude: ['@ffmpeg/ffmpeg']
   },
 });
