@@ -62,7 +62,9 @@ const SpeciesDistributionGraph = ({ selectedYears }) => {
 
   return (
     <div>
-      <h2>Species Distribution {selectedYears.join(", ")}</h2>
+      <h2 style={{ fontFamily: "Montserrat" }}>
+        Species Distribution {selectedYears.join(", ")}
+      </h2>
       <Plot
         data={[
           {
@@ -73,7 +75,6 @@ const SpeciesDistributionGraph = ({ selectedYears }) => {
           },
         ]}
         layout={{
-          fontFamily: "Montserrat",
           title: `Species Distribution (${selectedYears.join(", ")})`,
           xaxis: { title: "Species" },
           yaxis: { title: "Number of Animals Rescued" },
@@ -81,10 +82,6 @@ const SpeciesDistributionGraph = ({ selectedYears }) => {
           height: 400, // Adjust height as needed
         }}
       />
-      <link
-        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&display=swap"
-        rel="stylesheet"
-      ></link>
     </div>
   );
 };

@@ -63,7 +63,7 @@ function RenderButton(props) {
             onClick={() => {
               http
                 .delete(
-                  `https://i1mu51yxbd.execute-api.us-east-1.amazonaws.com/dev/animal_CRUD/animals?animal_id=${animal.id}`
+                  `https://i1mu51yxbd.execute-api.us-east-1.amazonaws.com/dev/animal_CRUD/animals?animal_ID=${animal.id}`
                 )
                 .then((res) => {
                   console.log(res.data);
@@ -108,10 +108,26 @@ function ViewAnimals() {
     {
       field: "current_health_status",
       headerName: "Current Status",
-      width: 140,
+      width: 130,
     },
-    { field: "outcome_type", headerName: "Outcome Type", width: 130 },
-    { field: "case_status", headerName: "Case Status", width: 100 },
+    { field: "outcome_type", headerName: "Outcome Type", width: 160 },
+    {
+      field: "case_status",
+      headerName: "Case Status",
+      width: 110,
+      renderCell: (params) => {
+        const status = params.value;
+        let statusStyle = {};
+
+        if (status === "Open") {
+          statusStyle = { color: "red", fontWeight: "bold" };
+        } else if (status === "Closed") {
+          statusStyle = { color: "#4A4A4A", fontWeight: "bold" };
+        }
+
+        return <span style={statusStyle}>{status}</span>;
+      },
+    },
     {
       field: "action",
       headerName: "Actions",

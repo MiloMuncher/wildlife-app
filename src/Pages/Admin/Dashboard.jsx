@@ -8,12 +8,16 @@ import {
   Checkbox,
   FormControlLabel,
   FormGroup,
+  IconButton,
+  Slide,
+  Box,
 } from "@mui/material";
 import MonthlyIntakeGraph from "./Graphs/MonthlyIntakeGraph";
 import LocationDistributionMap from "./Graphs/LocationDistributionMap";
 import http from "../../http.js";
 import SpeciesDistributionGraph from "./Graphs/SpeciesDistributionGraph";
 import CaseStatusChart from "./Graphs/CaseStatusChart";
+import { ChevronLeft, ChevronRight } from "@mui/icons-material";
 
 function Dashboard() {
   const itemcolor = { backgroundColor: "white" };
@@ -84,13 +88,51 @@ function Dashboard() {
     return acc;
   }, {});
 
+  const [isCardVisible, setIsCardVisible] = useState(true); // State to manage card visibility
+
+  const handleCardToggle = () => {
+    setIsCardVisible(!isCardVisible); // Toggle card visibility
+  };
+
   return (
     <Container maxWidth="xl">
-      <Grid container spacing={3} alignItems="stretch">
-        {/* Dropdown of years */}
-        <Grid item xs={12}>
-          <Card style={itemcolor}>
-            <CardContent>
+      {/* Button to toggle the card */}
+      <IconButton
+        onClick={handleCardToggle}
+        style={{
+          position: "fixed",
+          top: 4,
+          right: isCardVisible ? 198 : 20, // Move the arrow with the card
+          zIndex: 1001,
+          transition: "right 0.5s ease", // Smooth transition for the arrow
+        }}
+      >
+        {isCardVisible ? (
+          <ChevronRight fontSize="large" />
+        ) : (
+          <ChevronLeft fontSize="large" />
+        )}
+      </IconButton>
+
+      {/* Slide-in/Out Card */}
+      <Slide
+        direction="left"
+        in={isCardVisible}
+        mountOnEnter
+        unmountOnExit
+        timeout={500} // Adjust slide speed
+      >
+        <Card
+          style={{
+            position: "fixed",
+            top: 0,
+            right: 0,
+            zIndex: 100,
+            width: 240,
+          }}
+        >
+          <CardContent>
+            <Box>
               <Typography
                 fontSize={{ md: 16, xl: 18 }}
                 fontWeight="800"
@@ -113,10 +155,11 @@ function Dashboard() {
                   />
                 ))}
               </FormGroup>
-            </CardContent>
-          </Card>
-        </Grid>
-
+            </Box>
+          </CardContent>
+        </Card>
+      </Slide>
+      <Grid container spacing={3} alignItems="stretch">
         {/* Displaying the map */}
         <Grid item xs={12}>
           <Card style={itemcolor}>
@@ -166,9 +209,9 @@ function Dashboard() {
                 Current Open Cases
               </Typography>
               <Typography
-                fontSize={{ md: 30, xl: 34 }}
-                padding={{ md: 5, xl: 4 }}
-                style={{ color: "red", fontWeight: "600" }}
+                fontSize={{ md: 40, xl: 48 }}
+                padding={{ md: 3, xl: 3 }}
+                style={{ color: "orange", fontWeight: "600" }}
               >
                 {getOpenCount()}
               </Typography>
@@ -180,8 +223,8 @@ function Dashboard() {
                 Total Intake Count for {selectedYears.join(", ")}
               </Typography>
               <Typography
-                fontSize={{ md: 30, xl: 34 }}
-                padding={{ md: 5, xl: 4 }}
+                fontSize={{ md: 40, xl: 48 }}
+                padding={{ md: 3, xl: 2 }}
                 style={{
                   color: "skyblue",
                   fontWeight: "600",

@@ -41,7 +41,7 @@ const CaseStatusChart = () => {
 
   return (
     <div>
-      <h2>Case Status Chart</h2>
+      <h2 style={{ fontFamily: "Montserrat" }}>Case Status Chart</h2>
       <Plot
         data={[
           {
@@ -49,7 +49,7 @@ const CaseStatusChart = () => {
             labels: ["Open", "Closed"],
             values: [caseStatusCount.Open, caseStatusCount.Closed],
             marker: {
-              colors: ["orange", "gray"], // Customize colors if needed
+              colors: ["orange", "#B0B0B0"], // Customize colors if needed
             },
             textinfo: "label+percent", // Show label and percentage on the pie chart
           },

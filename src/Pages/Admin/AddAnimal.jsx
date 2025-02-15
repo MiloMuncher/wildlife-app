@@ -9,9 +9,6 @@ import {
   Card,
   CardContent,
   MenuItem,
-  Select,
-  FormControl,
-  InputLabel,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import * as yup from "yup";
@@ -64,7 +61,6 @@ function AddAnimal() {
     "Confined",
     "Starved",
     "Dehydrated",
-    "Other",
   ];
 
   const outcomeTypes = [
@@ -78,6 +74,16 @@ function AddAnimal() {
     "To be quarantined",
     "Released",
     "Deceased",
+  ];
+
+  const currentHealthStatus = [
+    "Healthy",
+    "Recovering",
+    "Critical Condition",
+    "Stable",
+    "Improving",
+    "Deteriorating",
+    "In Treatment",
   ];
 
   const [transcriptList, setTranscriptList] = useState([]);
@@ -122,10 +128,12 @@ function AddAnimal() {
       age_class: "",
       date_of_rescue: "",
       initial_condition: "",
+      current_health_status: "",
       location_found: "",
       outcome_type: "",
       case_status: "Open",
       required_food_amount: "",
+      profile_pic: "",
       vet_ID: "",
       medication_ID: "",
       food_ID: "",
@@ -157,6 +165,12 @@ function AddAnimal() {
         .min(2, "Initial condition must be at least 2 characters")
         .max(100, "Initial condition must be at most 100 characters")
         .required("Initial condition is required"),
+      current_health_status: yup
+        .string()
+        .trim()
+        .min(2, "Initial condition must be at least 2 characters")
+        .max(100, "Initial condition must be at most 100 characters")
+        .required("Initial condition is required"),
       location_found: yup
         .string()
         .trim()
@@ -179,9 +193,6 @@ function AddAnimal() {
       food_ID: yup.number().required("Food is required"),
     }),
     onSubmit: (data) => {
-      // Set current_health_status to initial_condition
-      data.current_health_status = data.initial_condition;
-
       // Perform the POST request
       http
         .post(
@@ -207,13 +218,82 @@ function AddAnimal() {
                   fullWidth
                   label="Species"
                   name="species"
-                  onChange={formik.handleChange}
+                  onChange={(e) => {
+                    const capitalizedValue =
+                      e.target.value.charAt(0).toUpperCase() +
+                      e.target.value.slice(1);
+                    formik.setFieldValue("species", capitalizedValue);
+                  }}
                   value={formik.values.species}
                   error={
                     formik.touched.species && Boolean(formik.errors.species)
                   }
                   helperText={formik.touched.species && formik.errors.species}
                 />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  label="Date of Rescue"
+                  name="date_of_rescue"
+                  type="date"
+                  onChange={formik.handleChange}
+                  value={formik.values.date_of_rescue}
+                  error={
+                    formik.touched.date_of_rescue &&
+                    Boolean(formik.errors.date_of_rescue)
+                  }
+                  helperText={
+                    formik.touched.date_of_rescue &&
+                    formik.errors.date_of_rescue
+                  }
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  select
+                  label="Location Found"
+                  name="location_found"
+                  onChange={formik.handleChange}
+                  value={formik.values.location_found}
+                  error={
+                    formik.touched.location_found &&
+                    Boolean(formik.errors.location_found)
+                  }
+                  helperText={
+                    formik.touched.location_found &&
+                    formik.errors.location_found
+                  }
+                  SelectProps={{
+                    MenuProps: {
+                      anchorOrigin: {
+                        vertical: "bottom",
+                        horizontal: "left",
+                      },
+                      transformOrigin: {
+                        vertical: "top",
+                        horizontal: "left",
+                      },
+                      disablePortal: true, // Ensures the dropdown remains within the form structure
+                      PaperProps: {
+                        style: {
+                          maxHeight: 200, // Set the max height for the dropdown
+                          overflowY: "auto", // Enables scrolling when content overflows
+                        },
+                      },
+                    },
+                  }}
+                >
+                  {singaporeTowns.map((town) => (
+                    <MenuItem key={town} value={town}>
+                      {town}
+                    </MenuItem>
+                  ))}
+                </TextField>
               </Grid>
               <Grid item xs={12}>
                 <TextField
@@ -226,6 +306,44 @@ function AddAnimal() {
                   error={formik.touched.weight && Boolean(formik.errors.weight)}
                   helperText={formik.touched.weight && formik.errors.weight}
                 />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  select
+                  label="Assign Vet Transcript"
+                  name="vet_ID"
+                  onChange={formik.handleChange}
+                  value={formik.values.vet_ID}
+                  error={formik.touched.vet_ID && Boolean(formik.errors.vet_ID)}
+                  helperText={formik.touched.vet_ID && formik.errors.vet_ID}
+                  SelectProps={{
+                    MenuProps: {
+                      anchorOrigin: {
+                        vertical: "bottom",
+                        horizontal: "left",
+                      },
+                      transformOrigin: {
+                        vertical: "top",
+                        horizontal: "left",
+                      },
+                      disablePortal: true, // Ensures the dropdown remains within the form structure
+                      PaperProps: {
+                        style: {
+                          maxHeight: 200, // Set the max height for the dropdown
+                          overflowY: "auto", // Enables scrolling when content overflows
+                        },
+                      },
+                    },
+                  }}
+                >
+                  {transcriptList.map((vet) => (
+                    <MenuItem key={vet.vet_ID} value={vet.vet_ID}>
+                      Transcript:&nbsp;<strong>{vet.description}</strong>
+                      &nbsp;|&nbsp;Vet Name:&nbsp;<strong>{vet.name}</strong>
+                    </MenuItem>
+                  ))}
+                </TextField>
               </Grid>
               <Grid item xs={12}>
                 <TextField
@@ -249,27 +367,7 @@ function AddAnimal() {
                   ))}
                 </TextField>
               </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  fullWidth
-                  label="Date of Rescue"
-                  name="date_of_rescue"
-                  type="date"
-                  onChange={formik.handleChange}
-                  value={formik.values.date_of_rescue}
-                  error={
-                    formik.touched.date_of_rescue &&
-                    Boolean(formik.errors.date_of_rescue)
-                  }
-                  helperText={
-                    formik.touched.date_of_rescue &&
-                    formik.errors.date_of_rescue
-                  }
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                />
-              </Grid>
+
               <Grid item xs={12}>
                 <TextField
                   fullWidth
@@ -317,17 +415,17 @@ function AddAnimal() {
                 <TextField
                   fullWidth
                   select
-                  label="Location Found"
-                  name="location_found"
+                  label="Current Health Status"
+                  name="current_health_status"
                   onChange={formik.handleChange}
-                  value={formik.values.location_found}
+                  value={formik.values.current_health_status}
                   error={
-                    formik.touched.location_found &&
-                    Boolean(formik.errors.location_found)
+                    formik.touched.current_health_status &&
+                    Boolean(formik.errors.current_health_status)
                   }
                   helperText={
-                    formik.touched.location_found &&
-                    formik.errors.location_found
+                    formik.touched.current_health_status &&
+                    formik.errors.current_health_status
                   }
                   SelectProps={{
                     MenuProps: {
@@ -349,9 +447,9 @@ function AddAnimal() {
                     },
                   }}
                 >
-                  {singaporeTowns.map((town) => (
-                    <MenuItem key={town} value={town}>
-                      {town}
+                  {currentHealthStatus.map((status) => (
+                    <MenuItem key={status} value={status}>
+                      {status}
                     </MenuItem>
                   ))}
                 </TextField>
@@ -399,7 +497,7 @@ function AddAnimal() {
                   ))}
                 </TextField>
               </Grid>
-              <Grid item xs={12}>
+              <Grid item xs={6}>
                 <TextField
                   fullWidth
                   select
@@ -438,7 +536,7 @@ function AddAnimal() {
                   ))}
                 </TextField>
               </Grid>
-              <Grid item xs={12}>
+              <Grid item xs={6}>
                 <TextField
                   fullWidth
                   label="Required Food Amount (g)"
@@ -457,44 +555,6 @@ function AddAnimal() {
                 />
               </Grid>
 
-              <Grid item xs={12}>
-                <TextField
-                  fullWidth
-                  select
-                  label="Assign Vet Transcript"
-                  name="vet_ID"
-                  onChange={formik.handleChange}
-                  value={formik.values.vet_ID}
-                  error={formik.touched.vet_ID && Boolean(formik.errors.vet_ID)}
-                  helperText={formik.touched.vet_ID && formik.errors.vet_ID}
-                  SelectProps={{
-                    MenuProps: {
-                      anchorOrigin: {
-                        vertical: "bottom",
-                        horizontal: "left",
-                      },
-                      transformOrigin: {
-                        vertical: "top",
-                        horizontal: "left",
-                      },
-                      disablePortal: true, // Ensures the dropdown remains within the form structure
-                      PaperProps: {
-                        style: {
-                          maxHeight: 200, // Set the max height for the dropdown
-                          overflowY: "auto", // Enables scrolling when content overflows
-                        },
-                      },
-                    },
-                  }}
-                >
-                  {transcriptList.map((vet) => (
-                    <MenuItem key={vet.vet_ID} value={vet.vet_ID}>
-                      Transcript:&nbsp;<strong>{vet.description}</strong>
-                      &nbsp;|&nbsp;Vet Name:&nbsp;<strong>{vet.name}</strong>
-                    </MenuItem>
-                  ))}
-                </TextField>
-              </Grid>
               <Grid item xs={12}>
                 <TextField
                   fullWidth

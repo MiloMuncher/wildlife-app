@@ -60,7 +60,9 @@ const LocationDistributionMap = ({ selectedYears }) => {
 
   return (
     <div>
-      {/* Plot the map */}
+      <h2 style={{ fontFamily: "Montserrat" }}>
+        Location Distribution for {selectedYears.join(", ")}
+      </h2>
       <Plot
         data={[
           {

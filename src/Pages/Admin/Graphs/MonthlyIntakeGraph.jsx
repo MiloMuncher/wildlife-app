@@ -88,7 +88,7 @@ const MonthlyIntakeGraph = ({ selectedYears }) => {
 
   return (
     <div>
-      <h2>Monthly Animal Intake {selectedYears.join(", ")}</h2>
+      <h2 style={{ fontFamily: "Montserrat" }}>Monthly Animal Intake {selectedYears.join(", ")}</h2>
       <Plot
         data={plotData}
         layout={{
