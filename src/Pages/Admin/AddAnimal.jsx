@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Container,
   Box,
@@ -9,11 +9,15 @@ import {
   Card,
   CardContent,
   MenuItem,
+  Select,
+  FormControl,
+  InputLabel,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import * as yup from "yup";
 import { useFormik } from "formik";
 import http from "../../http.js";
+import { useState } from "react";
 
 function AddAnimal() {
   const btnstyle = {
@@ -52,6 +56,65 @@ function AddAnimal() {
     "Yishun",
   ];
 
+  const initialConditions = [
+    "Injured",
+    "Sick",
+    "Orphaned",
+    "Abandoned",
+    "Confined",
+    "Starved",
+    "Dehydrated",
+    "Other",
+  ];
+
+  const outcomeTypes = [
+    "To be released",
+    "To be rehabilitated",
+    "To be euthanized",
+    "To be released to sanctuary",
+    "To be evaluated",
+    "To be treated",
+    "To be monitored",
+    "To be quarantined",
+    "Released",
+    "Deceased",
+  ];
+
+  const [transcriptList, setTranscriptList] = useState([]);
+  const [foodList, setFoodList] = useState([]);
+  const [medicationList, setMedicationList] = useState([]);
+  const getTranscripts = () => {
+    http
+      .get(
+        "https://0ylgzr9mv6.execute-api.us-east-1.amazonaws.com/dev/gettranscripts"
+      )
+      .then((res) => {
+        setTranscriptList(res.data); // Update state
+      });
+  };
+  const getFood = () => {
+    http
+      .get(`https://kvhdoqjcua.execute-api.us-east-1.amazonaws.com/dev/food`)
+      .then((res) => {
+        setFoodList(res.data);
+      });
+  };
+  const getMedication = () => {
+    http
+      .get(
+        `https://z40lajab6h.execute-api.us-east-1.amazonaws.com/dev/medications`
+      )
+      .then((res) => {
+        setMedicationList(res.data);
+      });
+  };
+
+  useEffect(() => {
+    getTranscripts();
+    getFood();
+    getMedication();
+  }, []);
+
   const formik = useFormik({
     initialValues: {
       species: "",
@@ -59,10 +122,14 @@ function AddAnimal() {
       age_class: "",
       date_of_rescue: "",
       initial_condition: "",
-      current_health_status: "",
       location_found: "",
       outcome_type: "",
+      case_status: "Open",
       required_food_amount: "",
+      vet_ID: "",
+      medication_ID: "",
+      food_ID: "",
+      profile_pic: "",
     },
     validationSchema: yup.object({
       species: yup
@@ -90,12 +157,6 @@ function AddAnimal() {
         .min(2, "Initial condition must be at least 2 characters")
         .max(100, "Initial condition must be at most 100 characters")
         .required("Initial condition is required"),
-      current_health_status: yup
-        .string()
-        .trim()
-        .min(2, "Current health status must be at least 2 characters")
-        .max(100, "Current health status must be at most 100 characters")
-        .required("Current health status is required"),
       location_found: yup
         .string()
         .trim()
@@ -113,15 +174,21 @@ function AddAnimal() {
         .typeError("Required food amount must be a number")
         .positive("Required food amount must be positive")
         .required("Required food amount is required"),
+      vet_ID: yup.number().required("Vet transcript is required"),
+      medication_ID: yup.number().required("Medication is required"),
+      food_ID: yup.number().required("Food is required"),
     }),
     onSubmit: (data) => {
+      // Set current_health_status to initial_condition
+      data.current_health_status = data.initial_condition;
+
+      // Perform the POST request
       http
         .post(
           "https://i1mu51yxbd.execute-api.us-east-1.amazonaws.com/dev/animal_CRUD",
           data
         )
         .then((res) => {
-          console.log(res.data);
           navigate("/admin/viewanimals");
         })
         .catch((err) => console.log(err));
@@ -141,7 +208,7 @@ function AddAnimal() {
                   label="Species"
                   name="species"
                   onChange={formik.handleChange}
-                  value={formik.values.species.charAt(0).toUpperCase() + formik.values.species.slice(1).toLowerCase()}
+                  value={formik.values.species}
                   error={
                     formik.touched.species && Boolean(formik.errors.species)
                   }
@@ -206,10 +273,11 @@ function AddAnimal() {
               <Grid item xs={12}>
                 <TextField
                   fullWidth
+                  select
                   label="Initial Condition"
                   name="initial_condition"
                   onChange={formik.handleChange}
-                  value={formik.values.initial_condition.charAt(0).toUpperCase() + formik.values.initial_condition.slice(1).toLowerCase()}
+                  value={formik.values.initial_condition}
                   error={
                     formik.touched.initial_condition &&
                     Boolean(formik.errors.initial_condition)
@@ -218,24 +286,32 @@ function AddAnimal() {
                     formik.touched.initial_condition &&
                     formik.errors.initial_condition
                   }
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  fullWidth
-                  label="Current Health Status"
-                  name="current_health_status"
-                  onChange={formik.handleChange}
-                  value={formik.values.current_health_status.charAt(0).toUpperCase() + formik.values.current_health_status.slice(1).toLowerCase()}
-                  error={
-                    formik.touched.current_health_status &&
-                    Boolean(formik.errors.current_health_status)
-                  }
-                  helperText={
-                    formik.touched.current_health_status &&
-                    formik.errors.current_health_status
-                  }
-                />
+                  SelectProps={{
+                    MenuProps: {
+                      anchorOrigin: {
+                        vertical: "bottom",
+                        horizontal: "left",
+                      },
+                      transformOrigin: {
+                        vertical: "top",
+                        horizontal: "left",
+                      },
+                      disablePortal: true, // Ensures the dropdown remains within the form structure
+                      PaperProps: {
+                        style: {
+                          maxHeight: 200, // Set the max height for the dropdown
+                          overflowY: "auto", // Enables scrolling when content overflows
+                        },
+                      },
+                    },
+                  }}
+                >
+                  {initialConditions.map((condition) => (
+                    <MenuItem key={condition} value={condition}>
+                      {condition}
+                    </MenuItem>
+                  ))}
+                </TextField>
               </Grid>
               <Grid item xs={12}>
                 <TextField
@@ -257,20 +333,20 @@ function AddAnimal() {
                     MenuProps: {
                       anchorOrigin: {
                         vertical: "bottom",
-                        horizontal: "left"
+                        horizontal: "left",
                       },
                       transformOrigin: {
                         vertical: "top",
-                        horizontal: "left"
+                        horizontal: "left",
                       },
                       disablePortal: true, // Ensures the dropdown remains within the form structure
                       PaperProps: {
                         style: {
                           maxHeight: 200, // Set the max height for the dropdown
-                          overflowY: 'auto', // Enables scrolling when content overflows
-                        }
-                      }
-                    }
+                          overflowY: "auto", // Enables scrolling when content overflows
+                        },
+                      },
+                    },
                   }}
                 >
                   {singaporeTowns.map((town) => (
@@ -284,10 +360,11 @@ function AddAnimal() {
               <Grid item xs={12}>
                 <TextField
                   fullWidth
+                  select
                   label="Outcome Type"
                   name="outcome_type"
                   onChange={formik.handleChange}
-                  value={formik.values.outcome_type.charAt(0).toUpperCase() + formik.values.outcome_type.slice(1).toLowerCase()}
+                  value={formik.values.outcome_type}
                   error={
                     formik.touched.outcome_type &&
                     Boolean(formik.errors.outcome_type)
@@ -295,7 +372,71 @@ function AddAnimal() {
                   helperText={
                     formik.touched.outcome_type && formik.errors.outcome_type
                   }
-                />
+                  SelectProps={{
+                    MenuProps: {
+                      anchorOrigin: {
+                        vertical: "bottom",
+                        horizontal: "left",
+                      },
+                      transformOrigin: {
+                        vertical: "top",
+                        horizontal: "left",
+                      },
+                      disablePortal: true, // Ensures the dropdown remains within the form structure
+                      PaperProps: {
+                        style: {
+                          maxHeight: 200, // Set the max height for the dropdown
+                          overflowY: "auto", // Enables scrolling when content overflows
+                        },
+                      },
+                    },
+                  }}
+                >
+                  {outcomeTypes.map((outcome) => (
+                    <MenuItem key={outcome} value={outcome}>
+                      {outcome}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  select
+                  label="Assign Food"
+                  name="food_ID"
+                  onChange={formik.handleChange}
+                  value={formik.values.food_ID}
+                  error={
+                    formik.touched.food_ID && Boolean(formik.errors.food_ID)
+                  }
+                  helperText={formik.touched.food_ID && formik.errors.food_ID}
+                  SelectProps={{
+                    MenuProps: {
+                      anchorOrigin: {
+                        vertical: "bottom",
+                        horizontal: "left",
+                      },
+                      transformOrigin: {
+                        vertical: "top",
+                        horizontal: "left",
+                      },
+                      disablePortal: true, // Ensures the dropdown remains within the form structure
+                      PaperProps: {
+                        style: {
+                          maxHeight: 200, // Set the max height for the dropdown
+                          overflowY: "auto", // Enables scrolling when content overflows
+                        },
+                      },
+                    },
+                  }}
+                >
+                  {foodList.map((food) => (
+                    <MenuItem key={food.food_ID} value={food.food_ID}>
+                      {food.name}
+                    </MenuItem>
+                  ))}
+                </TextField>
               </Grid>
               <Grid item xs={12}>
                 <TextField
@@ -314,6 +455,92 @@ function AddAnimal() {
                     formik.errors.required_food_amount
                   }
                 />
+              </Grid>
+
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  select
+                  label="Assign Vet Transcript"
+                  name="vet_ID"
+                  onChange={formik.handleChange}
+                  value={formik.values.vet_ID}
+                  error={formik.touched.vet_ID && Boolean(formik.errors.vet_ID)}
+                  helperText={formik.touched.vet_ID && formik.errors.vet_ID}
+                  SelectProps={{
+                    MenuProps: {
+                      anchorOrigin: {
+                        vertical: "bottom",
+                        horizontal: "left",
+                      },
+                      transformOrigin: {
+                        vertical: "top",
+                        horizontal: "left",
+                      },
+                      disablePortal: true, // Ensures the dropdown remains within the form structure
+                      PaperProps: {
+                        style: {
+                          maxHeight: 200, // Set the max height for the dropdown
+                          overflowY: "auto", // Enables scrolling when content overflows
+                        },
+                      },
+                    },
+                  }}
+                >
+                  {transcriptList.map((vet) => (
+                    <MenuItem key={vet.vet_ID} value={vet.vet_ID}>
+                      Transcript:&nbsp;<strong>{vet.description}</strong>
+                      &nbsp;|&nbsp;Vet Name:&nbsp;<strong>{vet.name}</strong>
+                    </MenuItem>
+                  ))}
+                </TextField>
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  select
+                  label="Assign Medication"
+                  name="medication_ID"
+                  onChange={(e) =>
+                    formik.setFieldValue("medication_ID", e.target.value)
+                  }
+                  value={formik.values.medication_ID}
+                  error={
+                    formik.touched.medication_ID &&
+                    Boolean(formik.errors.medication_ID)
+                  }
+                  helperText={
+                    formik.touched.medication_ID && formik.errors.medication_ID
+                  }
+                  SelectProps={{
+                    MenuProps: {
+                      anchorOrigin: {
+                        vertical: "bottom",
+                        horizontal: "left",
+                      },
+                      transformOrigin: {
+                        vertical: "top",
+                        horizontal: "left",
+                      },
+                      disablePortal: true, // Ensures the dropdown remains within the form structure
+                      PaperProps: {
+                        style: {
+                          maxHeight: 200, // Set the max height for the dropdown
+                          overflowY: "auto", // Enables scrolling when content overflows
+                        },
+                      },
+                    },
+                  }}
+                >
+                  {medicationList.map((medication) => (
+                    <MenuItem
+                      key={medication.medication_ID}
+                      value={medication.medication_ID}
+                    >
+                      {medication.name}
+                    </MenuItem>
+                  ))}
+                </TextField>
               </Grid>
             </Grid>
             <Button type="submit" variant="contained" style={btnstyle}>
