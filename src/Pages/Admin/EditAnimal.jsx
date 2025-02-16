@@ -108,6 +108,24 @@ function EditAnimal() {
   const [foodList, setFoodList] = useState([]);
   const [medicationList, setMedicationList] = useState([]);
 
+  const [fileName, setFileName] = useState("");
+  const [base64, setBase64] = useState("");
+
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      setFileName(file.name);
+
+      // Convert image to Base64
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onloadend = () => {
+        const base64String = reader.result.split(",")[1]; // Remove the prefix
+        setBase64(base64String);
+      };
+    }
+  };
+
   const getTranscripts = () => {
     http
       .get(
@@ -166,7 +184,7 @@ function EditAnimal() {
       age_class: yup
         .string()
         .oneOf(
-          ["Infant", "Juvenile", "Adult", "Elderly"],
+          ["Infant", "Juvenile", "Subadult", "Adult", "Elderly"],
           "Invalid age class selected"
         )
         .required("Age class is required"),
@@ -204,6 +222,7 @@ function EditAnimal() {
     }),
     onSubmit: (data) => {
       console.log(data);
+      data.profile_pic = base64;
       http
         .put(
           `https://i1mu51yxbd.execute-api.us-east-1.amazonaws.com/dev/animal_CRUD/animals?animal_ID=${id}`,
@@ -323,11 +342,13 @@ function EditAnimal() {
                     formik.touched.age_class && formik.errors.age_class
                   }
                 >
-                  {["Infant", "Juvenile", "Adult", "Elderly"].map((option) => (
-                    <MenuItem key={option} value={option}>
-                      {option.charAt(0).toUpperCase() + option.slice(1)}
-                    </MenuItem>
-                  ))}
+                  {["Infant", "Juvenile", "Subadult", "Adult", "Elderly"].map(
+                    (option) => (
+                      <MenuItem key={option} value={option}>
+                        {option.charAt(0).toUpperCase() + option.slice(1)}
+                      </MenuItem>
+                    )
+                  )}
                 </TextField>
               </Grid>
 
@@ -545,6 +566,39 @@ function EditAnimal() {
                     label="Closed"
                   />
                 </RadioGroup>
+              </Grid>
+              <Grid item xs={12}>
+                {/* Hidden File Input */}
+                <input
+                  type="file"
+                  id="profile-pic-upload"
+                  accept="image/*"
+                  style={{ display: "none" }}
+                  onChange={handleFileChange}
+                />
+
+                {/* Styled TextField to display file name */}
+                <TextField
+                  fullWidth
+                  label="Upload Profile Picture"
+                  value={fileName} // Shows the file name when selected
+                  InputProps={{
+                    readOnly: true,
+                    endAdornment: (
+                      <Button
+                        variant="contained"
+                        component="label"
+                        htmlFor="profile-pic-upload"
+                        sx={{
+                          width: "25%",
+                          backgroundColor: "rgb(255, 78, 0)",
+                        }}
+                      >
+                        Choose File
+                      </Button>
+                    ),
+                  }}
+                />
               </Grid>
             </Grid>
             <Button type="submit" variant="contained" style={btnstyle}>

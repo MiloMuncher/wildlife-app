@@ -89,7 +89,19 @@ function ViewAnimals() {
   const [animalList, setAnimalList] = useState([]);
 
   const columns = [
-    { field: "id", headerName: "ID", width: 50 },
+    {
+      field: "id",
+      headerName: "ID",
+      width: 50,
+      renderCell: (params) => (
+        <Link
+          to={`/admin/viewanimals/profile/${params.value}`}
+          style={{ textDecoration: "underline", color: "blue" }}
+        >
+          {params.value}
+        </Link>
+      ),
+    },
     { field: "species", headerName: "Species", width: 100 },
     {
       field: "weight",

@@ -86,25 +86,25 @@ function AddAnimal() {
     "In Treatment",
   ];
 
-  const [foodList, setFoodList] = useState([]);
-  const [medicationList, setMedicationList] = useState([]);
 
-  const getFood = () => {
-    http
-      .get(`https://kvhdoqjcua.execute-api.us-east-1.amazonaws.com/dev/food`)
-      .then((res) => {
-        setFoodList(res.data);
-      });
+  const [fileName, setFileName] = useState("");
+  const [base64, setBase64] = useState("");
+
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      setFileName(file.name);
+
+      // Convert image to Base64
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onloadend = () => {
+        const base64String = reader.result.split(",")[1]; // Remove the prefix
+        setBase64(base64String);
+      };
+    }
   };
-  const getMedication = () => {
-    http
-      .get(
-        `https://z40lajab6h.execute-api.us-east-1.amazonaws.com/dev/medications`
-      )
-      .then((res) => {
-        setMedicationList(res.data);
-      });
-  };
+
 
   const formik = useFormik({
     initialValues: {
@@ -112,10 +112,10 @@ function AddAnimal() {
       weight: "",
       age_class: "",
       date_of_rescue: new Date().toISOString().split("T")[0],
-      initial_condition: "",
-      current_health_status: "",
+      initial_condition: "To be updated",
+      current_health_status: "To be updated",
       location_found: "",
-      outcome_type: "",
+      outcome_type: "To be updated",
       case_status: "Open",
       required_food_amount: "",
       profile_pic: "",
@@ -124,8 +124,6 @@ function AddAnimal() {
       food_ID: "",
       weight_kg: 0,
       weight_g: 0,
-      food_kg: 0,
-      food_g: 0,
     },
     validationSchema: yup.object({
       species: yup
@@ -144,59 +142,32 @@ function AddAnimal() {
         .typeError("Weight must be a number")
         .positive("Weight must be positive")
         .required("Weight is required"),
-      food_kg: yup
-        .number()
-        .typeError("Weight must be a number")
-        .positive("Weight must be positive")
-        .required("Weight is required"),
-      food_g: yup
-        .number()
-        .typeError("Weight must be a number")
-        .positive("Weight must be positive")
-        .required("Weight is required"),
       age_class: yup
         .string()
         .oneOf(
-          ["Infant", "Juvenile", "Adult", "Elderly"],
+          ["Infant", "Juvenile", "Subadult", "Adult", "Elderly"],
           "Invalid age class selected"
         )
         .required("Age class is required"),
       date_of_rescue: yup.date().required("Date of rescue is required"),
-      initial_condition: yup
-        .string()
-        .trim()
-        .min(2, "Initial condition must be at least 2 characters")
-        .max(100, "Initial condition must be at most 100 characters")
-        .required("Initial condition is required"),
-      current_health_status: yup
-        .string()
-        .trim()
-        .min(2, "Initial condition must be at least 2 characters")
-        .max(100, "Initial condition must be at most 100 characters")
-        .required("Initial condition is required"),
       location_found: yup
         .string()
         .trim()
         .min(2, "Location found must be at least 2 characters")
         .max(100, "Location found must be at most 100 characters")
         .required("Location found is required"),
-      outcome_type: yup
-        .string()
-        .trim()
-        .min(2, "Outcome type must be at least 2 characters")
-        .max(50, "Outcome type must be at most 50 characters")
-        .required("Outcome type is required"),
-      required_food_amount: yup
-        .number()
-        .typeError("Required food amount must be a number")
-        .positive("Required food amount must be positive")
-        .required("Required food amount is required"),
-      medication_ID: yup.number().required("Medication is required"),
-      food_ID: yup.number().required("Food is required"),
     }),
     onSubmit: (data) => {
-      // Perform the POST request
+      data.profile_pic = base64;
+      data.initial_condition = "To be updated";
+      data.current_health_status = "To be updated";
+      data.outcome_type = "To be updated";
+      data.case_status = "Open";
+      data.required_food_amount = 0;
       data.transcript_ID = null;
+      data.food_ID = null;
+      data.medication_ID = null;
+
       console.log(data);
       http
         .post(
@@ -204,9 +175,13 @@ function AddAnimal() {
           data
         )
         .then((res) => {
+          console.log("Form submitted successfully:", res);
           navigate("/admin/viewanimals");
         })
-        .catch((err) => console.log(err));
+        .catch((err) => {
+          console.error("Submission error:", err);
+          alert("There was an error submitting the form.");
+        });
     },
   });
 
@@ -225,32 +200,9 @@ function AddAnimal() {
     console.log(formik.values.weight);
   };
 
-  const calculateFoodAmount = (e) => {
-    // const { name, value } = e.target;
-
-    // Get kilogram and gram values from formik state
-    const kg = parseFloat(formik.values.kg) || 0;
-    const g = parseFloat(formik.values.g) || 0;
-
-    // Calculate total weight in grams
-    const totalWeight = kg * 1000 + g;
-
-    // Set the total weight into the formik state 'weight'
-    formik.setFieldValue("required_food_amount", totalWeight);
-    console.log(formik.values.required_food_amount);
-  };
-
   useEffect(() => {
-    getFood();
-    getMedication();
     calculateTotalWeight();
-    calculateFoodAmount();
-  }, [
-    formik.values.weight_kg,
-    formik.values.weight_g,
-    formik.values.food_kg,
-    formik.values.food_g,
-  ]);
+  }, [formik.values.weight_kg, formik.values.weight_g]);
 
   return (
     <Container maxWidth="lg">
@@ -417,283 +369,48 @@ function AddAnimal() {
                     formik.touched.age_class && formik.errors.age_class
                   }
                 >
-                  {["Infant", "Juvenile", "Adult", "Elderly"].map((option) => (
-                    <MenuItem key={option} value={option}>
-                      {option.charAt(0).toUpperCase() + option.slice(1)}
-                    </MenuItem>
-                  ))}
+                  {["Infant", "Juvenile", "Subadult", "Adult", "Elderly"].map(
+                    (option) => (
+                      <MenuItem key={option} value={option}>
+                        {option.charAt(0).toUpperCase() + option.slice(1)}
+                      </MenuItem>
+                    )
+                  )}
                 </TextField>
               </Grid>
 
               <Grid item xs={12}>
-                <TextField
-                  fullWidth
-                  select
-                  label="Initial Condition"
-                  name="initial_condition"
-                  onChange={formik.handleChange}
-                  value={formik.values.initial_condition}
-                  error={
-                    formik.touched.initial_condition &&
-                    Boolean(formik.errors.initial_condition)
-                  }
-                  helperText={
-                    formik.touched.initial_condition &&
-                    formik.errors.initial_condition
-                  }
-                  SelectProps={{
-                    MenuProps: {
-                      anchorOrigin: {
-                        vertical: "bottom",
-                        horizontal: "left",
-                      },
-                      transformOrigin: {
-                        vertical: "top",
-                        horizontal: "left",
-                      },
-                      disablePortal: true, // Ensures the dropdown remains within the form structure
-                      PaperProps: {
-                        style: {
-                          maxHeight: 200, // Set the max height for the dropdown
-                          overflowY: "auto", // Enables scrolling when content overflows
-                        },
-                      },
-                    },
-                  }}
-                >
-                  {initialConditions.map((condition) => (
-                    <MenuItem key={condition} value={condition}>
-                      {condition}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  fullWidth
-                  select
-                  label="Current Health Status"
-                  name="current_health_status"
-                  onChange={formik.handleChange}
-                  value={formik.values.current_health_status}
-                  error={
-                    formik.touched.current_health_status &&
-                    Boolean(formik.errors.current_health_status)
-                  }
-                  helperText={
-                    formik.touched.current_health_status &&
-                    formik.errors.current_health_status
-                  }
-                  SelectProps={{
-                    MenuProps: {
-                      anchorOrigin: {
-                        vertical: "bottom",
-                        horizontal: "left",
-                      },
-                      transformOrigin: {
-                        vertical: "top",
-                        horizontal: "left",
-                      },
-                      disablePortal: true, // Ensures the dropdown remains within the form structure
-                      PaperProps: {
-                        style: {
-                          maxHeight: 200, // Set the max height for the dropdown
-                          overflowY: "auto", // Enables scrolling when content overflows
-                        },
-                      },
-                    },
-                  }}
-                >
-                  {currentHealthStatus.map((status) => (
-                    <MenuItem key={status} value={status}>
-                      {status}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              </Grid>
+                {/* Hidden File Input */}
+                <input
+                  type="file"
+                  id="profile-pic-upload"
+                  accept="image/*"
+                  style={{ display: "none" }}
+                  onChange={handleFileChange}
+                />
 
-              <Grid item xs={12}>
+                {/* Styled TextField to display file name */}
                 <TextField
                   fullWidth
-                  select
-                  label="Outcome Type"
-                  name="outcome_type"
-                  onChange={formik.handleChange}
-                  value={formik.values.outcome_type}
-                  error={
-                    formik.touched.outcome_type &&
-                    Boolean(formik.errors.outcome_type)
-                  }
-                  helperText={
-                    formik.touched.outcome_type && formik.errors.outcome_type
-                  }
-                  SelectProps={{
-                    MenuProps: {
-                      anchorOrigin: {
-                        vertical: "bottom",
-                        horizontal: "left",
-                      },
-                      transformOrigin: {
-                        vertical: "top",
-                        horizontal: "left",
-                      },
-                      disablePortal: true, // Ensures the dropdown remains within the form structure
-                      PaperProps: {
-                        style: {
-                          maxHeight: 200, // Set the max height for the dropdown
-                          overflowY: "auto", // Enables scrolling when content overflows
-                        },
-                      },
-                    },
+                  label="Upload Profile Picture"
+                  value={fileName} // Shows the file name when selected
+                  InputProps={{
+                    readOnly: true,
+                    endAdornment: (
+                      <Button
+                        variant="contained"
+                        component="label"
+                        htmlFor="profile-pic-upload"
+                        sx={{
+                          width: "25%",
+                          backgroundColor: "rgb(255, 78, 0)",
+                        }}
+                      >
+                        Choose File
+                      </Button>
+                    ),
                   }}
-                >
-                  {outcomeTypes.map((outcome) => (
-                    <MenuItem key={outcome} value={outcome}>
-                      {outcome}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              </Grid>
-              <Grid item xs={6}>
-                <TextField
-                  fullWidth
-                  select
-                  label="Assign Food"
-                  name="food_ID"
-                  onChange={formik.handleChange}
-                  value={formik.values.food_ID}
-                  error={
-                    formik.touched.food_ID && Boolean(formik.errors.food_ID)
-                  }
-                  helperText={formik.touched.food_ID && formik.errors.food_ID}
-                  SelectProps={{
-                    MenuProps: {
-                      anchorOrigin: {
-                        vertical: "bottom",
-                        horizontal: "left",
-                      },
-                      transformOrigin: {
-                        vertical: "top",
-                        horizontal: "left",
-                      },
-                      disablePortal: true, // Ensures the dropdown remains within the form structure
-                      PaperProps: {
-                        style: {
-                          maxHeight: 200, // Set the max height for the dropdown
-                          overflowY: "auto", // Enables scrolling when content overflows
-                        },
-                      },
-                    },
-                  }}
-                >
-                  {foodList.map((food) => (
-                    <MenuItem key={food.food_ID} value={food.food_ID}>
-                      {food.name}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              </Grid>
-              <Grid item xs={6}>
-                <Grid container spacing={2} alignItems="center">
-                  <Grid item xs={5}>
-                    <TextField
-                      fullWidth
-                      label="Food Amount (kg)"
-                      name="food_kg"
-                      type="number"
-                      onChange={(e) => {
-                        formik.handleChange(e);
-                        calculateTotalWeight(e);
-                      }}
-                      value={formik.values.food_kg}
-                      error={
-                        formik.touched.food_kg && Boolean(formik.errors.food_kg)
-                      }
-                      helperText={
-                        formik.touched.food_kg && formik.errors.food_kg
-                      }
-                    />
-                  </Grid>
-                  <Grid
-                    item
-                    xs={1}
-                    style={{ textAlign: "center", alignSelf: "center" }}
-                  >
-                    <Typography variant="body1">kg</Typography>
-                  </Grid>
-                  <Grid item xs={5}>
-                    <TextField
-                      fullWidth
-                      label="Food Amount (g)"
-                      name="food_g"
-                      type="number"
-                      onChange={(e) => {
-                        formik.handleChange(e);
-                        calculateTotalWeight(e);
-                      }}
-                      value={formik.values.food_g}
-                      error={
-                        formik.touched.food_g && Boolean(formik.errors.food_g)
-                      }
-                      helperText={formik.touched.food_g && formik.errors.food_g}
-                    />
-                  </Grid>
-                  <Grid
-                    item
-                    xs={1}
-                    style={{ textAlign: "center", alignSelf: "center" }}
-                  >
-                    <Typography variant="body1">g</Typography>
-                  </Grid>
-                </Grid>
-              </Grid>
-
-              <Grid item xs={12}>
-                <TextField
-                  fullWidth
-                  select
-                  label="Assign Medication"
-                  name="medication_ID"
-                  onChange={(e) =>
-                    formik.setFieldValue("medication_ID", e.target.value)
-                  }
-                  value={formik.values.medication_ID}
-                  error={
-                    formik.touched.medication_ID &&
-                    Boolean(formik.errors.medication_ID)
-                  }
-                  helperText={
-                    formik.touched.medication_ID && formik.errors.medication_ID
-                  }
-                  SelectProps={{
-                    MenuProps: {
-                      anchorOrigin: {
-                        vertical: "bottom",
-                        horizontal: "left",
-                      },
-                      transformOrigin: {
-                        vertical: "top",
-                        horizontal: "left",
-                      },
-                      disablePortal: true, // Ensures the dropdown remains within the form structure
-                      PaperProps: {
-                        style: {
-                          maxHeight: 200, // Set the max height for the dropdown
-                          overflowY: "auto", // Enables scrolling when content overflows
-                        },
-                      },
-                    },
-                  }}
-                >
-                  {medicationList.map((medication) => (
-                    <MenuItem
-                      key={medication.medication_ID}
-                      value={medication.medication_ID}
-                    >
-                      {medication.name}
-                    </MenuItem>
-                  ))}
-                </TextField>
+                />
               </Grid>
             </Grid>
             <Button type="submit" variant="contained" style={btnstyle}>
