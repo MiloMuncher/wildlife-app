@@ -17,6 +17,9 @@ import HowWeOperate from './Pages/HowWeOperate.jsx';
 import MerchantRoutes from './Pages/Merchant/MerchantRoutes';
 import AdminRoutes from './Pages/Admin/AdminRoutes';
 
+//QR Code pages
+import AnimalData from './Pages/Admin/QRCodePages/AnimalData.jsx';
+
 // Import components
 import Navbar from './Components/Navbar';
 import { Amplify } from 'aws-amplify';
@@ -50,6 +53,7 @@ function App() {
         <Route path="/aboutus" element={<AboutUs />} />
         <Route path="/supportus" element={<Donation />} />
         <Route path="/howweoperate" element={<HowWeOperate />} />
+        <Route path="/animaldata/:id" element={<AnimalData />} />
         {
           isCustomer && (
             <Route path="/profile/*" element={<ProfileRoutes />} />

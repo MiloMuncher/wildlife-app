@@ -30,6 +30,16 @@ function RenderButton(props) {
         ref={buttonElement}
         variant="contained"
         size="small"
+        style={{ backgroundColor: '#008CBA', marginRight: 10 }}
+        component={Link} to={`/admin/animal-qr/${animal.id}`}
+      >
+        Animal QR
+      </Button>
+
+      <Button
+        ref={buttonElement}
+        variant="contained"
+        size="small"
         style={{ backgroundColor: "#6CA0DC" }}
         LinkComponent={Link}
         to={`/admin/viewanimals/edit/${animal.id}`}
@@ -131,7 +141,7 @@ function ViewAnimals() {
     {
       field: "action",
       headerName: "Actions",
-      width: 200,
+      width: 300,
       renderCell: (params) => <RenderButton animal={params.row} />,
     },
   ];
