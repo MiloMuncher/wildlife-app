@@ -86,18 +86,9 @@ function AddAnimal() {
     "In Treatment",
   ];
 
-  const [transcriptList, setTranscriptList] = useState([]);
   const [foodList, setFoodList] = useState([]);
   const [medicationList, setMedicationList] = useState([]);
-  const getTranscripts = () => {
-    http
-      .get(
-        "https://0ylgzr9mv6.execute-api.us-east-1.amazonaws.com/dev/gettranscripts"
-      )
-      .then((res) => {
-        setTranscriptList(res.data); // Update state
-      });
-  };
+
   const getFood = () => {
     http
       .get(`https://kvhdoqjcua.execute-api.us-east-1.amazonaws.com/dev/food`)
@@ -115,18 +106,12 @@ function AddAnimal() {
       });
   };
 
-  useEffect(() => {
-    getTranscripts();
-    getFood();
-    getMedication();
-  }, []);
-
   const formik = useFormik({
     initialValues: {
       species: "",
       weight: "",
       age_class: "",
-      date_of_rescue: "",
+      date_of_rescue: new Date().toISOString().split("T")[0],
       initial_condition: "",
       current_health_status: "",
       location_found: "",
@@ -134,10 +119,13 @@ function AddAnimal() {
       case_status: "Open",
       required_food_amount: "",
       profile_pic: "",
-      vet_ID: "",
+      transcript_ID: "",
       medication_ID: "",
       food_ID: "",
-      profile_pic: "",
+      weight_kg: 0,
+      weight_g: 0,
+      food_kg: 0,
+      food_g: 0,
     },
     validationSchema: yup.object({
       species: yup
@@ -146,7 +134,22 @@ function AddAnimal() {
         .min(2, "Species name must be at least 2 characters")
         .max(50, "Species name must be at most 50 characters")
         .required("Species is required"),
-      weight: yup
+      weight_kg: yup
+        .number()
+        .typeError("Weight must be a number")
+        .positive("Weight must be positive")
+        .required("Weight is required"),
+      weight_g: yup
+        .number()
+        .typeError("Weight must be a number")
+        .positive("Weight must be positive")
+        .required("Weight is required"),
+      food_kg: yup
+        .number()
+        .typeError("Weight must be a number")
+        .positive("Weight must be positive")
+        .required("Weight is required"),
+      food_g: yup
         .number()
         .typeError("Weight must be a number")
         .positive("Weight must be positive")
@@ -188,12 +191,13 @@ function AddAnimal() {
         .typeError("Required food amount must be a number")
         .positive("Required food amount must be positive")
         .required("Required food amount is required"),
-      vet_ID: yup.number().required("Vet transcript is required"),
       medication_ID: yup.number().required("Medication is required"),
       food_ID: yup.number().required("Food is required"),
     }),
     onSubmit: (data) => {
       // Perform the POST request
+      data.transcript_ID = null;
+      console.log(data);
       http
         .post(
           "https://i1mu51yxbd.execute-api.us-east-1.amazonaws.com/dev/animal_CRUD",
@@ -205,6 +209,48 @@ function AddAnimal() {
         .catch((err) => console.log(err));
     },
   });
+
+  const calculateTotalWeight = (e) => {
+    // const { name, value } = e.target;
+
+    // Get kilogram and gram values from formik state
+    const kg = parseFloat(formik.values.weight_kg) || 0;
+    const g = parseFloat(formik.values.weight_g) || 0;
+
+    // Calculate total weight in grams
+    const totalWeight = kg * 1000 + g;
+
+    // Set the total weight into the formik state 'weight'
+    formik.setFieldValue("weight", totalWeight);
+    console.log(formik.values.weight);
+  };
+
+  const calculateFoodAmount = (e) => {
+    // const { name, value } = e.target;
+
+    // Get kilogram and gram values from formik state
+    const kg = parseFloat(formik.values.kg) || 0;
+    const g = parseFloat(formik.values.g) || 0;
+
+    // Calculate total weight in grams
+    const totalWeight = kg * 1000 + g;
+
+    // Set the total weight into the formik state 'weight'
+    formik.setFieldValue("required_food_amount", totalWeight);
+    console.log(formik.values.required_food_amount);
+  };
+
+  useEffect(() => {
+    getFood();
+    getMedication();
+    calculateTotalWeight();
+    calculateFoodAmount();
+  }, [
+    formik.values.weight_kg,
+    formik.values.weight_g,
+    formik.values.food_kg,
+    formik.values.food_g,
+  ]);
 
   return (
     <Container maxWidth="lg">
@@ -249,6 +295,9 @@ function AddAnimal() {
                   }
                   InputLabelProps={{
                     shrink: true,
+                  }}
+                  inputProps={{
+                    max: new Date().toISOString().split("T")[0], // Prevent future dates
                   }}
                 />
               </Grid>
@@ -296,54 +345,62 @@ function AddAnimal() {
                 </TextField>
               </Grid>
               <Grid item xs={12}>
-                <TextField
-                  fullWidth
-                  label="Weight (g)"
-                  name="weight"
-                  type="number"
-                  onChange={formik.handleChange}
-                  value={formik.values.weight}
-                  error={formik.touched.weight && Boolean(formik.errors.weight)}
-                  helperText={formik.touched.weight && formik.errors.weight}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  fullWidth
-                  select
-                  label="Assign Vet Transcript"
-                  name="vet_ID"
-                  onChange={formik.handleChange}
-                  value={formik.values.vet_ID}
-                  error={formik.touched.vet_ID && Boolean(formik.errors.vet_ID)}
-                  helperText={formik.touched.vet_ID && formik.errors.vet_ID}
-                  SelectProps={{
-                    MenuProps: {
-                      anchorOrigin: {
-                        vertical: "bottom",
-                        horizontal: "left",
-                      },
-                      transformOrigin: {
-                        vertical: "top",
-                        horizontal: "left",
-                      },
-                      disablePortal: true, // Ensures the dropdown remains within the form structure
-                      PaperProps: {
-                        style: {
-                          maxHeight: 200, // Set the max height for the dropdown
-                          overflowY: "auto", // Enables scrolling when content overflows
-                        },
-                      },
-                    },
-                  }}
-                >
-                  {transcriptList.map((vet) => (
-                    <MenuItem key={vet.vet_ID} value={vet.vet_ID}>
-                      Transcript:&nbsp;<strong>{vet.description}</strong>
-                      &nbsp;|&nbsp;Vet Name:&nbsp;<strong>{vet.name}</strong>
-                    </MenuItem>
-                  ))}
-                </TextField>
+                <Grid container spacing={2} alignItems="center">
+                  <Grid item xs={2.5}>
+                    <TextField
+                      fullWidth
+                      label="Weight (kg)"
+                      name="weight_kg"
+                      type="number"
+                      onChange={(e) => {
+                        formik.handleChange(e);
+                        calculateTotalWeight(e);
+                      }}
+                      value={formik.values.weight_kg}
+                      error={
+                        formik.touched.weight_kg &&
+                        Boolean(formik.errors.weight_kg)
+                      }
+                      helperText={
+                        formik.touched.weight_kg && formik.errors.weight_kg
+                      }
+                    />
+                  </Grid>
+                  <Grid
+                    item
+                    xs={0.5}
+                    style={{ textAlign: "center", alignSelf: "center" }}
+                  >
+                    <Typography variant="body1">kg</Typography>
+                  </Grid>
+                  <Grid item xs={2.5}>
+                    <TextField
+                      fullWidth
+                      label="Weight (g)"
+                      name="weight_g"
+                      type="number"
+                      onChange={(e) => {
+                        formik.handleChange(e);
+                        calculateTotalWeight(e);
+                      }}
+                      value={formik.values.weight_g}
+                      error={
+                        formik.touched.weight_g &&
+                        Boolean(formik.errors.weight_g)
+                      }
+                      helperText={
+                        formik.touched.weight_g && formik.errors.weight_g
+                      }
+                    />
+                  </Grid>
+                  <Grid
+                    item
+                    xs={0.5}
+                    style={{ textAlign: "center", alignSelf: "center" }}
+                  >
+                    <Typography variant="body1">g</Typography>
+                  </Grid>
+                </Grid>
               </Grid>
               <Grid item xs={12}>
                 <TextField
@@ -537,22 +594,58 @@ function AddAnimal() {
                 </TextField>
               </Grid>
               <Grid item xs={6}>
-                <TextField
-                  fullWidth
-                  label="Required Food Amount (g)"
-                  name="required_food_amount"
-                  type="number"
-                  onChange={formik.handleChange}
-                  value={formik.values.required_food_amount}
-                  error={
-                    formik.touched.required_food_amount &&
-                    Boolean(formik.errors.required_food_amount)
-                  }
-                  helperText={
-                    formik.touched.required_food_amount &&
-                    formik.errors.required_food_amount
-                  }
-                />
+                <Grid container spacing={2} alignItems="center">
+                  <Grid item xs={5}>
+                    <TextField
+                      fullWidth
+                      label="Food Amount (kg)"
+                      name="food_kg"
+                      type="number"
+                      onChange={(e) => {
+                        formik.handleChange(e);
+                        calculateTotalWeight(e);
+                      }}
+                      value={formik.values.food_kg}
+                      error={
+                        formik.touched.food_kg && Boolean(formik.errors.food_kg)
+                      }
+                      helperText={
+                        formik.touched.food_kg && formik.errors.food_kg
+                      }
+                    />
+                  </Grid>
+                  <Grid
+                    item
+                    xs={1}
+                    style={{ textAlign: "center", alignSelf: "center" }}
+                  >
+                    <Typography variant="body1">kg</Typography>
+                  </Grid>
+                  <Grid item xs={5}>
+                    <TextField
+                      fullWidth
+                      label="Food Amount (g)"
+                      name="food_g"
+                      type="number"
+                      onChange={(e) => {
+                        formik.handleChange(e);
+                        calculateTotalWeight(e);
+                      }}
+                      value={formik.values.food_g}
+                      error={
+                        formik.touched.food_g && Boolean(formik.errors.food_g)
+                      }
+                      helperText={formik.touched.food_g && formik.errors.food_g}
+                    />
+                  </Grid>
+                  <Grid
+                    item
+                    xs={1}
+                    style={{ textAlign: "center", alignSelf: "center" }}
+                  >
+                    <Typography variant="body1">g</Typography>
+                  </Grid>
+                </Grid>
               </Grid>
 
               <Grid item xs={12}>

@@ -99,10 +99,9 @@ function EditAnimal() {
     case_status: "",
     required_food_amount: "",
     profile_pic: "",
-    vet_ID: "",
+    transcript_ID: "",
     medication_ID: "",
     food_ID: "",
-    profile_pic: "",
   });
 
   const [transcriptList, setTranscriptList] = useState([]);
@@ -195,7 +194,7 @@ function EditAnimal() {
         .typeError("Required food amount must be a number")
         .positive("Required food amount must be positive")
         .required("Required food amount is required"),
-      vet_ID: yup.number().required("Vet transcript is required"),
+      transcript_ID: yup.number().required("Vet transcript is required"),
       medication_ID: yup.number().required("Medication is required"),
       food_ID: yup.number().required("Food is required"),
       case_status: yup
@@ -269,11 +268,18 @@ function EditAnimal() {
                   fullWidth
                   select
                   label="Assign Vet Transcript"
-                  name="vet_ID"
-                  onChange={formik.handleChange}
-                  value={formik.values.vet_ID}
-                  error={formik.touched.vet_ID && Boolean(formik.errors.vet_ID)}
-                  helperText={formik.touched.vet_ID && formik.errors.vet_ID}
+                  name="transcript_ID"
+                  onChange={(e) =>
+                    formik.setFieldValue("transcript_ID", e.target.value)
+                  }
+                  value={formik.values.transcript_ID}
+                  error={
+                    formik.touched.transcript_ID &&
+                    Boolean(formik.errors.transcript_ID)
+                  }
+                  helperText={
+                    formik.touched.transcript_ID && formik.errors.transcript_ID
+                  }
                   SelectProps={{
                     MenuProps: {
                       anchorOrigin: {
@@ -295,7 +301,7 @@ function EditAnimal() {
                   }}
                 >
                   {transcriptList.map((vet) => (
-                    <MenuItem key={vet.vet_ID} value={vet.vet_ID}>
+                    <MenuItem key={vet.transcript_ID} value={vet.transcript_ID}>
                       Transcript:&nbsp;<strong>{vet.description}</strong>
                       &nbsp;|&nbsp;Vet Name:&nbsp;<strong>{vet.name}</strong>
                     </MenuItem>
@@ -417,7 +423,9 @@ function EditAnimal() {
                   select
                   label="Assign Food"
                   name="food_ID"
-                  onChange={formik.handleChange}
+                  onChange={(e) =>
+                    formik.setFieldValue("food_ID", e.target.value)
+                  }
                   value={formik.values.food_ID}
                   error={
                     formik.touched.food_ID && Boolean(formik.errors.food_ID)
