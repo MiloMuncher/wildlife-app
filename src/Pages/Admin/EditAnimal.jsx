@@ -102,7 +102,6 @@ function EditAnimal() {
     transcript_ID: "",
     medication_ID: "",
     food_ID: "",
-    profile_pic: "",
   });
 
   const [transcriptList, setTranscriptList] = useState([]);
