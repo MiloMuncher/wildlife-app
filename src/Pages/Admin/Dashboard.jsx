@@ -24,6 +24,7 @@ function Dashboard() {
   const [animalList, setAnimalList] = useState([]);
   const currentYear = new Date().getFullYear(); // Get current year
   const [selectedYears, setSelectedYears] = useState([]); // Store selected years
+  const [balance, setBalance] = useState([]);
 
   // Fetching animal data
   const getAnimals = () => {
@@ -33,6 +34,14 @@ function Dashboard() {
       )
       .then((res) => {
         setAnimalList(res.data);
+      });
+  };
+
+  const getBalance = () => {
+    http
+      .get(`https://pn0ridlp81.execute-api.us-east-1.amazonaws.com/dev/balance`)
+      .then((res) => {
+        setBalance(res.data);
       });
   };
 
@@ -68,6 +77,7 @@ function Dashboard() {
 
   useEffect(() => {
     getAnimals();
+    getBalance();
   }, []);
 
   useEffect(() => {
@@ -173,51 +183,44 @@ function Dashboard() {
         <Grid
           item
           xs={12}
-          md={4}
+          md={12}
           style={{
             display: "flex",
-            flexDirection: "column",
+            flexDirection: "row",
             justifyContent: "space-between",
           }}
         >
-          <Card sx={{ height: "30%", overflowY: "scroll" }} style={itemcolor}>
+          <Card sx={{ width: "30%" }} style={itemcolor}>
             <CardContent align="center" style={{ maxHeight: "30px" }}>
               <Typography fontSize={{ md: 16, xl: 18 }} fontWeight="800">
-                Total Animals Rescued Across Locations
+                Overall Donations Received
               </Typography>
-              {/* List each location with its respective number of animals */}
-              <div
-                style={{
-                  paddingTop: "10px",
-                }}
+
+              <Typography
+                fontSize={{ md: 40, xl: 48 }}
+                padding={{ md: 3, xl: 2 }}
+                style={{ color: "orange", fontWeight: "600" }}
               >
-                {Object.keys(locationCount).map((location) => (
-                  <div key={location} style={{ paddingBottom: "10px" }}>
-                    <Typography variant="body1">
-                      <strong>{location}</strong>&nbsp; - &nbsp;
-                      {locationCount[location]} animal(s) rescued
-                    </Typography>
-                  </div>
-                ))}
-              </div>
+                S${balance.sgdOnHoldBalance}
+              </Typography>
             </CardContent>
           </Card>
 
-          <Card sx={{ height: "30%" }} style={itemcolor}>
+          <Card sx={{ width: "30%" }} style={itemcolor}>
             <CardContent align="center">
               <Typography fontSize={{ md: 16, xl: 18 }} fontWeight="800">
-                Current Open Cases
+                Total Open Cases Pending
               </Typography>
               <Typography
                 fontSize={{ md: 40, xl: 48 }}
-                padding={{ md: 3, xl: 3 }}
-                style={{ color: "orange", fontWeight: "600" }}
+                padding={{ md: 3, xl: 2 }}
+                style={{ color: "red", fontWeight: "600" }}
               >
                 {getOpenCount()}
               </Typography>
             </CardContent>
           </Card>
-          <Card sx={{ height: "30%" }} style={itemcolor}>
+          <Card sx={{ width: "30%" }} style={itemcolor}>
             <CardContent align="center">
               <Typography fontSize={{ md: 16, xl: 18 }} fontWeight="800">
                 Total Intake Count for {selectedYears.join(", ")}
@@ -232,14 +235,6 @@ function Dashboard() {
               >
                 {getIntakeCount()}
               </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-        {/* Placeholder for Pie Chart */}
-        <Grid item xs={12} md={8}>
-          <Card sx={{ height: "100%" }} style={itemcolor}>
-            <CardContent align="center">
-              <CaseStatusChart />
             </CardContent>
           </Card>
         </Grid>

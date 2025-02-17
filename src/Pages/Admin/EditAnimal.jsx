@@ -18,6 +18,7 @@ import * as yup from "yup";
 import { useFormik } from "formik";
 import http from "../../http.js";
 import { useState, useEffect, useContext } from "react";
+import BackButton from "./BackButton.jsx";
 
 function EditAnimal() {
   const btnstyle = {
@@ -372,6 +373,7 @@ function EditAnimal() {
 
   return (
     <Container maxWidth="lg">
+      <BackButton />
       <Card>
         <CardContent>
           <Box component="form" onSubmit={formik.handleSubmit}>

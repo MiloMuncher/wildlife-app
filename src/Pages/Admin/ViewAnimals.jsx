@@ -24,6 +24,15 @@ function RenderButton(props) {
     window.location.reload();
   };
 
+  const [openRelease, setOpenRelease] = useState(false);
+  const handleOpenRelease = () => {
+    setOpenRelease(true);
+  };
+  const handleCloseRelease = () => {
+    setOpenRelease(false);
+    navigate("/admin/viewsanctuary")
+  };
+
   return (
     <>
       <Button
@@ -36,6 +45,68 @@ function RenderButton(props) {
       >
         Animal QR
       </Button>
+
+      {animal.outcome_type === "To be released to sanctuary" && (
+        <Button
+          ref={buttonElement}
+          variant="contained"
+          size="small"
+          style={{ backgroundColor: "green", marginRight: 10 }}
+          onClick={handleOpenRelease}
+        >
+          To Sanctuary
+        </Button>
+      )}
+
+      <Dialog open={openRelease} onClose={handleCloseRelease}>
+        <DialogTitle>Release Animal to Sanctuary</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to release this animal to the sanctuary?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            variant="contained"
+            color="inherit"
+            onClick={handleCloseRelease}
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="contained"
+            color="success"
+            onClick={() => {
+              http
+                .post(
+                  `https://i1mu51yxbd.execute-api.us-east-1.amazonaws.com/dev/sanctuary`, // Replace with your API URL for the release action
+                  {
+                    animal_ID: animal.id,
+                    animal_name: "To be updated",
+                    description: "To be updated",
+                    donated_amount: 0,
+                  }
+                )
+                .then((res) => {
+                  console.log(res.data);
+                  handleCloseRelease();
+                })
+                .catch((err) => {
+                  console.error("Error during release: ", err);
+                });
+              http.put(
+                `https://i1mu51yxbd.execute-api.us-east-1.amazonaws.com/dev/animal_CRUD/animals?animal_ID=${animal.id}`,
+                {
+                  outcome_type: "Released to Sanctuary",
+                  case_status: "Closed",
+                }
+              );
+            }}
+          >
+            Release
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       <Button
         ref={buttonElement}
@@ -115,20 +186,6 @@ function ViewAnimals() {
     },
     { field: "species", headerName: "Species", width: 100 },
     {
-      field: "weight",
-      headerName: "Weight",
-      width: 90,
-      valueFormatter: (params) => {
-        const weight = params.value;
-        if (weight > 1000) {
-          return `${(weight / 1000).toFixed(2)} kg`; // Display in kilograms (rounded to 2 decimal places)
-        } else {
-          return `${weight} g`; // Display in grams
-        }
-      },
-    },
-
-    {
       field: "current_health_status",
       headerName: "Current Status",
       width: 130,
@@ -144,7 +201,7 @@ function ViewAnimals() {
     {
       field: "outcome_type",
       headerName: "Outcome Type",
-      width: 160,
+      width: 210,
       renderCell: (params) => {
         const isToBeUpdated = params.value === "To be updated";
         return (
@@ -175,7 +232,7 @@ function ViewAnimals() {
     {
       field: "action",
       headerName: "Actions",
-      width: 300,
+      width: 420,
       renderCell: (params) => <RenderButton animal={params.row} />,
     },
   ];

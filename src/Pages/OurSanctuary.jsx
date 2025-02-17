@@ -1,14 +1,31 @@
-import React, { useRef } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { Container, Box, Typography, Grid, Button, Card, CardContent, Divider } from '@mui/material';
 import { motion, useInView } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import Footer from '../Components/Footer.jsx';
 import Navbar from '../Components/Navbar.jsx';
 import Map from '../Components/Map.jsx';  // New Component for Interactive Map
+import http from "../http";
 
 function OurSanctuary() {
     const contentRef = useRef(null);
     const contentInView = useInView(contentRef, { triggerOnce: true, margin: "-100px" });
+
+    const [animalList, setAnimalList] = useState([]);
+    const getAnimals = () => {
+        http
+          .get(
+            `https://i1mu51yxbd.execute-api.us-east-1.amazonaws.com/dev/sanctuary`
+          )
+          .then((res) => {
+            console.log("Data: ", res.data);
+            setAnimalList(res.data);
+          });
+      };
+    
+      useEffect(() => {
+        getAnimals();
+      }, []);
 
     return (
         <Box sx={{ padding: '0' }}>

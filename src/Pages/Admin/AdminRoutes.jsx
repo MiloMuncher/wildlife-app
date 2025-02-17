@@ -40,6 +40,8 @@ import ViewAnimals from './ViewAnimals';
 import EditAnimal from './EditAnimal';
 import AnimalProfile from './AnimalProfile';
 import AddMedication from './AddMedication';
+import ViewAnimalsInSanctuary from "./ViewAnimalsInSanctuary";
+import EditAnimalInSanctuary from "./EditAnimalSanctuaryDetails";
 
 // Icons
 import CreateIcon from "@mui/icons-material/Create";
@@ -183,9 +185,9 @@ function ProfileRoutes() {
                       <ListItemButton
                         sx={{ pl: 4 }}
                         LinkComponent={Link}
-                        to="/admin/#viewvets"
+                        to="/admin/viewsanctuary"
                       >
-                        <ListItemText primary="Animal Data" />
+                        <ListItemText primary="Sanctuary" />
                       </ListItemButton>
                     </List>
                   </Collapse>
@@ -355,6 +357,8 @@ function ProfileRoutes() {
                   element={<AnimalProfile />}
                 />
                 <Route path="/animal-qr/:id" element={<AnimalQR />} />
+                <Route path="/viewsanctuary" element={<ViewAnimalsInSanctuary />} />
+                <Route path="/viewsanctuary/edit/:id" element={<EditAnimalInSanctuary />} />
               </>
             )}
             {userGroup === 'Vets' && <Route path="/uploadtranscripts" element={<UploadTranscripts />} />}
