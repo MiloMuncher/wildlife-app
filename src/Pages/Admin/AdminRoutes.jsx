@@ -22,13 +22,13 @@ import ShiftEdit from './ShiftEdit'
 import MedicationView from './MedicationView';
 import AddFood from './AddFood';
 import AnimalQR from './QRCodePages/AnimalQR';
-import SupplyQR from './QRCodePages/SupplyQR';
+// import SupplyQR from './QRCodePages/SupplyQR';
 import SupplyDetails from './QRCodePages/SupplyDetails';
 import AddAnimal from './AddAnimal';
 import ViewAnimals from './ViewAnimals';
 import EditAnimal from './EditAnimal';
 import AnimalProfile from './AnimalProfile';
-import AddMedication from './AddMedication';
+// import AddMedication from './AddMedication';
 
 // Icons
 import CreateIcon from '@mui/icons-material/Create';
