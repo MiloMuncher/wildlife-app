@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Container, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Divider, Grid, Card, Collapse } from '@mui/material'
-import { Link, Routes, Route } from 'react-router-dom'
+import { Link, Routes, Route, useNavigate  } from 'react-router-dom'
 
 // Pages
 import UserView from './UserView';
@@ -50,6 +50,7 @@ function ProfileRoutes() {
   const [openInventory, setOpenInventory] = useState(false);
   const [openCases, setOpenCases] = useState(false);
   const [userGroup, setUserGroup] = useState(null);
+  const navigate = useNavigate();
 
   const handleToggle = (setOpen) => {
     setOpen((prev) => !prev);
@@ -59,16 +60,23 @@ function ProfileRoutes() {
       try {
         const { tokens } = await fetchAuthSession();
         const groups = tokens.accessToken.payload['cognito:groups'];
-        console.log(tokens)
+  
+        console.log(tokens);
         console.log(groups);
-        setUserGroup(groups ? groups[0] : null); // Assuming the user belongs to a single group
+  
+        if (!groups || groups.length === 0) {
+          navigate('/'); // Redirect to homepage if no groups
+        } else {
+          setUserGroup(groups[0]); // Assuming the user belongs to a single group
+        }
       } catch (error) {
         console.error('Error fetching the session', error);
+        navigate('/'); // Redirect in case of an error (e.g., session expired)
       }
     };
-
+  
     checkAuthSession();
-  }, []);
+  }, [navigate]);
   const handleLogout = async () => {
     try {
       localStorage.clear();
