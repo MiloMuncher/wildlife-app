@@ -28,6 +28,7 @@ import AddAnimal from './AddAnimal';
 import ViewAnimals from './ViewAnimals';
 import EditAnimal from './EditAnimal';
 import AnimalProfile from './AnimalProfile';
+import AddMedication from './AddMedication';
 
 // Icons
 import CreateIcon from '@mui/icons-material/Create';
@@ -244,7 +245,7 @@ function ProfileRoutes() {
                 <Route path="/addanimal" element={<AddAnimal />} />
                 <Route path="/viewanimals/edit/:id" element={<EditAnimal />} />
                 <Route path="/viewanimals/profile/:id" element={<AnimalProfile />} />
-
+                <Route path="/animal-qr/:id" element={<AnimalQR />} />
               </>
             )}
             {userGroup === 'Vets' && <Route path="/uploadtranscripts" element={<UploadTranscripts />} />}
