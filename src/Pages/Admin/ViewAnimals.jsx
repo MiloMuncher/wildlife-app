@@ -30,8 +30,9 @@ function RenderButton(props) {
         ref={buttonElement}
         variant="contained"
         size="small"
-        style={{ backgroundColor: '#008CBA', marginRight: 10 }}
-        component={Link} to={`/admin/animal-qr/${animal.id}`}
+        style={{ backgroundColor: "#008CBA", marginRight: 10 }}
+        component={Link}
+        to={`/admin/animal-qr/${animal.id}`}
       >
         Animal QR
       </Button>
@@ -131,8 +132,29 @@ function ViewAnimals() {
       field: "current_health_status",
       headerName: "Current Status",
       width: 130,
+      renderCell: (params) => {
+        const isToBeUpdated = params.value === "To be updated";
+        return (
+          <span style={{ fontWeight: isToBeUpdated ? "bold" : "normal" }}>
+            {params.value}
+          </span>
+        );
+      },
     },
-    { field: "outcome_type", headerName: "Outcome Type", width: 160 },
+    {
+      field: "outcome_type",
+      headerName: "Outcome Type",
+      width: 160,
+      renderCell: (params) => {
+        const isToBeUpdated = params.value === "To be updated";
+        return (
+          <span style={{ fontWeight: isToBeUpdated ? "bold" : "normal" }}>
+            {params.value}
+          </span>
+        );
+      },
+    },
+
     {
       field: "case_status",
       headerName: "Case Status",

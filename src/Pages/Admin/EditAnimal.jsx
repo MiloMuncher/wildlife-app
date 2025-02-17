@@ -256,12 +256,14 @@ function EditAnimal() {
         .required("Case Status is required"),
     }),
     onSubmit: (data) => {
+      console.log(data.food_ID);
       if (data.transcript_ID == "To be assigned") {
         data.transcript_ID = null;
       }
 
       if (data.food_ID == "To be assigned") {
         data.food_ID = null;
+        data.required_food_amount = 0;
       }
 
       if (data.medication_ID == "To be assigned") {
