@@ -1,11 +1,11 @@
 import React from 'react';
-import { Container, Box, Paper, Grid, Typography, Button, TextField, Card, CardContent } from '@mui/material';
+import { Container, Box, Grid, Typography, Button, TextField, Card, CardContent } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import * as yup from 'yup';
 import { useFormik } from 'formik';
 import http from '../../http.js';
 
-function AddFood() {
+function AddMedication() {
     const btnstyle = { margin: '30px 0', fontWeight: 'bold', color: 'white', backgroundColor: '#FF4E00' };
 
     const navigate = useNavigate();
@@ -13,32 +13,26 @@ function AddFood() {
         initialValues: {
             name: '',
             description: '',
-            expiration_date: ' ',
+            dosage: '',
+            expiration_date: '',
             available_quantity: '',
-            batch_number: '', // Changed from job_title to batch_number
-            price: '', // New field for price
+            batch_number: '',
+            price: '',
         },
         validationSchema: yup.object({
-            name: yup.string().trim().min(2).max(50).required('Food name is required'),
-            description: yup.string().trim().min(2).max(150).required('Description is required'),
-            expiration_date: yup
-                .string()
-                .required('Expiration date is required'),
-            available_quantity: yup
-                .number()
-                .positive('Available quantity must be a number greater than 0')
-                .required('Available quantity is required'),
-            batch_number: yup.string().trim().required('Batch number is required'), // Validation for batch_number
-            price: yup
-                .number()
-                .positive('Price must be a positive number')
-                .required('Price is required'), // Validation for price
+            name: yup.string().trim().min(2).max(50).required('Medication name is required'),
+            description: yup.string().trim().min(2).max(500).required('Description is required'),
+            dosage: yup.string().trim().min(1).max(50).required('Dosage is required'),
+            expiration_date: yup.string().required('Expiration date is required'),
+            available_quantity: yup.number().positive('Available quantity must be greater than 0').required('Available quantity is required'),
+            batch_number: yup.string().trim().min(1).max(50).required('Batch number is required'),
+            price: yup.number().positive('Price must be a positive number').required('Price is required'),
         }),
         onSubmit: (data) => {
-            http.post('https://kvhdoqjcua.execute-api.us-east-1.amazonaws.com/dev/food', data) // Corrected endpoint for Food
+            http.post('https://kvhdoqjcua.execute-api.us-east-1.amazonaws.com/dev/medication', data) // Corrected endpoint for Medication
                 .then((res) => {
                     console.log(res.data);
-                    navigate("/admin/viewfood"); // Assuming the view page is for foods
+                    navigate("/admin/viewmedications"); // Assuming the view page is for medications
                 })
                 .catch((error) => {
                     console.error(error);
@@ -48,7 +42,7 @@ function AddFood() {
 
     return (
         <Container maxWidth="xl">
-            <Typography variant="h6">New Food Variety</Typography>
+            <Typography variant="h6">New Medication</Typography>
             <Card>
                 <CardContent>
                     <Box component="form" onSubmit={formik.handleSubmit}>
@@ -56,7 +50,7 @@ function AddFood() {
                             <Grid item xs={12}>
                                 <TextField
                                     fullWidth
-                                    label="Food Name"
+                                    label="Medication Name"
                                     name="name"
                                     onChange={formik.handleChange}
                                     value={formik.values.name}
@@ -78,9 +72,20 @@ function AddFood() {
                             <Grid item xs={12}>
                                 <TextField
                                     fullWidth
+                                    label="Dosage"
+                                    name="dosage"
+                                    onChange={formik.handleChange}
+                                    value={formik.values.dosage}
+                                    error={formik.touched.dosage && Boolean(formik.errors.dosage)}
+                                    helperText={formik.touched.dosage && formik.errors.dosage}
+                                />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <TextField
+                                    fullWidth
                                     label="Expiration Date"
                                     name="expiration_date"
-                                    type="date" // Assuming the expiration_date is a date field
+                                    type="date"
                                     onChange={formik.handleChange}
                                     value={formik.values.expiration_date}
                                     error={formik.touched.expiration_date && Boolean(formik.errors.expiration_date)}
@@ -124,7 +129,7 @@ function AddFood() {
                             </Grid>
                         </Grid>
                         <Button type="submit" variant="contained" style={btnstyle}>
-                            Add Food
+                            Add Medication
                         </Button>
                     </Box>
                 </CardContent>
@@ -133,4 +138,4 @@ function AddFood() {
     );
 }
 
-export default AddFood;
+export default AddMedication;

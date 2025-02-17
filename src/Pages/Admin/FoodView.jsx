@@ -37,7 +37,9 @@ function RenderButton(props) {
                 variant="contained"
                 size="small"
                 style={{ backgroundColor: '#008CBA', marginRight: 10 }}
-                component={Link} to={`/admin/qr/${food.id}`}
+                component={Link}
+                to={`/admin/supply-qr/${food.id}`}
+                state={{ fromFoodPage: true }}
             >
                 QR 
             </Button>
@@ -110,12 +112,12 @@ function FoodView() {
 
     const columns = [
         { field: 'id', headerName: 'ID', width: 70 },
-        { field: 'name', headerName: 'Name', width: 100 },
+        { field: 'name', headerName: 'Name', width: 150 },
         { field: 'description', headerName: 'Description', width: 200 },
-        { field: 'expiration_date', headerName: 'Expiry Date', width: 200 },
+        { field: 'expiration_date', headerName: 'Expiry Date', width: 120 },
         { field: 'available_quantity', headerName: 'Quantity', width: 100 },
-        { field: 'batch_number', headerName: 'Batch No.', width: 200 },
-        { field: 'action', headerName: 'Actions', width: 200, renderCell: (params) => <RenderButton food={params.row} getAllFood={getAllFood} /> },
+        { field: 'batch_number', headerName: 'Batch No.', width: 120 },
+        { field: 'action', headerName: 'Actions', width: 300, renderCell: (params) => <RenderButton food={params.row} getAllFood={getAllFood} /> },
     ];
 
 
@@ -132,7 +134,7 @@ function FoodView() {
 
     return (
         <>
-            <Button variant='contained' style={btnstyle} LinkComponent={Link} to={`/admin/addfood`}>New Feed Variety</Button>
+            <Button variant='contained' style={btnstyle} LinkComponent={Link} to={`/admin/addfood`}>New Food Variety</Button>
             <div style={{ width: '100%', backgroundColor: 'white' }}>
                 <DataGrid
                     rows={rows}

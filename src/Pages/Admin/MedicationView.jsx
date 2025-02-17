@@ -33,6 +33,17 @@ function RenderButton(props) {
                 ref={buttonElement}
                 variant="contained"
                 size="small"
+                style={{ backgroundColor: '#008CBA', marginRight: 10 }}
+                component={Link}
+                to={`/admin/supply-qr/${medication.id}`}
+                state={{ fromFoodPage: false }}
+            >
+                QR
+            </Button>
+            <Button
+                ref={buttonElement}
+                variant="contained"
+                size="small"
                 style={{ backgroundColor: '#6CA0DC' }}
                 LinkComponent={Link} to={`/admin/viewmedications/edit/${medication.id}`}
             >
@@ -48,7 +59,6 @@ function RenderButton(props) {
             >
                 Delete
             </Button>
-
             <Dialog open={open} onClose={handleClose}>
                 <DialogTitle>
                     Delete Medication
@@ -97,7 +107,7 @@ function MedicationView() {
         { field: 'batch_number', headerName: 'Batch Number', width: 150 }, // Added Batch Number column
         { field: 'expiration_date', headerName: 'Expiration Date', width: 150 }, // Added Expiration Date column
         { field: 'available_quantity', headerName: 'Available Quantity', width: 180 }, // Added Available Quantity column
-        { field: 'action', headerName: 'Actions', width: 200, renderCell: (params) => <RenderButton medication={params.row} getMedications={getMedications} /> },
+        { field: 'action', headerName: 'Actions', width: 300, renderCell: (params) => <RenderButton medication={params.row} getMedications={getMedications} /> },
     ];
 
     const getMedications = () => {
@@ -112,7 +122,7 @@ function MedicationView() {
 
     return (
         <>
-            <Button variant='contained' style={btnstyle} LinkComponent={Link} to={`/admin/addemployee`}>New Medication</Button>
+            <Button variant='contained' style={btnstyle} LinkComponent={Link} to={`/admin/addmedication`}>New Medication</Button>
             <div style={{ width: '100%', backgroundColor: 'white' }}>
                 <DataGrid
                     rows={rows}
