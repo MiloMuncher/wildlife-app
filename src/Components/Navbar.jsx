@@ -25,7 +25,7 @@ function Navbar() {
     useEffect(() => {
         const checkAuthSession = async () => {
             try {
-                const { tokens } = await fetchAuthSession();
+                await fetchAuthSession();
                 setIsSignedIn(true);  // Set user as signed in
             } catch {
                 console.log('Error fetching the session');
