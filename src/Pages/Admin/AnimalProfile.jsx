@@ -59,25 +59,32 @@ const AnimalProfile = () => {
       .then((res) => {
         setAnimal(res.data);
       });
-
-    transcriptList.map((transcript) => {
-      if (transcript.transcript_ID == animal.transcript_ID) {
-        return setTranscript(transcript);
-      }
-    });
-
-    medicationList.map((medication) => {
-      if (medication.medication_ID == animal.medication_ID) {
-        return setMedication(medication);
-      }
-    });
-
-    foodList.map((food) => {
-      if (food.food_ID == animal.food_ID) {
-        return setFood(food);
-      }
-    });
   }, [id]);
+
+  useEffect(() => {
+    if (animal && transcriptList.length > 0) {
+      const foundTranscript = transcriptList.find(
+        (t) => t.transcript_ID === animal.transcript_ID
+      );
+      if (foundTranscript) setTranscript(foundTranscript);
+    }
+  }, [animal, transcriptList]);
+
+  useEffect(() => {
+    if (animal && medicationList.length > 0) {
+      const foundMedication = medicationList.find(
+        (m) => m.medication_ID === animal.medication_ID
+      );
+      if (foundMedication) setMedication(foundMedication);
+    }
+  }, [animal, medicationList]);
+
+  useEffect(() => {
+    if (animal && foodList.length > 0) {
+      const foundFood = foodList.find((f) => f.food_ID === animal.food_ID);
+      if (foundFood) setFood(foundFood);
+    }
+  }, [animal, foodList]);
 
   const fieldsText = {
     fontSize: "19px",
@@ -192,6 +199,7 @@ const AnimalProfile = () => {
                   <Typography style={fieldsText}>
                     Prescribed Medication:
                   </Typography>
+                  <Typography style={fieldsText}>Required Dosage:</Typography>
                   <Typography style={fieldsText}>Food:</Typography>
                   <Typography style={fieldsText}>
                     Required Food Amount:
@@ -208,6 +216,11 @@ const AnimalProfile = () => {
                   </Typography>
                   <Typography style={textStyle}>
                     {medication?.name || "Not Assigned"}
+                  </Typography>
+                  <Typography style={textStyle}>
+                    {animal.required_dosage
+                      ? animal.required_dosage
+                      : "Not Assigned"}
                   </Typography>
                   <Typography style={textStyle}>
                     {food?.name || "Not Assigned"}
