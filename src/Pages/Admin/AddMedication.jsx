@@ -16,7 +16,6 @@ function AddMedication() {
             dosage: '',
             expiration_date: '',
             available_quantity: '',
-            batch_number: '',
             price: '',
         },
         validationSchema: yup.object({
@@ -25,11 +24,10 @@ function AddMedication() {
             dosage: yup.string().trim().min(1).max(50).required('Dosage is required'),
             expiration_date: yup.string().required('Expiration date is required'),
             available_quantity: yup.number().positive('Available quantity must be greater than 0').required('Available quantity is required'),
-            batch_number: yup.string().trim().min(1).max(50).required('Batch number is required'),
             price: yup.number().positive('Price must be a positive number').required('Price is required'),
         }),
         onSubmit: (data) => {
-            http.post('https://kvhdoqjcua.execute-api.us-east-1.amazonaws.com/dev/medication', data) // Corrected endpoint for Medication
+            http.post('https://z40lajab6h.execute-api.us-east-1.amazonaws.com/dev/medications', data) // Corrected endpoint for Medication
                 .then((res) => {
                     console.log(res.data);
                     navigate("/admin/viewmedications"); // Assuming the view page is for medications
@@ -102,17 +100,6 @@ function AddMedication() {
                                     value={formik.values.available_quantity}
                                     error={formik.touched.available_quantity && Boolean(formik.errors.available_quantity)}
                                     helperText={formik.touched.available_quantity && formik.errors.available_quantity}
-                                />
-                            </Grid>
-                            <Grid item xs={12}>
-                                <TextField
-                                    fullWidth
-                                    label="Batch Number"
-                                    name="batch_number"
-                                    onChange={formik.handleChange}
-                                    value={formik.values.batch_number}
-                                    error={formik.touched.batch_number && Boolean(formik.errors.batch_number)}
-                                    helperText={formik.touched.batch_number && formik.errors.batch_number}
                                 />
                             </Grid>
                             <Grid item xs={12}>

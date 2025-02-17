@@ -22,6 +22,7 @@ function AnimalData() {
   
   const [animalData, setAnimalData] = useState({
     food: null,
+    required_food_amount: null,
     medication: null,
     fed: false,
     medicated: false,
@@ -33,8 +34,10 @@ function AnimalData() {
     http.get(`https://8zjp8vpeub.execute-api.us-east-1.amazonaws.com/dev/animal/${id}`)
       .then((res) => {
         const responseData = res.data;
+        console.log(responseData)
         setAnimalData({
           food: responseData.food,
+          required_food_amount: responseData.required_food_amount,
           medication: responseData.medication,
           fed: false,
           medicated: false,
