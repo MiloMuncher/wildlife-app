@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import http from "../../../http";
 import Plot from "react-plotly.js";
-import { MenuItem, Select, FormControl, InputLabel } from "@mui/material";
+import { MenuItem, Select, FormControl } from "@mui/material";
 
 const LocationDistributionMap = ({ selectedYears }) => {
   const [animalList, setAnimalList] = useState([]);
   const [townCoordinates, setTownCoordinates] = useState({});
-  const [view, setView] = useState("map"); // "map" or "bar"
+  const [view, setView] = useState("map");
 
   // Fetch animal data
   const getAnimals = () => {
@@ -42,10 +42,8 @@ const LocationDistributionMap = ({ selectedYears }) => {
   const locationCount = filteredAnimals.reduce((acc, animal) => {
     const year = animal.date_of_rescue?.split("-")[0];
     const location = animal.location_found;
-
-    const key = `${year} - ${location}`; // Group by year and location
+    const key = `${year} - ${location}`;
     acc[key] = (acc[key] || 0) + 1;
-
     return acc;
   }, {});
 
@@ -71,7 +69,7 @@ const LocationDistributionMap = ({ selectedYears }) => {
     return {
       x: Object.keys(locationCount)
         .filter((key) => key.startsWith(`${year} -`))
-        .map((key) => key.split(" - ")[1]), // Extract location from 'year - location'
+        .map((key) => key.split(" - ")[1]),
       y: Object.keys(locationCount)
         .filter((key) => key.startsWith(`${year} -`))
         .map((key) => locationCount[key]),
@@ -79,15 +77,14 @@ const LocationDistributionMap = ({ selectedYears }) => {
     };
   });
 
-  // Create a color scale based on the year
-  const colors = [
-    "#FF6347",
-    "#4682B4",
-    "#32CD32",
-    "#FFD700",
-    "#8A2BE2",
-    "#FF1493",
-  ];
+  // Color mapping for years
+  const yearColors = {
+    "2021": "purple",
+    "2022": "orange",
+    "2023": "green",
+    "2024": "blue",
+    "2025": "red",
+  };
 
   return (
     <div>
@@ -96,9 +93,9 @@ const LocationDistributionMap = ({ selectedYears }) => {
           fontFamily: "Montserrat",
           display: "flex",
           alignItems: "center",
-          justifyContent: "center", // Centers both the text and the dropdown
-          textAlign: "center", // Ensures text is centered
-          gap: "8px", // Adds space between the elements
+          justifyContent: "center",
+          textAlign: "center",
+          gap: "8px",
         }}
       >
         Location Distribution
@@ -115,38 +112,33 @@ const LocationDistributionMap = ({ selectedYears }) => {
         for {selectedYears.join(", ")}
       </h2>
 
-      {/* Dropdown for view selection */}
       {view === "map" ? (
-        // Map View
         <Plot
-          data={[
-            {
-              type: "scattermapbox",
-              mode: "markers",
-              lat: mapData.map((d) => d.latitude),
-              lon: mapData.map((d) => d.longitude),
-              text: mapData.map(
-                (d) => `${d.year} - ${d.location}: ${d.count} animal(s)`
-              ),
-              marker: {
-                size: mapData.map((d) => d.count * 6), // Adjust size based on count
-                color: "red",
-              },
+        data={[
+          {
+            type: "scattermap",
+            mode: "markers",
+            lat: mapData.map((d) => d.latitude),
+            lon: mapData.map((d) => d.longitude),
+            text: mapData.map((d) => `${d.location}: ${d.count} animal(s)`),
+            marker: {
+              size: mapData.map((d) => d.count * 6), // Adjust size based on count
+              color: "red",
             },
-          ]}
-          layout={{
-            mapbox: {
-              style: "carto-positron",
-              center: { lat: 1.3521, lon: 103.8198 }, // Center on Singapore
-              zoom: 10.8,
-            },
-            margin: { t: 0, b: 0, l: 0, r: 0 },
-            width: 900,
-            height: 600,
-          }}
-        />
+          },
+        ]}
+        layout={{
+          map: {
+            style: "carto-positron",
+            center: { lat: 1.3521, lon: 103.8198 }, // Center on Singapore
+            zoom: 10.8,
+          },
+          margin: { t: 0, b: 0, l: 0, r: 0 },
+          width: 1000,
+          height: 600,
+        }}
+      />
       ) : (
-        // Bar Graph View
         <Plot
           data={groupedBarData.map((data, index) => ({
             type: "bar",
@@ -154,9 +146,8 @@ const LocationDistributionMap = ({ selectedYears }) => {
             y: data.y,
             name: data.name,
             marker: {
-              color: colors[index % colors.length], // Color each year's bars differently
+              color: yearColors[data.name] || "#888888",
             },
-             // Bar width
           }))}
           layout={{
             title: "Animal Location Distribution",
@@ -168,8 +159,8 @@ const LocationDistributionMap = ({ selectedYears }) => {
             },
             width: 800,
             height: 600,
-            barmode: "group", // Group bars by year-location combination
-            bargroupgap: 0, // Remove the gap between grouped bars
+            barmode: "group",
+            bargroupgap: 0,
           }}
         />
       )}
