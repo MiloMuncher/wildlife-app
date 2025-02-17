@@ -246,7 +246,7 @@ function ProfileRoutes() {
                 <Route path='/editmerchant/:id' element={<EditMerchant />} />
                 <Route path="/uploadtranscripts" element={<UploadTranscripts />} />
                 <Route path="/viewmedications" element={<MedicationView />} />
-                <Route path="/addmedication" element={<AddMedication />} />
+                {/* <Route path="/addmedication" element={<AddMedication />} /> */}
                 <Route path="/viewfood" element={<FoodView />} />
                 <Route path="/addfood" element={<AddFood />} />
 

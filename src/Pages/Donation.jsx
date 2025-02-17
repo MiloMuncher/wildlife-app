@@ -30,7 +30,8 @@ import {
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
+import Footer  from '../Components/Footer.jsx';
+import Navbar from '../Components/Navbar.jsx';
 const stripePromise = loadStripe(
   "pk_test_51Qrdhu2N2ApkaYzFWgke5qVVDsFaUkSywPRo1pdV8dcgbQ94HzPmVz9JjWMSzcANlTPVWqZwknTSI67RFi43pXK700EkYL6JuM"
 );
@@ -162,7 +163,8 @@ const CheckoutForm = () => {
 
   return (
     
-    <Container maxWidth="xl">
+    <Container maxWidth="x2">
+      <Navbar />
       <ToastContainer /> {/* Add this line to render toast notifications */}
       <Box
         style={{ backgroundSize: "cover", borderRadius: 15 }}
@@ -176,17 +178,18 @@ const CheckoutForm = () => {
             fontWeight: "bold",
             paddingTop: 100,
             fontSize: "60px",
+            marginLeft: '100px'
           }}
         >
           Donate To Wildlife Rehab
         </Typography>
-        <Typography variant="h6" style={{ textAlign: "left", paddingTop: 20 }}>
+        <Typography variant="h6" style={{ textAlign: "left", paddingTop: 20, marginLeft: '100px' }}>
           Together, we can protect vulnerable wildlife,
         </Typography>
-        <Typography variant="h6" style={{ textAlign: "left" }}>
+        <Typography variant="h6" style={{ textAlign: "left", marginLeft: '100px' }}>
           conserve vital habitats, and build a future where
         </Typography>
-        <Typography variant="h6" style={{ textAlign: "left" }}>
+        <Typography variant="h6" style={{ textAlign: "left", marginLeft: '100px'}}>
           people live in harmony with nature.
         </Typography>
 
@@ -496,6 +499,7 @@ const CheckoutForm = () => {
           )}
         </DialogContent>
       </Dialog>
+      <Footer />
     </Container>
   );
 };
