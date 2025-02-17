@@ -344,11 +344,13 @@ function EditAnimal() {
                     formik.touched.age_class && formik.errors.age_class
                   }
                 >
-                  {["Infant", "Juvenile", "Subadult", "Adult", "Elderly"].map((option) => (
-                    <MenuItem key={option} value={option}>
-                      {option.charAt(0).toUpperCase() + option.slice(1)}
-                    </MenuItem>
-                  ))}
+                  {["Infant", "Juvenile", "Subadult", "Adult", "Elderly"].map(
+                    (option) => (
+                      <MenuItem key={option} value={option}>
+                        {option.charAt(0).toUpperCase() + option.slice(1)}
+                      </MenuItem>
+                    )
+                  )}
                 </TextField>
               </Grid>
 

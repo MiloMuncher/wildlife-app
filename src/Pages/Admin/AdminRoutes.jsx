@@ -27,7 +27,6 @@ import SupplyDetails from './QRCodePages/SupplyDetails';
 import AddAnimal from './AddAnimal';
 import ViewAnimals from './ViewAnimals';
 import EditAnimal from './EditAnimal';
-import AddMedication from './AddMedication';
 import AnimalProfile from './AnimalProfile';
 
 // Icons
@@ -244,7 +243,6 @@ function ProfileRoutes() {
                 <Route path="/viewanimals" element={<ViewAnimals />} />
                 <Route path="/addanimal" element={<AddAnimal />} />
                 <Route path="/viewanimals/edit/:id" element={<EditAnimal />} />
-                <Route path="/animal-qr/:id" element={<AnimalQR />} />
                 <Route path="/viewanimals/profile/:id" element={<AnimalProfile />} />
 
               </>

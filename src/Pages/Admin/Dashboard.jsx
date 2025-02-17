@@ -181,7 +181,7 @@ function Dashboard() {
           }}
         >
           <Card sx={{ height: "30%", overflowY: "scroll" }} style={itemcolor}>
-            <CardContent align="center"  style={{ maxHeight: "30px" }}>
+            <CardContent align="center" style={{ maxHeight: "30px" }}>
               <Typography fontSize={{ md: 16, xl: 18 }} fontWeight="800">
                 Total Animals Rescued Across Locations
               </Typography>
