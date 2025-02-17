@@ -127,7 +127,6 @@ function EditAnimal() {
     }
   };
 
-  
   const getTranscripts = () => {
     http
       .get(
