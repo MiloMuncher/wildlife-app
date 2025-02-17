@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Container,
   Box,
@@ -30,8 +30,10 @@ import {
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Footer  from '../Components/Footer.jsx';
-import Navbar from '../Components/Navbar.jsx';
+import Footer from "../Components/Footer.jsx";
+import Navbar from "../Components/Navbar.jsx";
+import { fetchAuthSession } from "aws-amplify/auth";
+
 const stripePromise = loadStripe(
   "pk_test_51Qrdhu2N2ApkaYzFWgke5qVVDsFaUkSywPRo1pdV8dcgbQ94HzPmVz9JjWMSzcANlTPVWqZwknTSI67RFi43pXK700EkYL6JuM"
 );
@@ -145,16 +147,16 @@ const CheckoutForm = () => {
     setOpenModal(false);
     formik.resetForm();
     if (donationStatus === "success") {
-        toast.success("Thank you for your donation! 🎉", {
-            position: "bottom-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            theme: "colored",
-          });
-        navigate("/");
+      toast.success("Thank you for your donation! 🎉", {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        theme: "colored",
+      });
+      navigate("/");
     } else if (donationStatus === "failure") {
       // Optional: Redirect after failure
       window.location.reload();
@@ -162,7 +164,6 @@ const CheckoutForm = () => {
   };
 
   return (
-    
     <Container maxWidth="x2">
       <Navbar />
       <ToastContainer /> {/* Add this line to render toast notifications */}
@@ -178,18 +179,27 @@ const CheckoutForm = () => {
             fontWeight: "bold",
             paddingTop: 100,
             fontSize: "60px",
-            marginLeft: '100px'
+            marginLeft: "100px",
           }}
         >
           Donate To Wildlife Rehab
         </Typography>
-        <Typography variant="h6" style={{ textAlign: "left", paddingTop: 20, marginLeft: '100px' }}>
+        <Typography
+          variant="h6"
+          style={{ textAlign: "left", paddingTop: 20, marginLeft: "100px" }}
+        >
           Together, we can protect vulnerable wildlife,
         </Typography>
-        <Typography variant="h6" style={{ textAlign: "left", marginLeft: '100px' }}>
+        <Typography
+          variant="h6"
+          style={{ textAlign: "left", marginLeft: "100px" }}
+        >
           conserve vital habitats, and build a future where
         </Typography>
-        <Typography variant="h6" style={{ textAlign: "left", marginLeft: '100px'}}>
+        <Typography
+          variant="h6"
+          style={{ textAlign: "left", marginLeft: "100px" }}
+        >
           people live in harmony with nature.
         </Typography>
 
@@ -379,7 +389,7 @@ const CheckoutForm = () => {
                                     color: "#424770",
                                     "::placeholder": {
                                       color: "#aab7c4",
-                                    } 
+                                    },
                                   },
                                   invalid: {
                                     color: "#9e2146",
@@ -409,7 +419,6 @@ const CheckoutForm = () => {
         </Box>
       </Box>
       {/* Modal for Loading/Success/Failure */}
-
       <Dialog
         open={openModal}
         onClose={handleCloseModal}
@@ -470,7 +479,9 @@ const CheckoutForm = () => {
               <img src="public\fail.png" alt="" style={{ width: "20%" }} />
               <Typography variant="h6" color="red" style={{ paddingTop: 40 }}>
                 <strong>Donation Failed</strong> <br />
-                Something went wrong.<br />Please try again later.
+                Something went wrong.
+                <br />
+                Please try again later.
               </Typography>
               <DialogActions style={{ paddingTop: 50 }}>
                 <Button
@@ -504,10 +515,38 @@ const CheckoutForm = () => {
   );
 };
 
-const ContactUs = () => (
-  <Elements stripe={stripePromise}>
-    <CheckoutForm />
-  </Elements>
-);
+function ContactUs() {
+  const [email, setEmail] = useState("");
+  const [userGroup, setUserGroup] = useState(null);
+  const [modal, setModal] = useState(false);
+
+  const [load, setLoad] = useState(true);
+
+  const checkAuthSession = async () => {
+    try {
+      const { tokens } = await fetchAuthSession();
+      const groups = tokens.accessToken.payload["cognito:groups"];
+      setUserGroup(groups ? groups[0] : null);
+      const userEmail = tokens.idToken.payload["email"];
+      setEmail(userEmail);
+    } catch (error) {
+      console.error("Error fetching the session or user data", error);
+    }
+  };
+
+  useEffect(() => {
+    checkAuthSession();
+    console.log(email);
+  }, []);
+
+
+  return (
+    <div>
+      <Elements stripe={stripePromise}>
+        <CheckoutForm />
+      </Elements>
+    </div>
+  );
+}
 
 export default ContactUs;

@@ -151,17 +151,26 @@ function EditAnimal() {
     http
       .get(`https://kvhdoqjcua.execute-api.us-east-1.amazonaws.com/dev/food`)
       .then((res) => {
-        setFoodList(res.data);
+        console.log("food", res.data);
+        const filteredFood = res.data.filter(
+          (item) => item.batch_number !== "INTAKE"
+        );
+        setFoodList(filteredFood);
+        console.log(filteredFood);
       });
   };
+
   const getMedication = () => {
     http
       .get(
         `https://z40lajab6h.execute-api.us-east-1.amazonaws.com/dev/medications`
       )
       .then((res) => {
-        setMedicationList(res.data);
-        console.log(res.data.dosage);
+        console.log("meds", res.data);
+        const filteredMedications = res.data.filter(
+          (item) => item.batch_number !== "INTAKE"
+        );
+        setMedicationList(filteredMedications);
       });
   };
 
@@ -256,7 +265,6 @@ function EditAnimal() {
         .required("Case Status is required"),
     }),
     onSubmit: (data) => {
-      console.log(data.food_ID);
       if (data.transcript_ID == "To be assigned") {
         data.transcript_ID = null;
       }
@@ -273,7 +281,6 @@ function EditAnimal() {
       data.profile_pic = base64;
 
       const { weight_kg, weight_g, food_kg, food_g, ...filteredData } = data;
-      console.log(filteredData);
 
       http
         .put(

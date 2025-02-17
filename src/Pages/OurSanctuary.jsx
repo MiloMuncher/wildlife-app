@@ -1,30 +1,22 @@
 import React, { useRef } from 'react';
-import { Container, Box, Grid, Typography } from '@mui/material';
-import LocationOnIcon from '@mui/icons-material/LocationOn';
-import AccessTimeIcon from '@mui/icons-material/AccessTime';
-import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
-import { motion, useInView, useScroll, useTransform  } from 'framer-motion';
-import Footer  from '../Components/Footer.jsx';
+import { Container, Box, Typography, Grid, Button, Card, CardContent, Divider } from '@mui/material';
+import { motion, useInView } from 'framer-motion';
+import { Link } from 'react-router-dom';
+import Footer from '../Components/Footer.jsx';
 import Navbar from '../Components/Navbar.jsx';
+import Map from '../Components/Map.jsx';  // New Component for Interactive Map
 
 function OurSanctuary() {
-    const infoRef = useRef(null);
     const contentRef = useRef(null);
-    const valuesRef = useRef(null);
-    const heroRef = useRef(null);
-
-    const infoInView = useInView(infoRef, { triggerOnce: true, margin: "-100px" });
     const contentInView = useInView(contentRef, { triggerOnce: true, margin: "-100px" });
-    const valuesInView = useInView(valuesRef, { triggerOnce: true, margin: "-100px" });
-    const heroView = useInView(heroRef, { margin: "-50px 0px 0px 0px" }); // Detect when it's in view
-
 
     return (
-        <Container maxWidth="x2">
+        <Box sx={{ padding: '0' }}>
             <Navbar />
-            <Box
-                sx={{
-                    backgroundImage: "url('/wallpaperflare.com_wallpaper.jpg')",
+            <Container maxWidth="x2">
+                {/* Hero Section */}
+                <Box sx={{
+                    backgroundImage: "url('/bg2.jpg')",
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
                     height: 500,
@@ -33,138 +25,45 @@ function OurSanctuary() {
                     alignItems: 'center',
                     justifyContent: 'center',
                     color: 'white',
-                    textAlign: 'center',
-                }}
-                ref={heroRef}
-            >
-                <motion.div
-                    initial={{ opacity: 0, y: 50 }}
-                    animate={heroView ? { opacity: 1, y: 0 } : { opacity: 0, y: -50 }}
-                    transition={{ duration: 0.8 }}
-                    style={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        textAlign: "center",
-                        width: "100%",
-                    }}
-                >
-                    <Typography variant="h2" fontWeight="bold" sx={{ textShadow: '2px 2px 5px rgba(0,0,0,0.5)' }}>
-                        Our Sanctuary
-                    </Typography>
-                </motion.div>
-            </Box>
+                    boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.3)",
+                    position: 'relative',
+                    width: '100%',
+                }}>
+                    <motion.div initial={{ opacity: 0, y: -50 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 1 }}
+                        style={{
+                            display: "flex", alignItems: "center", justifyContent: "center", textAlign: "center", width: "100%",
+                        }}>
+                        <Typography variant="h3" fontWeight="bold" color="white" sx={{ maxWidth: "80%" }}>
+                            Our Sanctuary
+                        </Typography>
+                    </motion.div>
+                </Box>
 
-            <div ref={infoRef}>
-                <motion.div
-                    initial={{ opacity: 0, y: 50 }}
-                    animate={infoInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
-                    transition={{ duration: 0.8 }}
-                >
-                    <Grid container spacing={4} justifyContent="center" mt={14}>
-                        {[
-                            { icon: <LocationOnIcon fontSize="large" color="primary" />, title: "Where We Are Located", text: "573 Community Street, Isiolo, Kenya" },
-                            { icon: <AccessTimeIcon fontSize="large" color="primary" />, title: "Operation Hours", text: "Open 24/7 for animal queries" },
-                            { icon: <HelpOutlineIcon fontSize="large" color="primary" />, title: "FAQs", text: "Have questions? We have answers!" }
-                        ].map((item, index) => (
-                            <Grid item xs={12} md={4} key={index}>
-                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                                    {item.icon}
-                                    <Box>
-                                        <Typography variant="h5" fontWeight="bold">{item.title}</Typography>
-                                        <Typography variant="h6">{item.text}</Typography>
-                                    </Box>
-                                </Box>
+                {/* Our Team Section */}
+                <Box sx={{ my: 6, textAlign: "center", color: "black" }}>
+                    <Typography variant="h4" fontWeight="bold">Meet Our Residents</Typography>
+                    <Grid container spacing={4} justifyContent="center" sx={{ mt: 3 }}>
+                        {[{ name: "Maryam", role: "Founder", img: "team1.jpg" }, { name: "Chong Xie Hong", role: "Veterinarian", img: "team2.jpg" }, { name: "Rhaylene", role: "Operations Manager", img: "team2.jpg" }].map((item, index) => (
+                            <Grid item xs={12} sm={6} md={4} key={index}>
+                                <Card sx={{ boxShadow: 5, borderRadius: 3 }}>
+                                    <img src={item.img} alt={item.name} style={{ width: "100%", height: "200px", objectFit: "cover" }} />
+                                    <CardContent sx={{ textAlign: "center" }}>
+                                        <Typography variant="h5" fontWeight="bold">{item.name}</Typography>
+                                        <Typography variant="body1" color="textSecondary">{item.role}</Typography>
+                                    </CardContent>
+                                </Card>
                             </Grid>
                         ))}
                     </Grid>
-                </motion.div>
-            </div>
+                </Box>
 
-            <div ref={contentRef}>
-                <motion.div
-                    initial={{ opacity: 0, y: 50 }}
-                    animate={contentInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
-                    transition={{ duration: 0.8 }}
-                >
-                    <Box sx={{ mt: 14, px: { xs: 2, md: 6 } }}>
-                        <Grid container spacing={10} alignItems="center">
-                            <Grid item xs={12} md={6}>
-                                <Box
-                                    component="img"
-                                    src="/autumn-wolf-7680x4320.jpg"
-                                    alt="White Wolf"
-                                    sx={{
-                                        width: '100%',
-                                        height: 'auto',
-                                        maxHeight: 450,
-                                        borderRadius: 3,
-                                        objectFit: 'cover',
-                                    }}
-                                />
-                            </Grid>
-                            <Grid item xs={12} md={6}>
-                                <Box sx={{ textAlign: 'left', maxWidth: 500 }}>
-                                    <Typography variant="h5" fontWeight="bold">
-                                        <span style={{ color: 'green', fontStyle: 'italic' }}>About</span>{' '}
-                                        <span style={{ color: 'black' }}>Isiolo Wildlife Rehab Centre</span>
-                                    </Typography>
-                                    <Typography variant="body1" mt={2} color="text.secondary">
-                                        Our core mission here at Isiolo Wildlife Rehab Centre is
-                                        to provide compassionate care and rehabilitation for injured,
-                                        sick, and orphaned wildlife, ensuring their safe return to their
-                                        natural habitats while promoting conservation and environmental education.
-                                    </Typography>
-                                </Box>
-                            </Grid>
-                        </Grid>
-                    </Box>
-                </motion.div>
-            </div>
-
-            <div ref={valuesRef}>
-                <motion.div
-                    initial={{ opacity: 0, y: 50 }}
-                    animate={valuesInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
-                    transition={{ duration: 0.8 }}
-                >
-                    <Box sx={{ mt: 14, px: { xs: 2, md: 6 } }}>
-                        <Grid container alignItems="center">
-                            <Grid item xs={12} md={6}>
-                                <Box sx={{ textAlign: { xs: 'center', md: 'right' }, maxWidth: 800 }}>
-                                    <Typography variant="h4" fontWeight="bold" color="primary">
-                                        <span style={{ color: 'black' }}>Our</span>{' '}
-                                        <span style={{ color: 'green', fontStyle: 'italic' }}>Values</span>
-                                        
-                                    </Typography>
-                                    <Typography variant="body1" mt={2} color="text.secondary">
-                                        We believe in the ethical treatment of animals, promoting environmental stewardship, and
-                                        fostering a community of care and respect for all living beings. Our center thrives on
-                                        compassion, dedication, and the shared goal of protecting wildlife and their habitats.
-                                    </Typography>
-                                </Box>
-                            </Grid>
-                            <Grid item xs={12} md={6}>
-                                <Box
-                                    component="img"
-                                    src="/values.jpg"
-                                    alt="White Wolf"
-                                    sx={{
-                                        width: '100%',
-                                        height: 'auto',
-                                        maxHeight: 450,
-                                        borderRadius: 3,
-                                        objectFit: 'cover',
-                                    }}
-                                />
-                            </Grid>
-
-                        </Grid>
-                    </Box>
-                </motion.div>
-            </div>
-            <Footer />
-        </Container>
+                
+                {/* Footer */}
+                <Footer />
+            </Container>
+        </Box>
     );
 }
 
