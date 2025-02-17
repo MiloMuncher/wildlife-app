@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Container, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Divider, Grid, Card, Collapse } from '@mui/material'
+import { Container, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Divider, Grid, Card, Collapse, Box, Typography } from '@mui/material'
 import { Link, Routes, Route } from 'react-router-dom'
 
 // Pages
@@ -77,7 +77,21 @@ function ProfileRoutes() {
     }
   };
   return (
+
     <Container maxWidth='xl'>
+      <Box sx={{ p: 2, textAlign: 'center' }}>
+        <img
+          src="/logo.png"
+          alt="Home"
+          style={{
+            marginRight: '10px',
+            transition: 'transform 0.3s ease',
+          }}
+        />
+        <Typography color="textSecondary" fontWeight={'bold'}>
+          Isiolo Wildlife Rehab Centre
+        </Typography>
+      </Box>
       <Grid container spacing={2} marginTop={10}>
         <Grid item xs={12} sm={3}>
           <Card>
