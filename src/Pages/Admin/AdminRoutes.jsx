@@ -22,13 +22,13 @@ import ShiftEdit from './ShiftEdit'
 import MedicationView from './MedicationView';
 import AddFood from './AddFood';
 import AnimalQR from './QRCodePages/AnimalQR';
-// import SupplyQR from './QRCodePages/SupplyQR';
+import SupplyQR from './QRCodePages/SupplyQR';
 import SupplyDetails from './QRCodePages/SupplyDetails';
 import AddAnimal from './AddAnimal';
 import ViewAnimals from './ViewAnimals';
 import EditAnimal from './EditAnimal';
 import AnimalProfile from './AnimalProfile';
-// import AddMedication from './AddMedication';
+import AddMedication from './AddMedication';
 
 // Icons
 import CreateIcon from '@mui/icons-material/Create';
@@ -204,6 +204,18 @@ function ProfileRoutes() {
                   </Collapse>
                 </>
               )}
+
+              {userGroup === 'Suppliers' && (
+                <>
+                  <ListItemButton sx={{ padding: '17px', height: 'auto' }} LinkComponent={Link} to="/admin/viewmedications">
+                    <ListItemText primary="View Medication" />
+                  </ListItemButton>
+                  <ListItemButton sx={{ padding: '17px', height: 'auto' }} LinkComponent={Link} to="/admin/viewfood">
+                    <ListItemText primary="View Food" />
+                  </ListItemButton>
+                  <Divider />
+                </>
+              )}
               <ListItem>
                 <ListItemButton component={Link} to="/" style={{ paddingLeft: '20px' }} onClick={handleLogout}>
                   <Logout sx={{ marginRight: '10px' }} />
@@ -240,7 +252,7 @@ function ProfileRoutes() {
 
 
                 <Route path="/supplydetails/:id" element={<SupplyDetails />} />
-                <Route path="/supply-qr/:id" element={<SupplyQR /> } />
+                <Route path="/supply-qr/:id" element={<SupplyQR />} />
                 <Route path="/viewanimals" element={<ViewAnimals />} />
                 <Route path="/addanimal" element={<AddAnimal />} />
                 <Route path="/viewanimals/edit/:id" element={<EditAnimal />} />
@@ -249,6 +261,14 @@ function ProfileRoutes() {
               </>
             )}
             {userGroup === 'Vets' && <Route path="/uploadtranscripts" element={<UploadTranscripts />} />}
+
+            {userGroup === 'Suppliers' && (
+              <>
+                <Route path="/viewmedications" element={<MedicationView />} />
+                <Route path="/viewfood" element={<FoodView />} />
+                <Route path="/supply-qr/:id" element={<SupplyQR />} />
+              </>
+            )}
           </Routes>
         </Grid>
       </Grid>
