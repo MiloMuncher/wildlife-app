@@ -28,6 +28,7 @@ import AddAnimal from './AddAnimal';
 import ViewAnimals from './ViewAnimals';
 import EditAnimal from './EditAnimal';
 import AddMedication from './AddMedication';
+import AnimalProfile from './AnimalProfile';
 
 // Icons
 import CreateIcon from '@mui/icons-material/Create';
@@ -244,6 +245,7 @@ function ProfileRoutes() {
                 <Route path="/addanimal" element={<AddAnimal />} />
                 <Route path="/viewanimals/edit/:id" element={<EditAnimal />} />
                 <Route path="/animal-qr/:id" element={<AnimalQR />} />
+                <Route path="/viewanimals/profile/:id" element={<AnimalProfile />} />
 
               </>
             )}
