@@ -1,0 +1,98 @@
+{
+    "Ang Mo Kio": {
+        "latitude": 1.369842,
+        "longitude": 103.8466086
+    },
+    "Bedok": {
+        "latitude": 1.3256702,
+        "longitude": 103.9314714
+    },
+    "Bukit Batok": {
+        "latitude": 1.3482831,
+        "longitude": 103.7490191
+    },
+    "Bukit Panjang": {
+        "latitude": 1.3791486,
+        "longitude": 103.76141301431002
+    },
+    "Bukit Timah": {
+        "latitude": 1.3546901,
+        "longitude": 103.7763724
+    },
+    "Clementi": {
+        "latitude": 1.3140256,
+        "longitude": 103.7624098
+    },
+    "Dover": {
+        "latitude": 1.3114155,
+        "longitude": 103.7786108
+    },
+    "Hougang": {
+        "latitude": 1.3733601,
+        "longitude": 103.8860907
+    },
+    "Jurong East": {
+        "latitude": 1.333108,
+        "longitude": 103.7422939
+    },
+    "Jurong West": {
+        "latitude": 1.3434392,
+        "longitude": 103.7058663
+    },
+    "Kallang": {
+        "latitude": 1.310759,
+        "longitude": 103.866262
+    },
+    "Marina Bay": {
+        "latitude": 1.277658,
+        "longitude": 103.8536866
+    },
+    "Marine Parade": {
+        "latitude": 1.3026889,
+        "longitude": 103.9073952
+    },
+    "Novena": {
+        "latitude": 1.3231845,
+        "longitude": 103.8370863
+    },
+    "Orchard": {
+        "latitude": 1.30312075,
+        "longitude": 103.8313759279562
+    },
+    "Pasir Ris": {
+        "latitude": 1.3730307,
+        "longitude": 103.949255
+    },
+    "Punggol": {
+        "latitude": 1.4054248,
+        "longitude": 103.90179674458341
+    },
+    "Queenstown": {
+        "latitude": 1.2994371,
+        "longitude": 103.8000884
+    },
+    "Sengkang": {
+        "latitude": 1.3919236499999998,
+        "longitude": 103.89549093760694
+    },
+    "Serangoon": {
+        "latitude": 1.3497610500000001,
+        "longitude": 103.87368414801405
+    },
+    "Tampines": {
+        "latitude": 1.3546528,
+        "longitude": 103.9435712
+    },
+    "Toa Payoh": {
+        "latitude": 1.3353906,
+        "longitude": 103.8497414
+    },
+    "Woodlands": {
+        "latitude": 1.436897,
+        "longitude": 103.786216
+    },
+    "Yishun": {
+        "latitude": 1.4293839,
+        "longitude": 103.8350282
+    }
+}

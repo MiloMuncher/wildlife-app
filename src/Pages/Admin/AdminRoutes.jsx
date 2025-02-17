@@ -21,11 +21,13 @@ import PayrollView from './PayrollView'
 import ShiftEdit from './ShiftEdit'
 import MedicationView from './MedicationView';
 import AddFood from './AddFood';
-import QR from './QRCodePages/QR';
+import AnimalQR from './QRCodePages/AnimalQR';
+import SupplyQR from './QRCodePages/SupplyQR';
 import SupplyDetails from './QRCodePages/SupplyDetails';
 import AddAnimal from './AddAnimal';
 import ViewAnimals from './ViewAnimals';
 import EditAnimal from './EditAnimal';
+import AddMedication from './AddMedication';
 
 // Icons
 import CreateIcon from '@mui/icons-material/Create';
@@ -231,14 +233,17 @@ function ProfileRoutes() {
                 <Route path='/editmerchant/:id' element={<EditMerchant />} />
                 <Route path="/uploadtranscripts" element={<UploadTranscripts />} />
                 <Route path="/viewmedications" element={<MedicationView />} />
+                <Route path="/addmedication" element={<AddMedication />} />
                 <Route path="/viewfood" element={<FoodView />} />
                 <Route path="/addfood" element={<AddFood />} />
 
-                <Route path="/qr/:id" element={<QR />} />
+
                 <Route path="/supplydetails/:id" element={<SupplyDetails />} />
+                <Route path="/supply-qr/:id" element={<SupplyQR /> } />
                 <Route path="/viewanimals" element={<ViewAnimals />} />
                 <Route path="/addanimal" element={<AddAnimal />} />
                 <Route path="/viewanimals/edit/:id" element={<EditAnimal />} />
+                <Route path="/animal-qr/:id" element={<AnimalQR />} />
 
               </>
             )}
