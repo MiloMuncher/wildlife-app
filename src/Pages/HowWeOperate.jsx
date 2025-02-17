@@ -1,29 +1,22 @@
 import React, { useRef } from 'react';
-import { Container, Box, Typography, Grid, Button, Card, CardContent, Divider, collapseClasses } from '@mui/material';
+import { Container, Box, Typography, Grid, Button, Card, CardContent, Divider } from '@mui/material';
 import { motion, useInView } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import Slider from 'react-slick';
-import 'slick-carousel/slick/slick.css';
-import 'slick-carousel/slick/slick-theme.css';
+import Footer from '../Components/Footer.jsx';
+import Navbar from '../Components/Navbar.jsx';
+import Map from '../Components/Map.jsx';  // New Component for Interactive Map
 
 function HowWeOperate() {
-    // Testimonials Data
-    const testimonials = [
-        { name: "Sarah M.", text: "This organization changed my life! Seeing wildlife recover is truly rewarding." },
-        { name: "John D.", text: "Amazing work! The team is passionate and committed to every rescue." },
-        { name: "Emily R.", text: "Volunteering here was the best decision I ever made!" },
-    ];
-
-    // Create references for sections
     const contentRef = useRef(null);
     const contentInView = useInView(contentRef, { triggerOnce: true, margin: "-100px" });
 
     return (
-        <Box sx={{ backgroundImage: "url('/Paw Print Background Pattern.jpg')" }}>
-            <Container maxWidth="x2" >
-                {/* Hero Section with Parallax Effect */}
+        <Box sx={{ padding: '0' }}>
+            <Navbar />
+            <Container maxWidth="x2">
+                {/* Hero Section */}
                 <Box sx={{
-                    backgroundImage: "url('/background.jpg')",
+                    backgroundImage: "url('/bg2.jpg')",
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
                     height: 500,
@@ -32,118 +25,125 @@ function HowWeOperate() {
                     alignItems: 'center',
                     justifyContent: 'center',
                     color: 'white',
-                    textAlign: 'center',
                     boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.3)",
                     position: 'relative',
                     width: '100%',
                 }}>
-                    <motion.div
-                        initial={{ opacity: 0, y: -50 }}
+                    <motion.div initial={{ opacity: 0, y: -50 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 1 }}
                         style={{
                             display: "flex", alignItems: "center", justifyContent: "center", textAlign: "center", width: "100%",
-                        }}
-                    >
+                        }}>
                         <Typography variant="h3" fontWeight="bold" color="white" sx={{ maxWidth: "80%" }}>
-                            Rescuing and rehabilitating wildlife for a better tomorrow.
+                            How We Operate
                         </Typography>
                     </motion.div>
-
-                    {/* Decorative Background Stripes */}
-                    <Box />
                 </Box>
 
-                {/* Impact Numbers Section */}
-                <Box sx={{ my: 6, textAlign: "center", py: 5, borderRadius: 5, backgroundColor: '#fff', boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)" }}>
-                    <Typography variant="h4" fontWeight="bold">Our Impact</Typography>
-                    <Grid container spacing={3} justifyContent="center" sx={{ mt: 3 }}>
-                        {[
-                            { number: "1,500+", label: "Animals Rescued" },
-                            { number: "800+", label: "Rehabilitated & Released" },
-                            { number: "200+", label: "Volunteers Engaged" }
-                        ].map((item, index) => (
-                            <Grid item xs={12} sm={4} key={index}>
-                                <motion.div whileHover={{ scale: 1.1 }}>
-                                    <Typography variant="h3" fontWeight="bold" color="primary">{item.number}</Typography>
-                                    <Typography variant="body1">{item.label}</Typography>
-                                </motion.div>
+                {/* Our Team Section */}
+                <Box sx={{ my: 6, textAlign: "center", color: "black" }}>
+                    <Typography variant="h4" fontWeight="bold">Meet Our Team</Typography>
+                    <Grid container spacing={4} justifyContent="center" sx={{ mt: 3 }}>
+                        {[{ name: "Maryam", role: "Founder", img: "team1.jpg" }, { name: "Chong Xie Hong", role: "Veterinarian", img: "team2.jpg" }, { name: "Rhaylene", role: "Operations Manager", img: "team2.jpg" }].map((item, index) => (
+                            <Grid item xs={12} sm={6} md={4} key={index}>
+                                <Card sx={{ boxShadow: 5, borderRadius: 3 }}>
+                                    <img src={item.img} alt={item.name} style={{ width: "100%", height: "200px", objectFit: "cover" }} />
+                                    <CardContent sx={{ textAlign: "center" }}>
+                                        <Typography variant="h5" fontWeight="bold">{item.name}</Typography>
+                                        <Typography variant="body1" color="textSecondary">{item.role}</Typography>
+                                    </CardContent>
+                                </Card>
                             </Grid>
                         ))}
                     </Grid>
                 </Box>
-                <Divider sx={{ my: 10 }} />
 
-                {/* How We Help Section */}
-                <Container sx={{ mt: 5, textAlign: "center" }} ref={contentRef}>
-                    <motion.div
-                        initial={{ opacity: 0, y: 50 }}
-                        animate={contentInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
-                        transition={{ duration: 0.8 }}
-                    >
-                        <Typography variant="h4" fontWeight="bold" gutterBottom>
-                            How We Help
-                        </Typography>
-                        <Typography variant="body1" color="textSecondary" paragraph mb={5}>
-                            Our team is dedicated to rescuing, rehabilitating, and releasing wildlife back into their natural habitats.
-                        </Typography>
-
-                        {/* Grid for How We Help Cards */}
-                        <Grid container spacing={4} justifyContent="center">
-                            {[
-                                { title: "Rescue", text: "Providing emergency response for injured and orphaned wildlife.", img: "rescue.jpg" },
-                                { title: "Rehabilitate", text: "Caring for wildlife with expert medical attention and nurturing.", img: "rehabilitation.jpg" },
-                                { title: "Release", text: "Returning animals to their natural environment safely.", img: "release.jpg" }
-                            ].map((item, index) => (
-                                <Grid item xs={12} sm={6} md={4} key={index}>
-                                    <motion.div whileHover={{ scale: 1.05 }}>
-                                        <Card sx={{ boxShadow: 5, borderRadius: 3, height: 320 }}>
-                                            <img
-                                                src={item.img}
-                                                alt={item.title}
-                                                style={{ width: "100%", height: "200px", objectFit: "cover", borderTopLeftRadius: "12px", borderTopRightRadius: "12px" }}
-                                            />
-                                            <CardContent sx={{ p: 3 }}>
-                                                <Typography variant="h5" fontWeight="bold">{item.title}</Typography>
-                                                <Typography variant="body1" color="textSecondary">{item.text}</Typography>
-                                            </CardContent>
-                                        </Card>
-                                    </motion.div>
-                                </Grid>
-                            ))}
-                        </Grid>
-                    </motion.div>
-                </Container>
-                <Divider sx={{ my: 10 }} />
-
-                {/* Testimonials Section */}
-                <Box sx={{ my: 6, textAlign: "center", color: "black", py: 5, backgroundColor: "#fff", borderRadius:5 }}>
-                    <Typography variant="h4" fontWeight="bold" gutterBottom>What People Say</Typography>
-                    <Slider dots infinite autoplay speed={2000} slidesToShow={1} slidesToScroll={1}>
-                        {testimonials.map((item, index) => (
-                            <div key={index}>
-                                <Typography variant="h6" sx={{ fontStyle: "italic", px: 3 }}>
-                                    "{item.text}"
-                                </Typography>
-                                <Typography variant="body2" sx={{ mt: 2, fontWeight: "bold" }}>- {item.name}</Typography>
-                            </div>
+                {/* Partners and Sponsors */}
+                <Box sx={{ my: 6, textAlign: "center", color: "black" }}>
+                    <Typography variant="h4" fontWeight="bold">Our Partners and Sponsors</Typography>
+                    <Grid container spacing={3} justifyContent="center" sx={{ mt: 3 }}>
+                        {[{ name: "Wildlife Org", img: "partner1.png" }, { name: "Eco Foundation", img: "partner2.png" }].map((item, index) => (
+                            <Grid item xs={12} sm={6} md={4} key={index}>
+                                <img src={item.img} alt={item.name} style={{ maxWidth: "150px", margin: "0 auto", display: "block" }} />
+                            </Grid>
                         ))}
-                    </Slider>
+                    </Grid>
                 </Box>
-                <Divider sx={{ my: 10 }} />
 
-                {/* Call to Action Section */}
-                <Box sx={{ mt: 5, textAlign: "center", backgroundColor: "#f9f9f9", padding: "40px 0", borderRadius: '5' }}>
-                    <Typography variant="h4" fontWeight="bold" gutterBottom>
-                        Get Involved
-                    </Typography>
-                    <Typography variant="body1" color="textSecondary">
-                        Join us in making a difference. Whether you want to volunteer, donate, or spread awareness, your support matters!
-                    </Typography>
-                    <Box sx={{ mt: 3 }}>
-                        <Button variant="outlined" color="secondary" size="large" sx={{ mx: 2 }} component={Link} to="/supportus">Donate</Button>
-                    </Box>
+                {/* Our Process */}
+                <Box sx={{ my: 6, textAlign: "center", color: "black" }}>
+                    <Typography variant="h4" fontWeight="bold">Our Process</Typography>
+                    <Grid container spacing={3} justifyContent="center" sx={{ mt: 3 }}>
+                        {[{ step: "Step 1: Rescue", description: "We provide emergency response." }, { step: "Step 2: Rehabilitate", description: "We offer medical care and recovery." }, { step: "Step 3: Release", description: "Animals are safely returned to their habitat." }].map((item, index) => (
+                            <Grid item xs={12} sm={4} key={index}>
+                                <Card sx={{ boxShadow: 3, p: 3, textAlign: "center" }}>
+                                    <Typography variant="h6" fontWeight="bold">{item.step}</Typography>
+                                    <Typography variant="body2" sx={{ mt: 2 }}>{item.description}</Typography>
+                                </Card>
+                            </Grid>
+                        ))}
+                    </Grid>
                 </Box>
+
+                {/* Impact Stories */}
+                <Box sx={{ my: 6, textAlign: "center", color: "black" }}>
+                    <Typography variant="h4" fontWeight="bold">Impact Stories</Typography>
+                    <Grid container spacing={3} justifyContent="center" sx={{ mt: 3 }}>
+                        {[{ title: "Rescue of a baby owl", story: "This is a success story of an owl saved from a storm." }, { title: "Rehabilitation of a tortoise", story: "A story of recovery after an injury." }].map((item, index) => (
+                            <Grid item xs={12} sm={6} md={4} key={index}>
+                                <Card sx={{ boxShadow: 3, p: 3, textAlign: "center" }}>
+                                    <Typography variant="h6" fontWeight="bold">{item.title}</Typography>
+                                    <Typography variant="body2" sx={{ mt: 2 }}>{item.story}</Typography>
+                                </Card>
+                            </Grid>
+                        ))}
+                    </Grid>
+                </Box>
+
+                {/* Sustainability & Ethical Practices */}
+                <Box sx={{ my: 6, textAlign: "center", color: "black" }}>
+                    <Typography variant="h4" fontWeight="bold">Sustainability & Ethical Practices</Typography>
+                    <Typography variant="body1" paragraph>
+                        We are committed to sustainability by using eco-friendly materials and practices in all of our operations.
+                    </Typography>
+                </Box>
+
+                {/* FAQ Section */}
+                <Box sx={{ my: 6, textAlign: "center", color: "black" }}>
+                    <Typography variant="h4" fontWeight="bold">FAQs</Typography>
+                    <Typography variant="body1" paragraph>
+                        Have questions? We have answers to the most common queries about our operations.
+                    </Typography>
+                    <Grid container spacing={3} justifyContent="center" sx={{ mt: 3 }}>
+                        {[{ question: "How can I volunteer?", answer: "You can sign up through our website." }, { question: "How do I donate?", answer: "We accept donations online." }].map((item, index) => (
+                            <Grid item xs={12} sm={6} md={4} key={index}>
+                                <Card sx={{ boxShadow: 3, p: 3, textAlign: "center" }}>
+                                    <Typography variant="h6" fontWeight="bold">{item.question}</Typography>
+                                    <Typography variant="body2" sx={{ mt: 2 }}>{item.answer}</Typography>
+                                </Card>
+                            </Grid>
+                        ))}
+                    </Grid>
+                </Box>
+
+                {/* Interactive Map */}
+                <Box sx={{ my: 6 }}>
+                    <Typography variant="h4" fontWeight="bold" textAlign="center">Where We Operate</Typography>
+                    <Map /> {/* Add Map Component here */}
+                </Box>
+
+                {/* Educational Resources */}
+                <Box sx={{ my: 6, textAlign: "center" }}>
+                    <Typography variant="h4" fontWeight="bold">Educational Resources</Typography>
+                    <Typography variant="body1" paragraph>
+                        Explore resources about wildlife conservation and animal care.
+                    </Typography>
+                    <Button variant="contained" color="primary" component={Link} to="/resources">Explore Resources</Button>
+                </Box>
+
+                {/* Footer */}
+                <Footer />
             </Container>
         </Box>
     );

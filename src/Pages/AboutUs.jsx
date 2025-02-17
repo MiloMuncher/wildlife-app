@@ -4,6 +4,8 @@ import LocationOnIcon from '@mui/icons-material/LocationOn';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import { motion, useInView, useScroll, useTransform  } from 'framer-motion';
+import Footer  from '../Components/Footer.jsx';
+import Navbar from '../Components/Navbar.jsx';
 
 function AboutUs() {
     const infoRef = useRef(null);
@@ -19,6 +21,7 @@ function AboutUs() {
 
     return (
         <Container maxWidth="x2">
+            <Navbar />
             <Box
                 sx={{
                     backgroundImage: "url('/wallpaperflare.com_wallpaper.jpg')",
@@ -160,6 +163,7 @@ function AboutUs() {
                     </Box>
                 </motion.div>
             </div>
+            <Footer />
         </Container>
     );
 }

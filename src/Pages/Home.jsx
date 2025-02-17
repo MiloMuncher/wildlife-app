@@ -5,6 +5,8 @@ import { Link } from 'react-router-dom';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
+import Navbar from '../Components/Navbar.jsx';
+import Footer from '../Components/Footer.jsx';
 
 function Home() {
     // Testimonials Data
@@ -20,6 +22,7 @@ function Home() {
 
     return (
         <Box sx={{  backgroundImage: "url('/Paw Print Background Pattern.jpg')" }}>
+            <Navbar />
             <Container maxWidth="x2" >
                 {/* Hero Section with Parallax Effect */}
                 <Box sx={{
@@ -49,9 +52,6 @@ function Home() {
                             Rescuing and rehabilitating wildlife for a better tomorrow.
                         </Typography>
                     </motion.div>
-
-                    {/* Decorative Background Stripes */}
-                    <Box />
                 </Box>
 
                 {/* Impact Numbers Section */}
@@ -145,6 +145,7 @@ function Home() {
                     </Box>
                 </Box>
             </Container>
+            <Footer />
         </Box>
     );
 }

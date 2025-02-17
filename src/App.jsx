@@ -10,7 +10,6 @@ import Home from './Pages/Home';
 import AboutUs from './Pages/AboutUs.jsx';
 import Donation from './Pages/Donation.jsx';
 import Login from './Pages/Login'
-import Footer  from './Components/Footer.jsx';
 import HowWeOperate from './Pages/HowWeOperate.jsx';
 
 //Other routes
@@ -44,7 +43,6 @@ function App() {
 
   return (
     <UserContext.Provider value={{ user, setUser }}>
-      <Navbar />
       <ToastContainer />
       
       <Routes>
@@ -71,7 +69,6 @@ function App() {
         }
         <Route path="/admin/*" element={<AdminRoutes />} />
       </Routes>
-      <Footer />
     </UserContext.Provider>
   );
 }
