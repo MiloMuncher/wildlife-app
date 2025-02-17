@@ -14,32 +14,32 @@ import {
 import { Link, Routes, Route } from "react-router-dom";
 
 // Pages
-import UserView from "./UserView";
-import UserEdit from "./UserEdit";
-import AddMerchant from "./AddMerchant";
-import OrdersView from "./OrdersView";
-import OrderItems from "./OrderItems";
-import PostsView from "./PostsView";
-import AddAdminPost from "./AddAdminPost";
-import AdminEditPost from "./AdminEditPost";
-import CustomerServiceTickets from "./CustomerServiceTickets";
-import Dashboard from "./Dashboard";
-import EditMerchant from "./EditMerchant";
-import AddEmployee from "./AddEmployee";
-import FoodView from "./FoodView";
-import ShiftView from "./ShiftView";
-import PayrollView from "./PayrollView";
-import ShiftEdit from "./ShiftEdit";
-import MedicationView from "./MedicationView";
-import AddFood from "./AddFood";
-import AnimalQR from "./QRCodePages/AnimalQR";
-// import SupplyQR from './QRCodePages/SupplyQR';
-import SupplyDetails from "./QRCodePages/SupplyDetails";
-import AddAnimal from "./AddAnimal";
-import ViewAnimals from "./ViewAnimals";
-import EditAnimal from "./EditAnimal";
-import AnimalProfile from "./AnimalProfile";
-// import AddMedication from './AddMedication';
+import UserView from './UserView';
+import UserEdit from './UserEdit';
+import AddMerchant from './AddMerchant';
+import OrdersView from './OrdersView';
+import OrderItems from './OrderItems';
+import PostsView from './PostsView';
+import AddAdminPost from './AddAdminPost';
+import AdminEditPost from './AdminEditPost';
+import CustomerServiceTickets from './CustomerServiceTickets';
+import Dashboard from './Dashboard';
+import EditMerchant from './EditMerchant';
+import AddEmployee from './AddEmployee';
+import FoodView from './FoodView'
+import ShiftView from './ShiftView'
+import PayrollView from './PayrollView'
+import ShiftEdit from './ShiftEdit'
+import MedicationView from './MedicationView';
+import AddFood from './AddFood';
+import AnimalQR from './QRCodePages/AnimalQR';
+import SupplyQR from './QRCodePages/SupplyQR';
+import SupplyDetails from './QRCodePages/SupplyDetails';
+import AddAnimal from './AddAnimal';
+import ViewAnimals from './ViewAnimals';
+import EditAnimal from './EditAnimal';
+import AnimalProfile from './AnimalProfile';
+import AddMedication from './AddMedication';
 
 // Icons
 import CreateIcon from "@mui/icons-material/Create";
@@ -280,6 +280,18 @@ function ProfileRoutes() {
                   </Collapse>
                 </>
               )}
+
+              {userGroup === 'Suppliers' && (
+                <>
+                  <ListItemButton sx={{ padding: '17px', height: 'auto' }} LinkComponent={Link} to="/admin/viewmedications">
+                    <ListItemText primary="View Medication" />
+                  </ListItemButton>
+                  <ListItemButton sx={{ padding: '17px', height: 'auto' }} LinkComponent={Link} to="/admin/viewfood">
+                    <ListItemText primary="View Food" />
+                  </ListItemButton>
+                  <Divider />
+                </>
+              )}
               <ListItem>
                 <ListItemButton
                   component={Link}
@@ -326,7 +338,7 @@ function ProfileRoutes() {
                 <Route path="/addfood" element={<AddFood />} />
 
                 <Route path="/supplydetails/:id" element={<SupplyDetails />} />
-                {/* <Route path="/supply-qr/:id" element={<SupplyQR /> } /> */}
+                <Route path="/supply-qr/:id" element={<SupplyQR />} />
                 <Route path="/viewanimals" element={<ViewAnimals />} />
                 <Route path="/addanimal" element={<AddAnimal />} />
                 <Route path="/viewanimals/edit/:id" element={<EditAnimal />} />
@@ -337,11 +349,14 @@ function ProfileRoutes() {
                 <Route path="/animal-qr/:id" element={<AnimalQR />} />
               </>
             )}
-            {userGroup === "Vets" && (
-              <Route
-                path="/uploadtranscripts"
-                element={<UploadTranscripts />}
-              />
+            {userGroup === 'Vets' && <Route path="/uploadtranscripts" element={<UploadTranscripts />} />}
+
+            {userGroup === 'Suppliers' && (
+              <>
+                <Route path="/viewmedications" element={<MedicationView />} />
+                <Route path="/viewfood" element={<FoodView />} />
+                <Route path="/supply-qr/:id" element={<SupplyQR />} />
+              </>
             )}
           </Routes>
         </Grid>

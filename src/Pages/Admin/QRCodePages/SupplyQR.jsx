@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
 import http from '../../../http.js';
 import {
   Box,
@@ -8,51 +8,51 @@ import {
   Button,
   Grid,
   IconButton,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogContentText,
-  DialogActions,
 } from '@mui/material';
 import { ArrowBack } from '@mui/icons-material';
 import QrCodeWithLogo from 'qrcode-with-logos';
-// import Logo from '../../../../public/logo.png';
-import Logo from './sizedlogo.png'
+import Logo from './sizedlogo.png';
 
-function QR() {
+function SupplyQR() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [food, setFood] = useState(null);
+  const location = useLocation(); // Get current route
+
+  const fromFoodPage = location.state?.fromFoodPage; 
+
+  const [data, setData] = useState(null);
   const [filename, setFilename] = useState('');
   const [isQRGenerated, setQRGenerated] = useState(false);
   const [loading, setLoading] = useState(true);
   const canvasRef = useRef(null);
-  const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    async function getFood() {
+    async function fetchData() {
+      const endpoint = fromFoodPage
+        ? `https://kvhdoqjcua.execute-api.us-east-1.amazonaws.com/dev/food/${id}`
+        : `https://z40lajab6h.execute-api.us-east-1.amazonaws.com/dev/medications/${id}`;
+
       try {
-        const response = await http.get(`https://kvhdoqjcua.execute-api.us-east-1.amazonaws.com/dev/food/${id}`);
-        const foodData = response.data[0];
-        console.log(foodData);
-        setFood(foodData);
-        setFilename(`${foodData.name}.png`);
+        const response = await http.get(endpoint);
+        const itemData = response.data;
+        setData(itemData);
+        setFilename(`${itemData.name}.png`);
         setLoading(false);
       } catch (error) {
-        console.error('Error fetching food:', error);
+        console.error('Error fetching data:', error);
         setLoading(false);
       }
     }
-    getFood();
-  }, [id]);
+    fetchData();
+  }, [id, fromFoodPage]);
 
   useEffect(() => {
-    if (food && canvasRef.current) {
+    if (data && canvasRef.current) {
       const canvas = canvasRef.current;
       try {
         new QrCodeWithLogo({
           canvas: canvas,
-          content: 'https://dev.d1hih7jskxsvbh.amplifyapp.com/', //adjust the url here, now it leads to amplify app
+          content: `https://dev.d1hih7jskxsvbh.amplifyapp.com/animaldata/${id}`,
           width: 300
         });
         setQRGenerated(true);
@@ -60,28 +60,23 @@ function QR() {
       } catch (err) {
         console.error("Error generating QR code:", err);
       }
-    } else {
-      console.log("Food or canvasRef not ready yet.");
     }
-  }, [food]);
+  }, [data]);
 
-    // Function to draw the logo over the QR code using the canvas API.
-    const drawLogoOverQRCode = () => {
-        const canvas = canvasRef.current;
-        if (!canvas) return;
-        const ctx = canvas.getContext('2d');
-        const logoImg = new Image();
-        logoImg.src = Logo;
-        logoImg.onload = () => {
-          // Set desired logo dimensions. Adjust these values as needed.
-          const logoWidth = 100;
-          const logoHeight = 100;
-          // Calculate coordinates so the logo is centered.
-          const centerX = (canvas.width - logoWidth) / 2;
-          const centerY = (canvas.height - logoHeight) / 2;
-          ctx.drawImage(logoImg, centerX, centerY, logoWidth, logoHeight);
-        };
-      };
+  const drawLogoOverQRCode = () => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const logoImg = new Image();
+    logoImg.src = Logo;
+    logoImg.onload = () => {
+      const logoWidth = 100;
+      const logoHeight = 100;
+      const centerX = (canvas.width - logoWidth) / 2;
+      const centerY = (canvas.height - logoHeight) / 2;
+      ctx.drawImage(logoImg, centerX, centerY, logoWidth, logoHeight);
+    };
+  };
 
   const downloadQRCode = () => {
     const qrcodeImage = canvasRef.current;
@@ -98,13 +93,17 @@ function QR() {
     <Box sx={{ width: "100%", textAlign: "center" }}>
       <Grid container alignItems="center" spacing={2} justifyContent="center">
         <Grid item>
-          <IconButton component={Link} to="/admin/viewfood" color="inherit">
+          <IconButton
+            component={Link}
+            to={fromFoodPage ? "/admin/viewfood" : "/admin/viewmedications"}
+            color="inherit"
+          >
             <ArrowBack />
           </IconButton>
         </Grid>
         <Grid item>
           <Typography variant="h4" sx={{ my: 2 }}>
-            QR Code for {food?.name}
+            QR Code for {data?.name} ({fromFoodPage ? "Food" : "Medication"})
           </Typography>
         </Grid>
       </Grid>
@@ -125,7 +124,6 @@ function QR() {
             </Box>
           ) : (
             <>
-              {/* Always render the canvas so that canvasRef is set */}
               <canvas
                 ref={canvasRef}
                 width={300}
@@ -149,4 +147,4 @@ function QR() {
   );
 }
 
-export default QR;
+export default SupplyQR;
