@@ -13,14 +13,14 @@ import {
     Divider,
     Typography,
 } from '@mui/material';
-import { Login } from '@mui/icons-material';
+import { Login, Logout } from '@mui/icons-material';
 import MenuIcon from '@mui/icons-material/Menu';
+import { fetchAuthSession } from 'aws-amplify/auth';
 
 function Navbar() {
     const [isOpen, setIsOpen] = useState(false);
     const [isSignedIn, setIsSignedIn] = useState(false);
-    const [userEmail, setUserEmail] = useState('');
-    const [isHovered, setIsHovered] = useState(false);
+
 
     useEffect(() => {
         const checkAuthSession = async () => {
@@ -46,7 +46,7 @@ function Navbar() {
     const handleLogout = () => {
         // Handle logout logic (e.g., clear session, redirect)
         setIsSignedIn(false);
-        setUserEmail('');
+        localStorage.clear()
         console.log('Logged out');
     };
     return (
@@ -151,9 +151,10 @@ function Navbar() {
                                 <ListItem disablePadding>
                                     {isSignedIn ? (
 
-                                        <Typography variant="body1" style={{ flex: 1 }}>
-
-                                        </Typography>
+                                        <ListItemButton component={Link} to="/" style={{ paddingLeft: '20px' }} onClick={handleLogout}>
+                                            <Logout sx={{ marginRight: '10px' }} />
+                                            <ListItemText primary="Logout" />
+                                        </ListItemButton>
                                     ) : (
                                         <ListItemButton component={Link} to="/login" style={{ paddingLeft: '20px' }} onClick={handleCloseDrawer}>
                                             <Login sx={{ marginRight: '10px' }} />
