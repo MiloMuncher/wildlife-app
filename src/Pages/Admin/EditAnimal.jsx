@@ -99,15 +99,32 @@ function EditAnimal() {
     case_status: "",
     required_food_amount: "",
     profile_pic: "",
-    vet_ID: "",
+    transcript_ID: "",
     medication_ID: "",
     food_ID: "",
-    profile_pic: "",
   });
 
   const [transcriptList, setTranscriptList] = useState([]);
   const [foodList, setFoodList] = useState([]);
   const [medicationList, setMedicationList] = useState([]);
+
+  const [fileName, setFileName] = useState("");
+  const [base64, setBase64] = useState("");
+
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      setFileName(file.name);
+
+      // Convert image to Base64
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onloadend = () => {
+        const base64String = reader.result.split(",")[1]; // Remove the prefix
+        setBase64(base64String);
+      };
+    }
+  };
 
   const getTranscripts = () => {
     http
@@ -167,7 +184,7 @@ function EditAnimal() {
       age_class: yup
         .string()
         .oneOf(
-          ["Infant", "Juvenile", "Adult", "Elderly"],
+          ["Infant", "Juvenile", "Subadult", "Adult", "Elderly"],
           "Invalid age class selected"
         )
         .required("Age class is required"),
@@ -195,7 +212,7 @@ function EditAnimal() {
         .typeError("Required food amount must be a number")
         .positive("Required food amount must be positive")
         .required("Required food amount is required"),
-      vet_ID: yup.number().required("Vet transcript is required"),
+      transcript_ID: yup.number().required("Vet transcript is required"),
       medication_ID: yup.number().required("Medication is required"),
       food_ID: yup.number().required("Food is required"),
       case_status: yup
@@ -205,6 +222,7 @@ function EditAnimal() {
     }),
     onSubmit: (data) => {
       console.log(data);
+      data.profile_pic = base64;
       http
         .put(
           `https://i1mu51yxbd.execute-api.us-east-1.amazonaws.com/dev/animal_CRUD/animals?animal_ID=${id}`,
@@ -269,11 +287,18 @@ function EditAnimal() {
                   fullWidth
                   select
                   label="Assign Vet Transcript"
-                  name="vet_ID"
-                  onChange={formik.handleChange}
-                  value={formik.values.vet_ID}
-                  error={formik.touched.vet_ID && Boolean(formik.errors.vet_ID)}
-                  helperText={formik.touched.vet_ID && formik.errors.vet_ID}
+                  name="transcript_ID"
+                  onChange={(e) =>
+                    formik.setFieldValue("transcript_ID", e.target.value)
+                  }
+                  value={formik.values.transcript_ID}
+                  error={
+                    formik.touched.transcript_ID &&
+                    Boolean(formik.errors.transcript_ID)
+                  }
+                  helperText={
+                    formik.touched.transcript_ID && formik.errors.transcript_ID
+                  }
                   SelectProps={{
                     MenuProps: {
                       anchorOrigin: {
@@ -295,7 +320,7 @@ function EditAnimal() {
                   }}
                 >
                   {transcriptList.map((vet) => (
-                    <MenuItem key={vet.vet_ID} value={vet.vet_ID}>
+                    <MenuItem key={vet.transcript_ID} value={vet.transcript_ID}>
                       Transcript:&nbsp;<strong>{vet.description}</strong>
                       &nbsp;|&nbsp;Vet Name:&nbsp;<strong>{vet.name}</strong>
                     </MenuItem>
@@ -317,11 +342,13 @@ function EditAnimal() {
                     formik.touched.age_class && formik.errors.age_class
                   }
                 >
-                  {["Infant", "Juvenile", "Adult", "Elderly"].map((option) => (
-                    <MenuItem key={option} value={option}>
-                      {option.charAt(0).toUpperCase() + option.slice(1)}
-                    </MenuItem>
-                  ))}
+                  {["Infant", "Juvenile", "Subadult", "Adult", "Elderly"].map(
+                    (option) => (
+                      <MenuItem key={option} value={option}>
+                        {option.charAt(0).toUpperCase() + option.slice(1)}
+                      </MenuItem>
+                    )
+                  )}
                 </TextField>
               </Grid>
 
@@ -417,7 +444,9 @@ function EditAnimal() {
                   select
                   label="Assign Food"
                   name="food_ID"
-                  onChange={formik.handleChange}
+                  onChange={(e) =>
+                    formik.setFieldValue("food_ID", e.target.value)
+                  }
                   value={formik.values.food_ID}
                   error={
                     formik.touched.food_ID && Boolean(formik.errors.food_ID)
@@ -537,6 +566,39 @@ function EditAnimal() {
                     label="Closed"
                   />
                 </RadioGroup>
+              </Grid>
+              <Grid item xs={12}>
+                {/* Hidden File Input */}
+                <input
+                  type="file"
+                  id="profile-pic-upload"
+                  accept="image/*"
+                  style={{ display: "none" }}
+                  onChange={handleFileChange}
+                />
+
+                {/* Styled TextField to display file name */}
+                <TextField
+                  fullWidth
+                  label="Upload Profile Picture"
+                  value={fileName} // Shows the file name when selected
+                  InputProps={{
+                    readOnly: true,
+                    endAdornment: (
+                      <Button
+                        variant="contained"
+                        component="label"
+                        htmlFor="profile-pic-upload"
+                        sx={{
+                          width: "25%",
+                          backgroundColor: "rgb(255, 78, 0)",
+                        }}
+                      >
+                        Choose File
+                      </Button>
+                    ),
+                  }}
+                />
               </Grid>
             </Grid>
             <Button type="submit" variant="contained" style={btnstyle}>

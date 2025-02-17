@@ -22,12 +22,13 @@ import ShiftEdit from './ShiftEdit'
 import MedicationView from './MedicationView';
 import AddFood from './AddFood';
 import AnimalQR from './QRCodePages/AnimalQR';
-import SupplyQR from './QRCodePages/SupplyQR';
+// import SupplyQR from './QRCodePages/SupplyQR';
 import SupplyDetails from './QRCodePages/SupplyDetails';
 import AddAnimal from './AddAnimal';
 import ViewAnimals from './ViewAnimals';
 import EditAnimal from './EditAnimal';
-import AddMedication from './AddMedication';
+import AnimalProfile from './AnimalProfile';
+// import AddMedication from './AddMedication';
 
 // Icons
 import CreateIcon from '@mui/icons-material/Create';
@@ -243,8 +244,8 @@ function ProfileRoutes() {
                 <Route path="/viewanimals" element={<ViewAnimals />} />
                 <Route path="/addanimal" element={<AddAnimal />} />
                 <Route path="/viewanimals/edit/:id" element={<EditAnimal />} />
+                <Route path="/viewanimals/profile/:id" element={<AnimalProfile />} />
                 <Route path="/animal-qr/:id" element={<AnimalQR />} />
-
               </>
             )}
             {userGroup === 'Vets' && <Route path="/uploadtranscripts" element={<UploadTranscripts />} />}
