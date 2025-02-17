@@ -86,7 +86,6 @@ function AddAnimal() {
     "In Treatment",
   ];
 
-
   const [fileName, setFileName] = useState("");
   const [base64, setBase64] = useState("");
 
@@ -105,7 +104,6 @@ function AddAnimal() {
     }
   };
 
-
   const formik = useFormik({
     initialValues: {
       species: "",
@@ -121,6 +119,7 @@ function AddAnimal() {
       profile_pic: "",
       transcript_ID: "",
       medication_ID: "",
+      required_dosage: "",
       food_ID: "",
       weight_kg: 0,
       weight_g: 0,
@@ -135,12 +134,28 @@ function AddAnimal() {
       weight_kg: yup
         .number()
         .typeError("Weight must be a number")
-        .positive("Weight must be positive")
+        .min(0, "Weight cannot be negative")
+        .test(
+          "at-least-one",
+          "Either weight (kg) or weight (g) must be greater than 0",
+          function (value) {
+            const weight_g = this.parent.weight_g;
+            return value > 0 || weight_g > 0;
+          }
+        )
         .required("Weight is required"),
       weight_g: yup
         .number()
         .typeError("Weight must be a number")
-        .positive("Weight must be positive")
+        .min(0, "Weight cannot be negative")
+        .test(
+          "at-least-one",
+          "Either weight (kg) or weight (g) must be greater than 0",
+          function (value) {
+            const weight_kg = this.parent.weight_kg;
+            return value > 0 || weight_kg > 0;
+          }
+        )
         .required("Weight is required"),
       age_class: yup
         .string()
@@ -167,6 +182,7 @@ function AddAnimal() {
       data.transcript_ID = null;
       data.food_ID = null;
       data.medication_ID = null;
+      data.required_dosage = null;
 
       console.log(data);
       http
