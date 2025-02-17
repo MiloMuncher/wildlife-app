@@ -26,4 +26,4 @@ function Login() {
 }
 
 // Wrap the LoginPage with the Authenticator
-export default withAuthenticator(Login, { hideSignUp: true, className:'custom-login' });
+export default withAuthenticator(Login, { className:'custom-login' });
