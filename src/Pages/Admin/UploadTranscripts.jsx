@@ -18,14 +18,40 @@ function UploadTranscripts() {
   const [audioBase64, setAudioBase64] = useState(null);
   const [recordingTime, setRecordingTime] = useState(0);
   const [timerId, setTimerId] = useState(null);
-
+  const [openViewDialog, setOpenViewDialog] = useState(false);
+  const [transcript, setTranscript] = useState(null);
   // Columns for DataGrid
   const columns = [
     { field: 'id', headerName: 'ID', width: 100 },
-    { field: 'name', headerName: 'Vet Name', width: 200 },
+    { field: 'name', headerName: 'Vet Email', width: 200 },
     { field: 'description', headerName: 'Description', width: 250 },
     { field: 'date', headerName: 'Date', width: 150 },
     { field: 'transcription', headerName: 'Transcription', width: 300 },
+    {
+      field: "actions",
+      headerName: "Actions",
+      width: 150,
+      renderCell: (params) => (
+        <>
+          <Button
+            variant="contained"
+            color="primary"
+            size="small"
+            onClick={() => handleView(params.row.id)}
+          >
+            View
+          </Button>
+          <Button
+            variant="contained"
+            color="secondary"
+            size="small"
+            onClick={() => handleDelete(params.row.id)}
+          >
+            Delete
+          </Button>
+        </>
+      ),
+    },
   ];
 
   const rows = eventList.map((event) => ({
@@ -53,11 +79,42 @@ function UploadTranscripts() {
     getTranscripts();
   }, []);
 
+  const handleDelete = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this transcript?")) return;
+
+    try {
+      const response = await http.delete(
+        `https://0ylgzr9mv6.execute-api.us-east-1.amazonaws.com/dev/deletetranscript/${id}`
+      );
+      console.log("Delete response:", response.data);
+      alert("Transcript deleted successfully");
+      window.reload()
+    } catch (error) {
+      console.error("Error deleting transcript:", error);
+      alert("Failed to delete transcript");
+    }
+  };
+
   const getTranscripts = () => {
     http.get('https://0ylgzr9mv6.execute-api.us-east-1.amazonaws.com/dev/gettranscripts').then((res) => {
       setEventList(res.data);
     });
   };
+
+  const handleView = async (id) => {
+    await http.get(`https://0ylgzr9mv6.execute-api.us-east-1.amazonaws.com/dev/gettranscripts/${id}`)
+      .then((res) => {
+        setTranscript(res.data); // Ensure state is updated
+        setOpenViewDialog(true); // Open the modal after data is set
+      })
+      .catch((error) => console.error("Error fetching transcript details", error));
+  };
+
+  const closeViewDialog = () => {
+    setOpenViewDialog(false);
+    setTranscript(null); // Reset the data when closing the modal
+  };
+
   const convertWebMToMP3 = async (webmBlob) => {
     const ffmpeg = new FFmpeg()
     try {
@@ -85,7 +142,7 @@ function UploadTranscripts() {
       console.error('Error during conversion:', error);
     }
   };
-  // Start recording
+
   const startRecording = async () => {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     const recorder = new MediaRecorder(stream);
@@ -101,14 +158,12 @@ function UploadTranscripts() {
     setIsRecording(true);
     setRecordingTime(0);
 
-    // Start timer for recording
     const id = setInterval(() => {
       setRecordingTime((prev) => prev + 1);
     }, 1000);
     setTimerId(id);
   };
 
-  // Stop recording and convert to Base64
   const stopRecording = () => {
     mediaRecorder.stop();
     setIsRecording(false);
@@ -131,7 +186,6 @@ function UploadTranscripts() {
     };
   };
 
-  // Convert file to Base64
   const convertFileToBase64 = (file) => {
     console.log(file);
 
@@ -143,9 +197,7 @@ function UploadTranscripts() {
     });
   };
 
-  // Handle submission
   const handleSubmit = async () => {
-
     if (!audioBase64 || !description || !email) {
       alert('Please record audio and enter a description.');
       return;
@@ -175,7 +227,6 @@ function UploadTranscripts() {
     }
   };
 
-  // Format the recording time (mm:ss)
   const formatTime = (seconds) => {
     const minutes = Math.floor(seconds / 60);
     const secs = seconds % 60;
@@ -184,7 +235,6 @@ function UploadTranscripts() {
 
   return (
     <div>
-      {/* Upload Button */}
       {userGroup === 'Vets' && (
         <>
           <Button
@@ -202,68 +252,86 @@ function UploadTranscripts() {
       <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
         <DialogTitle>Record Audio and Enter Description</DialogTitle>
         <DialogContent>
-          <DialogContentText>
-            Please record your audio and enter a description for the procedure.
-          </DialogContentText>
           <TextField
-            margin="dense"
             label="Description"
-            type="text"
             fullWidth
+            multiline
+            rows={4}
             variant="outlined"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
           />
-          <div style={{ marginTop: '20px' }}>
-            {!isRecording ? (
-              <Button variant="contained" color="primary" onClick={startRecording}>
-                Start Recording
-              </Button>
-            ) : (
-              <Button variant="contained" color="secondary" onClick={stopRecording}>
-                Stop Recording
-              </Button>
-            )}
-            {isRecording && (
-              <div style={{ display: 'flex', alignItems: 'center', marginTop: '10px' }}>
-                <div
-                  style={{
-                    width: '10px',
-                    height: '10px',
-                    borderRadius: '50%',
-                    backgroundColor: 'red',
-                    marginRight: '10px',
-                    animation: 'blinking 1s infinite',
-                  }}
-                ></div>
-                <Typography variant="body1">Recording... {formatTime(recordingTime)}</Typography>
-              </div>
-            )}
-            {audioBase64 && <p>Audio recorded and ready for upload.</p>}
+          <TextField
+            label="Email"
+            fullWidth
+            variant="outlined"
+            value={email}
+            disabled
+            margin="normal"
+          />
+
+          <div>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={startRecording}
+              disabled={isRecording}
+            >
+              Start Recording
+            </Button>
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={stopRecording}
+              disabled={!isRecording}
+            >
+              Stop Recording
+            </Button>
+            <Typography>{formatTime(recordingTime)}</Typography>
           </div>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpenDialog(false)} color="inherit">
+          <Button onClick={() => setOpenDialog(false)} color="primary">
             Cancel
           </Button>
-          <Button onClick={handleSubmit} color="primary" variant="contained">
-            Upload
+          <Button onClick={handleSubmit} color="primary">
+            Submit
           </Button>
         </DialogActions>
       </Dialog>
 
-      {/* DataGrid for Displaying Transcriptions */}
-      <div style={{ width: '100%', backgroundColor: 'white' }}>
+      {/* Dialog for Viewing Transcript */}
+      <Dialog open={openViewDialog} onClose={closeViewDialog}>
+        <DialogTitle>View Transcript</DialogTitle>
+        <DialogContent>
+          {transcript ? (
+            <DialogContentText>
+              <strong>Name:</strong> {transcript.name}
+              <br />
+              <strong>Description:</strong> {transcript.description}
+              <br />
+              <strong>Date:</strong> {new Date(transcript.date).toLocaleDateString()}
+              <br />
+              <strong>Transcription:</strong>
+              {transcript.transcription}
+            </DialogContentText>
+          ) : (
+            <DialogContentText>Loading...</DialogContentText>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={closeViewDialog} color="primary">
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <div style={{ height: 400, width: '110%' }}>
         <DataGrid
           rows={rows}
           columns={columns}
-          initialState={{
-            pagination: {
-              paginationModel: { page: 0, pageSize: 5 },
-            },
-          }}
-          pageSizeOptions={[5, 10]}
-          sx={{ height: 500 }}
+          pageSize={5}
+          disableSelectionOnClick
         />
       </div>
     </div>

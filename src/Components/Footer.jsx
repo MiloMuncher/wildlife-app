@@ -11,10 +11,9 @@ function Footer() {
                     <Grid item xs={12} sm={6} md={3}>
                         <Typography variant="h6" fontWeight="bold" gutterBottom>Quick Links</Typography>
                         <Box>
-                            <Link href="#" color="inherit" sx={{ display: 'block', mb: 1 }}><Typography>Home</Typography></Link>
-                            <Link href="#" color="inherit" sx={{ display: 'block', mb: 1 }}><Typography>How We Help</Typography></Link>
-                            <Link href="#" color="inherit" sx={{ display: 'block', mb: 1 }}><Typography>Get Involved</Typography></Link>
-                            <Link href="#" color="inherit" sx={{ display: 'block', mb: 1 }}><Typography>Contact</Typography></Link>
+                            <Link href="/" color="inherit" sx={{ display: 'block', mb: 1 }}><Typography>Home</Typography></Link>
+                            <Link href="/howweoperate" color="inherit" sx={{ display: 'block', mb: 1 }}><Typography>How We Help</Typography></Link>
+                            <Link href="/supportus" color="inherit" sx={{ display: 'block', mb: 1 }}><Typography>Get Involved</Typography></Link>
                         </Box>
                     </Grid>
 
