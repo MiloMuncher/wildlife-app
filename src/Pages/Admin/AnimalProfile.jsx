@@ -220,7 +220,7 @@ const AnimalProfile = () => {
                   <Typography style={textStyle}>
                     {animal.required_dosage
                       ? animal.required_dosage
-                      : "Not Assigned"}
+                      : "Not Assigned"}mg
                   </Typography>
                   <Typography style={textStyle}>
                     {food?.name || "Not Assigned"}
