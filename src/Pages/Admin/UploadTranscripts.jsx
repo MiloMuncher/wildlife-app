@@ -79,6 +79,7 @@ function UploadTranscripts() {
       // Create a Blob from the MP3 data
       const mp3Blob = new Blob([mp3Data], { type: 'audio/mp3' });  // Create Blob from Uint8Array
 
+      console.log('Conversion complete:', mp3Blob);
       return mp3Blob;
     } catch (error) {
       console.error('Error during conversion:', error);
@@ -90,7 +91,6 @@ function UploadTranscripts() {
     const recorder = new MediaRecorder(stream);
     recorder.ondataavailable = (event) => {
       if (event.data && event.data.size > 0) {
-        console.log('Data available:', event.data);
         setAudioChunks((prev) => [...prev, event.data]);
       } else {
         console.warn('Empty data chunk:', event.data);
@@ -115,6 +115,7 @@ function UploadTranscripts() {
     clearInterval(timerId);
 
     mediaRecorder.onstop = async () => {
+      console.log('Stopping recording...');
       if (audioChunks.length === 0) {
         console.error('No audio chunks available!');
         return;
@@ -125,6 +126,7 @@ function UploadTranscripts() {
       setAudioChunks([]);
       const mp3Blob = await convertWebMToMP3(webmBlob);
       const base64Audio = await convertFileToBase64(mp3Blob);
+      console.log('Base64 MP3:', base64Audio);
       setAudioBase64(base64Audio);
     };
   };
@@ -167,7 +169,6 @@ function UploadTranscripts() {
       );
       console.log('Transcription started:', response.data);
       setOpenDialog(false);
-      setAudioBase64(null);
       getTranscripts();
     } catch (error) {
       console.error('Error starting transcription:', error);
@@ -198,10 +199,7 @@ function UploadTranscripts() {
       )}
 
       {/* Dialog for Upload */}
-      <Dialog open={openDialog} onClose={() => {
-        setOpenDialog(false);
-        setAudioBase64(null);
-      }}>
+      <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
         <DialogTitle>Record Audio and Enter Description</DialogTitle>
         <DialogContent>
           <DialogContentText>
@@ -241,14 +239,11 @@ function UploadTranscripts() {
                 <Typography variant="body1">Recording... {formatTime(recordingTime)}</Typography>
               </div>
             )}
-            {audioBase64 && <Typography mt={5}>Audio File Recorded And Ready</Typography>}
+            {audioBase64 && <p>Audio recorded and ready for upload.</p>}
           </div>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => {
-            setOpenDialog(false);
-            setAudioBase64(null);
-          }} color="inherit">
+          <Button onClick={() => setOpenDialog(false)} color="inherit">
             Cancel
           </Button>
           <Button onClick={handleSubmit} color="primary" variant="contained">
