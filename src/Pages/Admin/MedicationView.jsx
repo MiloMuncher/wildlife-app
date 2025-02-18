@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Switch, FormControlLabel } from '@mui/material';
+import { Button, Switch, FormControlLabel, Tooltip } from '@mui/material';
 import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
 import { DataGrid } from '@mui/x-data-grid';
@@ -113,6 +113,7 @@ function MedicationView() {
     const getAllMedications = () => {
         http.get('https://z40lajab6h.execute-api.us-east-1.amazonaws.com/dev/medications').then((res) => {
             setMedicationList(res.data);
+            console.log(medicationList)
         });
     };
 
@@ -129,14 +130,21 @@ function MedicationView() {
         expiration_date: medication.expiration_date,
         available_quantity: medication.available_quantity,
         dosage: medication.dosage,
+        description: medication.description
     }));
 
     const columns = [
-        { field: 'id', headerName: 'ID', width: 70 },
-        { field: 'name', headerName: 'Name', width: 200 },
-        { field: 'batch_number', headerName: 'Batch No.', width: 100 },
-        { field: 'expiration_date', headerName: 'Expiry Date', width: 150 },
+        { field: 'id', headerName: 'ID', width: 50 },
+        {
+            field: 'name', headerName: 'Name', width: 150, renderCell: (params) => (
+                <Tooltip title={params.row.description} arrow>
+                    <span>{params.value}</span>
+                </Tooltip>
+            )
+        },
+        { field: 'expiration_date', headerName: 'Expiry Date', width: 120 },
         { field: 'available_quantity', headerName: 'Quantity Per Batch', width: 180 },
+        { field: 'batch_number', headerName: 'Batch No.', width: 100 },
         { field: 'dosage', headerName: 'Dosage', width: 150 },
         { field: 'action', headerName: 'Actions', width: 300, renderCell: (params) => <RenderButton medication={params.row} getAllMedications={getAllMedications} /> },
     ];

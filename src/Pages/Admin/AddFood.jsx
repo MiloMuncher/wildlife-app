@@ -15,6 +15,7 @@ function AddFood() {
             description: '',
             expiration_date: ' ',
             available_quantity: '',
+            weight_per_quantity: '',
             price: '', // New field for price
         },
         validationSchema: yup.object({
@@ -27,6 +28,10 @@ function AddFood() {
                 .number()
                 .positive('Available quantity must be a number greater than 0')
                 .required('Available quantity is required'),
+            weight_per_quantity: yup
+            .number()
+            .positive('Weight per quantity must be a number greater than 0')
+            .required('Weight per quantity is required'),
             price: yup
                 .number()
                 .positive('Price must be a positive number')
@@ -95,6 +100,18 @@ function AddFood() {
                                     value={formik.values.available_quantity}
                                     error={formik.touched.available_quantity && Boolean(formik.errors.available_quantity)}
                                     helperText={formik.touched.available_quantity && formik.errors.available_quantity}
+                                />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <TextField
+                                    fullWidth
+                                    label="Weight Per Quantity (grams)"
+                                    name="weight_per_quantity"
+                                    type="number"
+                                    onChange={formik.handleChange}
+                                    value={formik.values.weight_per_quantity}
+                                    error={formik.touched.weight_per_quantity && Boolean(formik.errors.weight_per_quantity)}
+                                    helperText={formik.touched.weight_per_quantity && formik.errors.weight_per_quantity}
                                 />
                             </Grid>
                             <Grid item xs={12}>

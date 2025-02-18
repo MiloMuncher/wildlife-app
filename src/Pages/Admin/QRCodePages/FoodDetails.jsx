@@ -17,6 +17,7 @@ function FoodDetails() {
             .then((res) => {
                 setFoodData(res.data[0]);
                 setLoading(false);
+                console.log(foodData)
             })
             .catch((error) => {
                 console.log(error);
@@ -43,7 +44,8 @@ function FoodDetails() {
             available_quantity: updatedQuantity,
             expiration_date: expirationDate,
             batch_number: batchNumber,
-            price: foodData.price
+            price: foodData.price,
+            weight_per_quantity: foodData.weight_per_quantity
         };
 
         console.log(payload);

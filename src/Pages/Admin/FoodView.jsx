@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Switch, FormControlLabel } from '@mui/material';
+import { Button, Switch, FormControlLabel, Tooltip } from '@mui/material';
 import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
 import { DataGrid } from '@mui/x-data-grid';
@@ -51,7 +51,7 @@ function RenderButton(props) {
                         size="small"
                         style={{ backgroundColor: '#6CA0DC' }}
                         component={Link}
-                        to={`/admin/viewusers/edit/${food.id}`}
+                        to={`/admin/viewfood/edit/${food.id}`}
                     >
                         Edit
                     </Button>
@@ -113,6 +113,7 @@ function FoodView() {
     const getAllFood = () => {
         http.get(`https://kvhdoqjcua.execute-api.us-east-1.amazonaws.com/dev/food`).then((res) => {
             setFoodList(res.data);
+            console.log(res.data);  // Updated to log the response directly
         });
     };
 
@@ -125,19 +126,24 @@ function FoodView() {
     const rows = filteredRows.map((food) => ({
         id: food.food_ID,
         name: food.name,
-        description: food.description,
         expiration_date: food.expiration_date,
         available_quantity: food.available_quantity,
         batch_number: food.batch_number,
+        weight_per_quantity: food.weight_per_quantity, // Added this line
+        description: food.description // Keep for use in Tooltip
     }));
 
     const columns = [
-        { field: 'id', headerName: 'ID', width: 70 },
-        { field: 'name', headerName: 'Name', width: 150 },
-        { field: 'description', headerName: 'Description', width: 200 },
+        { field: 'id', headerName: 'ID', width: 50 },
+        { field: 'name', headerName: 'Name', width: 150, renderCell: (params) => (
+            <Tooltip title={params.row.description} arrow>
+                <span>{params.value}</span>
+            </Tooltip>
+        )},
         { field: 'expiration_date', headerName: 'Expiry Date', width: 120 },
-        { field: 'available_quantity', headerName: 'Quantity Per Batch', width: 100 },
+        { field: 'available_quantity', headerName: 'Quantity', width: 100 },
         { field: 'batch_number', headerName: 'Batch No.', width: 120 },
+        { field: 'weight_per_quantity', headerName: 'Weight Per Quantity', width: 170 }, // Added new column
         { field: 'action', headerName: 'Actions', width: 300, renderCell: (params) => <RenderButton food={params.row} getAllFood={getAllFood} /> },
     ];
 
@@ -145,7 +151,7 @@ function FoodView() {
         <>
             {userGroup === "Admins" && (
                 <>
-                    <Button variant='contained' style={{ ...btnstyle, marginRight: '20px' }} component={Link} to={`/admin/addmedication`}>New Medication</Button>
+                    <Button variant='contained' style={{ ...btnstyle, marginRight: '20px' }} component={Link} to={`/admin/addfood`}>New Food Variety</Button>
                     <FormControlLabel
                         control={<Switch checked={showIntakeOnly} onChange={() => setShowIntakeOnly(prev => !prev)} />}
                         label="Show Batches"
