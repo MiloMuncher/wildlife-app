@@ -15,6 +15,7 @@ import * as yup from "yup";
 import { useFormik } from "formik";
 import http from "../../http.js";
 import { useState } from "react";
+import BackButton from "./BackButton.jsx";
 
 function AddAnimal() {
   const btnstyle = {
@@ -222,7 +223,9 @@ function AddAnimal() {
 
   return (
     <Container maxWidth="lg">
+      <BackButton />
       <Typography variant="h6">Add New Animal Rescue</Typography>
+
       <Card>
         <CardContent>
           <Box component="form" onSubmit={formik.handleSubmit}>

@@ -176,6 +176,13 @@ function ProfileRoutes() {
                       >
                         <ListItemText primary="View Animals" />
                       </ListItemButton>
+                      <ListItemButton
+                        sx={{ pl: 4 }}
+                        LinkComponent={Link}
+                        to="/admin/viewsanctuary"
+                      >
+                        <ListItemText primary="Sanctuary" />
+                      </ListItemButton>
                     </List>
                   </Collapse>
                   <Divider />
@@ -336,6 +343,8 @@ function ProfileRoutes() {
                   element={<AnimalProfile />}
                 />
                 <Route path="/animal-qr/:id" element={<AnimalQR />} />
+                <Route path="/viewsanctuary" element={<ViewAnimalsInSanctuary />} />
+                <Route path="/viewsanctuary/edit/:id" element={<EditAnimalInSanctuary />} />
               </>
             )}
             {userGroup === "Vets" && (

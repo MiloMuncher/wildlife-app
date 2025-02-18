@@ -133,6 +133,19 @@ function Navbar() {
                                             <ListItemText primary="About" />
                                         </ListItemButton>
                                     </ListItem>
+                                    <ListItem disablePadding>
+                                        <ListItemButton component={Link} to="/oursanctuary" style={{ paddingLeft: '20px' }} onClick={handleCloseDrawer}>
+                                            <img
+                                                src="/paw.png"
+                                                alt="About"
+                                                style={{
+                                                    marginRight: '10px',
+                                                    transition: 'transform 0.3s ease',
+                                                }}
+                                            />
+                                            <ListItemText primary="Our Sanctuary" />
+                                        </ListItemButton>
+                                    </ListItem>
                                 </List>
                             </Box>
 

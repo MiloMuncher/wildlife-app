@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Container,
   Box,
@@ -30,8 +30,10 @@ import {
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Footer  from '../Components/Footer.jsx';
-import Navbar from '../Components/Navbar.jsx';
+import Footer from "../Components/Footer.jsx";
+import Navbar from "../Components/Navbar.jsx";
+import { fetchAuthSession } from "aws-amplify/auth";
+
 const stripePromise = loadStripe(
   "pk_test_51Qrdhu2N2ApkaYzFWgke5qVVDsFaUkSywPRo1pdV8dcgbQ94HzPmVz9JjWMSzcANlTPVWqZwknTSI67RFi43pXK700EkYL6JuM"
 );
@@ -44,11 +46,43 @@ const CheckoutForm = () => {
     backgroundColor: "#FF4E00",
   };
 
-  const [showChatbot, setShowChatbot] = useState(false);
+  const [userEmail, setUserEmail] = useState("");
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // Track if the user is logged in
 
-  const toggleChatbot = () => {
-    setShowChatbot(!showChatbot);
+  const checkAuthSession = async () => {
+    try {
+      const session = await fetchAuthSession();
+      if (!session || !session.tokens) {
+        console.log("No session found. Continuing without session.");
+        return; // If there's no valid session, just continue
+      }
+
+      const { tokens } = session;
+      const userEmail = tokens.idToken.payload["email"];
+      setUserEmail(userEmail);
+      console.log(userEmail);
+      setIsLoggedIn(true);
+    } catch (error) {
+      if (error.name === "NotAuthorizedException") {
+        console.log("User is unauthenticated. Continuing without session.");
+      } else {
+        console.error("Error fetching the session or user data", error);
+      }
+    }
   };
+
+  // Check session on mount
+  useEffect(() => {
+    const getAuthSession = async () => {
+      const isAuthenticated = await checkAuthSession();
+      if (isAuthenticated) {
+        setIsLoggedIn(true);
+      }
+      console.log(isLoggedIn);
+    };
+
+    getAuthSession();
+  }, []);
 
   const stripe = useStripe();
   const elements = useElements();
@@ -63,21 +97,30 @@ const CheckoutForm = () => {
 
   const formik = useFormik({
     initialValues: {
-      email: "",
+      email: userEmail || "",
       donationAmount: "",
+      auth: "",
     },
     validationSchema: yup.object({
-      email: yup
-        .string()
-        .trim()
-        .email("Email must be valid")
-        .max(50, "Email must be at most 50 characters")
-        .required("Email is required"),
+      email: isLoggedIn
+        ? yup
+            .string()
+            .email("Email must be valid")
+            .max(50, "Email must be at most 50 characters")
+        : yup
+            .string()
+            .trim()
+            .required("Email is required")
+            .email("Email must be valid")
+            .max(50, "Email must be at most 50 characters"),
       donationAmount: yup.string().required("Please select a donation amount"),
     }),
+
     onSubmit: async (values) => {
-      values.email = values.email.trim();
+      console.log("log", isLoggedIn);
+      values.email = isLoggedIn ? userEmail : values.email.trim();
       values.donationAmount = values.donationAmount.trim();
+      values.auth = isLoggedIn;
       // Handle custom amount
       if (values.donationAmount === "custom") {
         values.donationAmount = customAmount.trim();
@@ -112,6 +155,7 @@ const CheckoutForm = () => {
         }, // Get payment method from token
         email: values.email,
         amount: values.donationAmount, // Stripe requires amount in cents
+        auth: values.auth,
       };
 
       console.log("Payment data:", paymentData);
@@ -145,16 +189,16 @@ const CheckoutForm = () => {
     setOpenModal(false);
     formik.resetForm();
     if (donationStatus === "success") {
-        toast.success("Thank you for your donation! 🎉", {
-            position: "bottom-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            theme: "colored",
-          });
-        navigate("/");
+      toast.success("Thank you for your donation! 🎉", {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        theme: "colored",
+      });
+      navigate("/");
     } else if (donationStatus === "failure") {
       // Optional: Redirect after failure
       window.location.reload();
@@ -162,7 +206,6 @@ const CheckoutForm = () => {
   };
 
   return (
-    
     <Container maxWidth="x2">
       <Navbar />
       <ToastContainer /> {/* Add this line to render toast notifications */}
@@ -178,18 +221,27 @@ const CheckoutForm = () => {
             fontWeight: "bold",
             paddingTop: 100,
             fontSize: "60px",
-            marginLeft: '100px'
+            marginLeft: "100px",
           }}
         >
           Donate To Wildlife Rehab
         </Typography>
-        <Typography variant="h6" style={{ textAlign: "left", paddingTop: 20, marginLeft: '100px' }}>
+        <Typography
+          variant="h6"
+          style={{ textAlign: "left", paddingTop: 20, marginLeft: "100px" }}
+        >
           Together, we can protect vulnerable wildlife,
         </Typography>
-        <Typography variant="h6" style={{ textAlign: "left", marginLeft: '100px' }}>
+        <Typography
+          variant="h6"
+          style={{ textAlign: "left", marginLeft: "100px" }}
+        >
           conserve vital habitats, and build a future where
         </Typography>
-        <Typography variant="h6" style={{ textAlign: "left", marginLeft: '100px'}}>
+        <Typography
+          variant="h6"
+          style={{ textAlign: "left", marginLeft: "100px" }}
+        >
           people live in harmony with nature.
         </Typography>
 
@@ -295,7 +347,7 @@ const CheckoutForm = () => {
                       }}
                     />
                     <div>
-                      {customAmount && customAmount <= 1 && (
+                      {customAmount && customAmount < 1 && (
                         <Typography
                           color="error"
                           variant="body2"
@@ -303,7 +355,7 @@ const CheckoutForm = () => {
                           paddingTop={1}
                           fontWeight={600}
                         >
-                          Amount must be greater than $1
+                          Min. donation amount is $1
                         </Typography>
                       )}
                     </div>
@@ -344,22 +396,24 @@ const CheckoutForm = () => {
                   <Card>
                     <CardContent>
                       <Grid container spacing={1}>
-                        <Grid item xs={12} md={12}>
-                          <TextField
-                            label="Email"
-                            name="email"
-                            fullWidth
-                            onChange={formik.handleChange}
-                            value={formik.values.email}
-                            error={
-                              formik.touched.email &&
-                              Boolean(formik.errors.email)
-                            }
-                            helperText={
-                              formik.touched.email && formik.errors.email
-                            }
-                          />
-                        </Grid>
+                        {!isLoggedIn && (
+                          <Grid item xs={12} md={12}>
+                            <TextField
+                              label="Email"
+                              name="email"
+                              fullWidth
+                              onChange={formik.handleChange}
+                              value={formik.values.email}
+                              error={
+                                formik.touched.email &&
+                                Boolean(formik.errors.email)
+                              }
+                              helperText={
+                                formik.touched.email && formik.errors.email
+                              }
+                            />
+                          </Grid>
+                        )}
 
                         <Grid item xs={12} md={12}>
                           <div
@@ -379,7 +433,7 @@ const CheckoutForm = () => {
                                     color: "#424770",
                                     "::placeholder": {
                                       color: "#aab7c4",
-                                    } 
+                                    },
                                   },
                                   invalid: {
                                     color: "#9e2146",
@@ -409,7 +463,6 @@ const CheckoutForm = () => {
         </Box>
       </Box>
       {/* Modal for Loading/Success/Failure */}
-
       <Dialog
         open={openModal}
         onClose={handleCloseModal}
@@ -437,7 +490,7 @@ const CheckoutForm = () => {
                 flexDirection: "column",
               }}
             >
-              <img src="public\success.jpg" alt="" style={{ width: "20%" }} />
+              <img src="/success.jpg" alt="" style={{ width: "20%" }} />
               <Typography variant="h6" color="green">
                 <strong>Thank you for your gift!</strong> <br />
                 Your donation will help local wildlife thrive.
@@ -467,10 +520,12 @@ const CheckoutForm = () => {
                 flexDirection: "column",
               }}
             >
-              <img src="public\fail.png" alt="" style={{ width: "20%" }} />
+              <img src="/fail.png" alt="" style={{ width: "20%" }} />
               <Typography variant="h6" color="red" style={{ paddingTop: 40 }}>
                 <strong>Donation Failed</strong> <br />
-                Something went wrong.<br />Please try again later.
+                Something went wrong.
+                <br />
+                Please try again later.
               </Typography>
               <DialogActions style={{ paddingTop: 50 }}>
                 <Button
@@ -504,10 +559,14 @@ const CheckoutForm = () => {
   );
 };
 
-const ContactUs = () => (
-  <Elements stripe={stripePromise}>
-    <CheckoutForm />
-  </Elements>
-);
+function ContactUs() {
+  return (
+    <div>
+      <Elements stripe={stripePromise}>
+        <CheckoutForm />
+      </Elements>
+    </div>
+  );
+}
 
 export default ContactUs;

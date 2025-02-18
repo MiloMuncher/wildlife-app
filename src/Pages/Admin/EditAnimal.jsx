@@ -18,6 +18,7 @@ import * as yup from "yup";
 import { useFormik } from "formik";
 import http from "../../http.js";
 import { useState, useEffect, useContext } from "react";
+import BackButton from "./BackButton.jsx";
 
 function EditAnimal() {
   const btnstyle = {
@@ -106,7 +107,7 @@ function EditAnimal() {
     case_status: "",
     required_food_amount: "",
     profile_pic: "",
-    required_dosage: 0,
+    required_dosage: "",
     transcript_ID: "",
     medication_ID: "",
     food_ID: "",
@@ -151,17 +152,26 @@ function EditAnimal() {
     http
       .get(`https://kvhdoqjcua.execute-api.us-east-1.amazonaws.com/dev/food`)
       .then((res) => {
-        setFoodList(res.data);
+        console.log("food", res.data);
+        const filteredFood = res.data.filter(
+          (item) => item.batch_number !== "INTAKE"
+        );
+        setFoodList(filteredFood);
+        console.log(filteredFood);
       });
   };
+
   const getMedication = () => {
     http
       .get(
         `https://z40lajab6h.execute-api.us-east-1.amazonaws.com/dev/medications`
       )
       .then((res) => {
-        setMedicationList(res.data);
-        console.log(res.data.dosage);
+        console.log("meds", res.data);
+        const filteredMedications = res.data.filter(
+          (item) => item.batch_number !== "INTAKE"
+        );
+        setMedicationList(filteredMedications);
       });
   };
 
@@ -262,6 +272,7 @@ function EditAnimal() {
 
       if (data.food_ID == "To be assigned") {
         data.food_ID = null;
+        data.required_food_amount = 0;
       }
 
       if (data.medication_ID == "To be assigned") {
@@ -271,7 +282,6 @@ function EditAnimal() {
       data.profile_pic = base64;
 
       const { weight_kg, weight_g, food_kg, food_g, ...filteredData } = data;
-      console.log(filteredData);
 
       http
         .put(
@@ -316,23 +326,22 @@ function EditAnimal() {
     console.log(formik.values.required_food_amount);
   };
 
-  const calculateDosage = (e) => {
+  const calculateDosage = () => {
     const kg = parseFloat(formik.values.weight_kg) || 0;
     const g = parseFloat(formik.values.weight_g) || 0;
 
-    // Calculate total weight in grams
+    // Calculate total weight in kg
     const totalWeight = kg + g / 1000;
 
-    const medicationId = e.target.value; // Get the selected medication ID
+    const medicationId = formik.values.medication_ID; // Get the selected medication ID
+    console.log("id", medicationId);
     const selectedMedication = medicationList.find(
       (med) => med.medication_ID === medicationId
     ); // Find the selected medication
 
-    console.log(selectedMedication);
-
     if (selectedMedication) {
       // Remove 'mg' from the dosage and convert to number
-      const dosageString = selectedMedication.dosage; // Remove 'mg' and trim any extra spaces
+      const dosageString = selectedMedication.dosage.replace("mg", "").trim(); // Remove 'mg' and trim any extra spaces
       console.log(dosageString);
       const dosage = parseFloat(dosageString); // Convert the string to a number
 
@@ -342,22 +351,29 @@ function EditAnimal() {
         return;
       }
       const calculation = totalWeight * dosage; // Calculate the required dosage in mg
+      console.log(totalWeight);
+      console.log(calculation);
       formik.setFieldValue("required_dosage", calculation); // Update formik state with calculated dosage
+    } else {
+      formik.setFieldValue("required_dosage", null);
     }
   };
 
   useEffect(() => {
     calculateTotalWeight();
     calculateFoodAmount();
+    calculateDosage();
   }, [
     formik.values.weight_kg,
     formik.values.weight_g,
     formik.values.food_kg,
     formik.values.food_g,
+    formik.values.medication_ID,
   ]);
 
   return (
     <Container maxWidth="lg">
+      <BackButton />
       <Card>
         <CardContent>
           <Box component="form" onSubmit={formik.handleSubmit}>
@@ -800,7 +816,7 @@ function EditAnimal() {
               <Grid item xs={6}>
                 <TextField
                   fullWidth
-                  label="Calculated Dosage"
+                  label="Calculated Dosage in milligrams"
                   name="required_dosage"
                   type="number"
                   value={formik.values.required_dosage}

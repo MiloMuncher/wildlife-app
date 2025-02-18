@@ -11,6 +11,7 @@ import {
 import { useState, useEffect } from "react";
 import http from "../../http.js";
 import { color } from "framer-motion";
+import BackButton from "./BackButton.jsx";
 
 const AnimalProfile = () => {
   const { id } = useParams();
@@ -100,6 +101,7 @@ const AnimalProfile = () => {
   console.log(animal.profile_pic);
   return (
     <Container maxWidth="md">
+      <BackButton />
       <Card>
         <CardContent>
           <Box padding={5}>
@@ -219,9 +221,10 @@ const AnimalProfile = () => {
                   </Typography>
                   <Typography style={textStyle}>
                     {animal.required_dosage
-                      ? animal.required_dosage
+                      ? `${animal.required_dosage} mg`
                       : "Not Assigned"}
                   </Typography>
+
                   <Typography style={textStyle}>
                     {food?.name || "Not Assigned"}
                   </Typography>

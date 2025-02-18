@@ -11,6 +11,7 @@ import AboutUs from './Pages/AboutUs.jsx';
 import Donation from './Pages/Donation.jsx';
 import Login from './Pages/Login'
 import HowWeOperate from './Pages/HowWeOperate.jsx';
+import OurSanctuary from './Pages/OurSanctuary.jsx';
 
 //Other routes
 import AdminRoutes from './Pages/Admin/AdminRoutes';
@@ -54,6 +55,7 @@ function App() {
         <Route path="/aboutus" element={<AboutUs />} />
         <Route path="/supportus" element={<Donation />} />
         <Route path="/howweoperate" element={<HowWeOperate />} />
+        <Route path="/oursanctuary" element={<OurSanctuary />} />
         <Route path="/animaldata/:id" element={<AnimalData />} />
         <Route path="/fooddetails/:id" element={<FoodDetails />} />
         <Route path="/meddetails/:id" element={<MedicationDetails />} />
