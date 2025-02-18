@@ -5,15 +5,9 @@ import { Link, Routes, Route, useNavigate, useLocation } from 'react-router-dom'
 // Pages
 import UserView from "./UserView";
 import UserEdit from "./UserEdit";
-import AddMerchant from "./AddMerchant";
-import OrdersView from "./OrdersView";
 import OrderItems from "./OrderItems";
 import PostsView from "./PostsView";
-import AddAdminPost from "./AddAdminPost";
-import AdminEditPost from "./AdminEditPost";
-import CustomerServiceTickets from "./CustomerServiceTickets";
 import Dashboard from "./Dashboard";
-import EditMerchant from "./EditMerchant";
 import AddEmployee from "./AddEmployee";
 import FoodView from "./FoodView";
 import ShiftView from "./ShiftView";
@@ -55,17 +49,12 @@ function ProfileRoutes() {
     setOpen((prev) => !prev);
   };
 
-  const location = useLocation();
-
   useEffect(() => {
     
     const checkAuthSession = async () => {
       try {
         const { tokens } = await fetchAuthSession();
         const groups = tokens.accessToken.payload['cognito:groups'];
-
-        console.log(tokens);
-        console.log(groups);
 
         if (!groups || groups.length === 0) {
           const previousPage = sessionStorage.getItem('previousPage') || '/';
@@ -84,7 +73,7 @@ function ProfileRoutes() {
   const handleLogout = async () => {
     try {
       localStorage.clear();
-      sessionStorage, clear();
+      sessionStorage.clear();
     } catch (error) {
       console.error("Error signing out:", error);
     }
@@ -174,13 +163,6 @@ function ProfileRoutes() {
                         to="/admin/viewanimals"
                       >
                         <ListItemText primary="View Animals" />
-                      </ListItemButton>
-                      <ListItemButton
-                        sx={{ pl: 4 }}
-                        LinkComponent={Link}
-                        to="/admin/#viewvets"
-                      >
-                        <ListItemText primary="Animal Data" />
                       </ListItemButton>
                     </List>
                   </Collapse>
@@ -319,18 +301,10 @@ function ProfileRoutes() {
                 <Route path="/viewusers" element={<UserView />} />
                 <Route path="/viewshifts" element={<ShiftView />} />
                 <Route path="/payrollview" element={<PayrollView />} />
-                <Route path="/vieworders" element={<OrdersView />} />
                 <Route path="/orderitems/:id" element={<OrderItems />} />
                 <Route path="/viewposts" element={<PostsView />} />
                 <Route path="/addemployee" element={<AddEmployee />} />
-                <Route path="/addadminpost" element={<AddAdminPost />} />
-                <Route path="/admineditpost/:id" element={<AdminEditPost />} />
-                <Route
-                  path="/customerserviceticket"
-                  element={<CustomerServiceTickets />}
-                />
-                <Route path="/addmerchant" element={<AddMerchant />} />
-                <Route path="/editmerchant/:id" element={<EditMerchant />} />
+
                 <Route
                   path="/uploadtranscripts"
                   element={<UploadTranscripts />}

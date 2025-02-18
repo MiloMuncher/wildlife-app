@@ -19,7 +19,7 @@ function UploadTranscripts() {
   const [recordingTime, setRecordingTime] = useState(0);
   const [timerId, setTimerId] = useState(null);
   const [openViewDialog, setOpenViewDialog] = useState(false);
-  const [transcript, setTranscript] = useState(null);
+  const [transcript, setTranscript] = useState('');
   // Columns for DataGrid
   const columns = [
     { field: 'id', headerName: 'ID', width: 100 },
@@ -45,6 +45,7 @@ function UploadTranscripts() {
             variant="contained"
             color="secondary"
             size="small"
+            style={{ marginLeft: 10 }}
             onClick={() => handleDelete(params.row.id)}
           >
             Delete
@@ -104,11 +105,15 @@ function UploadTranscripts() {
   const handleView = async (id) => {
     await http.get(`https://0ylgzr9mv6.execute-api.us-east-1.amazonaws.com/dev/gettranscripts/${id}`)
       .then((res) => {
-        setTranscript(res.data); // Ensure state is updated
-        setOpenViewDialog(true); // Open the modal after data is set
+        setTranscript(res.data[0]); // Ensure state is updated
       })
       .catch((error) => console.error("Error fetching transcript details", error));
   };
+  useEffect(() => {
+    if (transcript) {
+      setOpenViewDialog(true); // Open the dialog only when transcript is set
+    }
+  }, [transcript]);
 
   const closeViewDialog = () => {
     setOpenViewDialog(false);
@@ -305,16 +310,17 @@ function UploadTranscripts() {
         <DialogTitle>View Transcript</DialogTitle>
         <DialogContent>
           {transcript ? (
-            <DialogContentText>
-              <strong>Name:</strong> {transcript.name}
-              <br />
-              <strong>Description:</strong> {transcript.description}
-              <br />
-              <strong>Date:</strong> {new Date(transcript.date).toLocaleDateString()}
-              <br />
-              <strong>Transcription:</strong>
-              {transcript.transcription}
-            </DialogContentText>
+            <>
+              <DialogContentText>
+                <strong>Name:</strong> {transcript.name || "N/A"}
+                <br />
+                <strong>Description:</strong> {transcript.description || "No description available"}
+                <br />
+                <strong>Date:</strong> {transcript.date ? new Date(transcript.date).toLocaleDateString() : "N/A"}
+                <br />
+                <strong>Transcription:</strong> {transcript.transcription || "No transcription available"}
+              </DialogContentText>
+            </>
           ) : (
             <DialogContentText>Loading...</DialogContentText>
           )}
