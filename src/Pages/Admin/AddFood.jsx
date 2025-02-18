@@ -15,7 +15,6 @@ function AddFood() {
             description: '',
             expiration_date: ' ',
             available_quantity: '',
-            batch_number: '', // Changed from job_title to batch_number
             price: '', // New field for price
         },
         validationSchema: yup.object({
@@ -28,7 +27,6 @@ function AddFood() {
                 .number()
                 .positive('Available quantity must be a number greater than 0')
                 .required('Available quantity is required'),
-            batch_number: yup.string().trim().required('Batch number is required'), // Validation for batch_number
             price: yup
                 .number()
                 .positive('Price must be a positive number')
@@ -97,17 +95,6 @@ function AddFood() {
                                     value={formik.values.available_quantity}
                                     error={formik.touched.available_quantity && Boolean(formik.errors.available_quantity)}
                                     helperText={formik.touched.available_quantity && formik.errors.available_quantity}
-                                />
-                            </Grid>
-                            <Grid item xs={12}>
-                                <TextField
-                                    fullWidth
-                                    label="Batch Number"
-                                    name="batch_number"
-                                    onChange={formik.handleChange}
-                                    value={formik.values.batch_number}
-                                    error={formik.touched.batch_number && Boolean(formik.errors.batch_number)}
-                                    helperText={formik.touched.batch_number && formik.errors.batch_number}
                                 />
                             </Grid>
                             <Grid item xs={12}>

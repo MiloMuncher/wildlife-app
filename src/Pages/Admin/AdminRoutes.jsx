@@ -3,31 +3,31 @@ import { Container, List, ListItem, ListItemButton, ListItemIcon, ListItemText, 
 import { Link, Routes, Route, useNavigate, useLocation } from 'react-router-dom'
 
 // Pages
-import UserView from './UserView';
-import UserEdit from './UserEdit';
-import AddMerchant from './AddMerchant';
-import OrdersView from './OrdersView';
-import OrderItems from './OrderItems';
-import PostsView from './PostsView';
-import AddAdminPost from './AddAdminPost';
-import AdminEditPost from './AdminEditPost';
-import CustomerServiceTickets from './CustomerServiceTickets';
-import Dashboard from './Dashboard';
-import EditMerchant from './EditMerchant';
-import AddEmployee from './AddEmployee';
-import FoodView from './FoodView'
-import ShiftView from './ShiftView'
-import PayrollView from './PayrollView'
-import ShiftEdit from './ShiftEdit'
-import MedicationView from './MedicationView';
-import AddFood from './AddFood';
-import AnimalQR from './QRCodePages/AnimalQR';
+import UserView from "./UserView";
+import UserEdit from "./UserEdit";
+import AddMerchant from "./AddMerchant";
+import OrdersView from "./OrdersView";
+import OrderItems from "./OrderItems";
+import PostsView from "./PostsView";
+import AddAdminPost from "./AddAdminPost";
+import AdminEditPost from "./AdminEditPost";
+import CustomerServiceTickets from "./CustomerServiceTickets";
+import Dashboard from "./Dashboard";
+import EditMerchant from "./EditMerchant";
+import AddEmployee from "./AddEmployee";
+import FoodView from "./FoodView";
+import ShiftView from "./ShiftView";
+import PayrollView from "./PayrollView";
+import ShiftEdit from "./ShiftEdit";
+import MedicationView from "./MedicationView";
+import AddFood from "./AddFood";
+import AnimalQR from "./QRCodePages/AnimalQR";
 import SupplyQR from './QRCodePages/SupplyQR';
-import SupplyDetails from './QRCodePages/SupplyDetails';
-import AddAnimal from './AddAnimal';
-import ViewAnimals from './ViewAnimals';
-import EditAnimal from './EditAnimal';
-import AnimalProfile from './AnimalProfile';
+import SupplyDetails from "./QRCodePages/FoodDetails";
+import AddAnimal from "./AddAnimal";
+import ViewAnimals from "./ViewAnimals";
+import EditAnimal from "./EditAnimal";
+import AnimalProfile from "./AnimalProfile";
 import AddMedication from './AddMedication';
 
 // Icons
@@ -83,109 +83,165 @@ function ProfileRoutes() {
       localStorage.clear();
       sessionStorage.clear();
     } catch (error) {
-      console.error('Error signing out:', error);
+      console.error("Error signing out:", error);
     }
   };
   return (
-    <Container maxWidth='xl'>
+    <Container maxWidth="xl">
       <Grid container spacing={2} marginTop={10}>
         <Grid item xs={12} sm={3}>
           <Card>
             <List>
               <ListItem>
                 <ListItemIcon>
-                  <DashboardIcon color='primary' />
+                  <DashboardIcon color="primary" />
                 </ListItemIcon>
-                <ListItemButton LinkComponent={Link} to='/admin/dashboard' >
+                <ListItemButton LinkComponent={Link} to="/admin/dashboard">
                   <ListItemText primary="Dashboard" />
                 </ListItemButton>
               </ListItem>
               <Divider />
               {/* Admin-specific items */}
-              {userGroup === 'Admins' && (
+              {userGroup === "Admins" && (
                 <>
-                  <ListItemButton onClick={() => handleToggle(setOpenUsers)} sx={{ padding: '17px', height: 'auto' }}>
-                    <ListItemIcon sx={{ paddingRight: '30px' }}>
+                  <ListItemButton
+                    onClick={() => handleToggle(setOpenUsers)}
+                    sx={{ padding: "17px", height: "auto" }}
+                  >
+                    <ListItemIcon sx={{ paddingRight: "30px" }}>
                       {openUsers ? (
                         <ExpandLessIcon color="primary" />
                       ) : (
                         <ExpandMoreIcon color="primary" />
                       )}
                     </ListItemIcon>
-                    <ListItemText primary="Manage Staff" sx={{ paddingLeft: '15px' }} />
+                    <ListItemText
+                      primary="Manage Staff"
+                      sx={{ paddingLeft: "15px" }}
+                    />
                   </ListItemButton>
                   <Collapse in={openUsers} timeout="auto" unmountOnExit>
                     <List component="div">
-                      <ListItemButton sx={{ pl: 4 }} LinkComponent={Link} to="/admin/viewusers">
+                      <ListItemButton
+                        sx={{ pl: 4 }}
+                        LinkComponent={Link}
+                        to="/admin/viewusers"
+                      >
                         <ListItemText primary="View Employees" />
                       </ListItemButton>
-                      <ListItemButton sx={{ pl: 4 }} LinkComponent={Link} to="/admin/viewshifts">
+                      <ListItemButton
+                        sx={{ pl: 4 }}
+                        LinkComponent={Link}
+                        to="/admin/viewshifts"
+                      >
                         <ListItemText primary="View Shifts" />
                       </ListItemButton>
-                      <ListItemButton sx={{ pl: 4 }} LinkComponent={Link} to="/admin/payrollview">
+                      <ListItemButton
+                        sx={{ pl: 4 }}
+                        LinkComponent={Link}
+                        to="/admin/payrollview"
+                      >
                         <ListItemText primary="Payroll Management" />
                       </ListItemButton>
                     </List>
                   </Collapse>
                   <Divider />
 
-                  <ListItemButton onClick={() => handleToggle(setOpenAnimals)} sx={{ padding: '17px', height: 'auto' }}>
-                    <ListItemIcon sx={{ paddingRight: '30px' }}>
+                  <ListItemButton
+                    onClick={() => handleToggle(setOpenAnimals)}
+                    sx={{ padding: "17px", height: "auto" }}
+                  >
+                    <ListItemIcon sx={{ paddingRight: "30px" }}>
                       {openAnimals ? (
                         <ExpandLessIcon color="primary" />
                       ) : (
                         <ExpandMoreIcon color="primary" />
                       )}
                     </ListItemIcon>
-                    <ListItemText primary="Manage Animals" sx={{ paddingLeft: '15px' }} />
+                    <ListItemText
+                      primary="Manage Animals"
+                      sx={{ paddingLeft: "15px" }}
+                    />
                   </ListItemButton>
                   <Collapse in={openAnimals} timeout="auto" unmountOnExit>
                     <List component="div">
-                      <ListItemButton sx={{ pl: 4 }} LinkComponent={Link} to="/admin/viewanimals">
+                      <ListItemButton
+                        sx={{ pl: 4 }}
+                        LinkComponent={Link}
+                        to="/admin/viewanimals"
+                      >
                         <ListItemText primary="View Animals" />
                       </ListItemButton>
-                      <ListItemButton sx={{ pl: 4 }} LinkComponent={Link} to="/admin/#viewvets">
+                      <ListItemButton
+                        sx={{ pl: 4 }}
+                        LinkComponent={Link}
+                        to="/admin/#viewvets"
+                      >
                         <ListItemText primary="Animal Data" />
                       </ListItemButton>
                     </List>
                   </Collapse>
                   <Divider />
 
-                  <ListItemButton onClick={() => handleToggle(setOpenInventory)} sx={{ padding: '17px', height: 'auto' }}>
-                    <ListItemIcon sx={{ paddingRight: '30px' }}>
+                  <ListItemButton
+                    onClick={() => handleToggle(setOpenInventory)}
+                    sx={{ padding: "17px", height: "auto" }}
+                  >
+                    <ListItemIcon sx={{ paddingRight: "30px" }}>
                       {openInventory ? (
                         <ExpandLessIcon color="primary" />
                       ) : (
                         <ExpandMoreIcon color="primary" />
                       )}
                     </ListItemIcon>
-                    <ListItemText primary="Manage Inventory" sx={{ paddingLeft: '15px' }} />
+                    <ListItemText
+                      primary="Manage Inventory"
+                      sx={{ paddingLeft: "15px" }}
+                    />
                   </ListItemButton>
                   <Collapse in={openInventory} timeout="auto" unmountOnExit>
                     <List component="div">
-                      <ListItemButton sx={{ pl: 4 }} LinkComponent={Link} to="/admin/viewmedications">
+                      <ListItemButton
+                        sx={{ pl: 4 }}
+                        LinkComponent={Link}
+                        to="/admin/viewmedications"
+                      >
                         <ListItemText primary="View Medication" />
                       </ListItemButton>
-                      <ListItemButton sx={{ pl: 4 }} LinkComponent={Link} to="/admin/viewfood">
+                      <ListItemButton
+                        sx={{ pl: 4 }}
+                        LinkComponent={Link}
+                        to="/admin/viewfood"
+                      >
                         <ListItemText primary="View Food" />
                       </ListItemButton>
                     </List>
                   </Collapse>
                   <Divider />
 
-                  <ListItemButton onClick={() => handleToggle(setOpenCases)} sx={{ padding: '17px', height: 'auto' }}>
-                    <ListItemIcon sx={{ paddingRight: '30px' }}>
+                  <ListItemButton
+                    onClick={() => handleToggle(setOpenCases)}
+                    sx={{ padding: "17px", height: "auto" }}
+                  >
+                    <ListItemIcon sx={{ paddingRight: "30px" }}>
                       {openCases ? (
                         <ExpandLessIcon color="primary" />
                       ) : (
                         <ExpandMoreIcon color="primary" />
                       )}
                     </ListItemIcon>
-                    <ListItemText primary="Manage Cases" sx={{ paddingLeft: '15px' }} />
+                    <ListItemText
+                      primary="Manage Cases"
+                      sx={{ paddingLeft: "15px" }}
+                    />
                   </ListItemButton>
                   <Collapse in={openCases} timeout="auto" unmountOnExit>
                     <List component="div">
-                      <ListItemButton sx={{ pl: 4 }} LinkComponent={Link} to="/admin/uploadtranscripts">
+                      <ListItemButton
+                        sx={{ pl: 4 }}
+                        LinkComponent={Link}
+                        to="/admin/uploadtranscripts"
+                      >
                         <ListItemText primary="View Cases" />
                       </ListItemButton>
                     </List>
@@ -193,21 +249,31 @@ function ProfileRoutes() {
                 </>
               )}
               {/* Vet-specific items */}
-              {userGroup === 'Vets' && (
+              {userGroup === "Vets" && (
                 <>
-                  <ListItemButton onClick={() => handleToggle(setOpenCases)} sx={{ padding: '17px', height: 'auto' }}>
-                    <ListItemIcon sx={{ paddingRight: '30px' }}>
+                  <ListItemButton
+                    onClick={() => handleToggle(setOpenCases)}
+                    sx={{ padding: "17px", height: "auto" }}
+                  >
+                    <ListItemIcon sx={{ paddingRight: "30px" }}>
                       {openCases ? (
                         <ExpandLessIcon color="primary" />
                       ) : (
                         <ExpandMoreIcon color="primary" />
                       )}
                     </ListItemIcon>
-                    <ListItemText primary="Manage Cases" sx={{ paddingLeft: '15px' }} />
+                    <ListItemText
+                      primary="Manage Cases"
+                      sx={{ paddingLeft: "15px" }}
+                    />
                   </ListItemButton>
                   <Collapse in={openCases} timeout="auto" unmountOnExit>
                     <List component="div">
-                      <ListItemButton sx={{ pl: 4 }} LinkComponent={Link} to="/admin/uploadtranscripts">
+                      <ListItemButton
+                        sx={{ pl: 4 }}
+                        LinkComponent={Link}
+                        to="/admin/uploadtranscripts"
+                      >
                         <ListItemText primary="View Cases" />
                       </ListItemButton>
                     </List>
@@ -227,8 +293,13 @@ function ProfileRoutes() {
                 </>
               )}
               <ListItem>
-                <ListItemButton component={Link} to="/" style={{ paddingLeft: '20px' }} onClick={handleLogout}>
-                  <Logout sx={{ marginRight: '10px' }} />
+                <ListItemButton
+                  component={Link}
+                  to="/"
+                  style={{ paddingLeft: "20px" }}
+                  onClick={handleLogout}
+                >
+                  <Logout sx={{ marginRight: "10px" }} />
                   <ListItemText primary="Logout" />
                 </ListItemButton>
               </ListItem>
@@ -237,55 +308,66 @@ function ProfileRoutes() {
         </Grid>
         <Grid item xs={12} sm={9}>
           <Routes>
-            <Route path='/dashboard' element={<Dashboard />} />
+            <Route path="/dashboard" element={<Dashboard />} />
             {/* Admin-specific routes */}
-            {userGroup === 'Admins' && (
+            {userGroup === "Admins" && (
               <>
                 <Route path="/viewusers/edit/:id" element={<UserEdit />} />
-                <Route path='/viewusers' element={<UserView />} />
-                <Route path='/viewshifts' element={<ShiftView />} />
-                <Route path='/payrollview' element={<PayrollView />} />
-                <Route path='/vieworders' element={<OrdersView />} />
-                <Route path='/orderitems/:id' element={<OrderItems />} />
-                <Route path='/viewposts' element={<PostsView />} />
-                <Route path='/addemployee' element={<AddEmployee />} />
-                <Route path='/addadminpost' element={<AddAdminPost />} />
-                <Route path='/admineditpost/:id' element={<AdminEditPost />} />
-                <Route path='/customerserviceticket' element={<CustomerServiceTickets />} />
-                <Route path='/addmerchant' element={<AddMerchant />} />
-                <Route path='/editmerchant/:id' element={<EditMerchant />} />
-                <Route path="/uploadtranscripts" element={<UploadTranscripts />} />
+                <Route path="/viewusers" element={<UserView />} />
+                <Route path="/viewshifts" element={<ShiftView />} />
+                <Route path="/payrollview" element={<PayrollView />} />
+                <Route path="/vieworders" element={<OrdersView />} />
+                <Route path="/orderitems/:id" element={<OrderItems />} />
+                <Route path="/viewposts" element={<PostsView />} />
+                <Route path="/addemployee" element={<AddEmployee />} />
+                <Route path="/addadminpost" element={<AddAdminPost />} />
+                <Route path="/admineditpost/:id" element={<AdminEditPost />} />
+                <Route
+                  path="/customerserviceticket"
+                  element={<CustomerServiceTickets />}
+                />
+                <Route path="/addmerchant" element={<AddMerchant />} />
+                <Route path="/editmerchant/:id" element={<EditMerchant />} />
+                <Route
+                  path="/uploadtranscripts"
+                  element={<UploadTranscripts />}
+                />
                 <Route path="/viewmedications" element={<MedicationView />} />
-                {/* <Route path="/addmedication" element={<AddMedication />} /> */}
+                <Route path="/addmedication" element={<AddMedication />} />
                 <Route path="/viewfood" element={<FoodView />} />
                 <Route path="/addfood" element={<AddFood />} />
 
-
                 <Route path="/supplydetails/:id" element={<SupplyDetails />} />
-                <Route path="/supply-qr/:id" element={<SupplyQR />} />
+                <Route path="/supply-qr/:id" element={<SupplyQR /> } />
                 <Route path="/viewanimals" element={<ViewAnimals />} />
                 <Route path="/addanimal" element={<AddAnimal />} />
                 <Route path="/viewanimals/edit/:id" element={<EditAnimal />} />
-                <Route path="/viewanimals/profile/:id" element={<AnimalProfile />} />
+                <Route
+                  path="/viewanimals/profile/:id"
+                  element={<AnimalProfile />}
+                />
                 <Route path="/animal-qr/:id" element={<AnimalQR />} />
               </>
             )}
-            {userGroup === 'Vets' && <Route path="/uploadtranscripts" element={<UploadTranscripts />} />}
+            {userGroup === "Vets" && (
+              <Route
+                path="/uploadtranscripts"
+                element={<UploadTranscripts />}
+              />
+            )}
 
-            {userGroup === 'Suppliers' && (
+            {userGroup === "Suppliers" && (
               <>
                 <Route path="/viewmedications" element={<MedicationView />} />
                 <Route path="/viewfood" element={<FoodView />} />
-                <Route path="/supply-qr/:id" element={<SupplyQR />} />
+                <Route path="/supply-qr/:id" element={<SupplyQR /> } />
               </>
             )}
           </Routes>
         </Grid>
       </Grid>
-
-
-    </Container >
-  )
+    </Container>
+  );
 }
 
-export default ProfileRoutes
+export default ProfileRoutes;

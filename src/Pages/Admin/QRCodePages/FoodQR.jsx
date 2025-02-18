@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import http from '../../../http.js';
 import {
   Box,
@@ -11,53 +11,42 @@ import {
 } from '@mui/material';
 import { ArrowBack } from '@mui/icons-material';
 import QrCodeWithLogo from 'qrcode-with-logos';
-import Logo from './sizedlogo.png';
+// import Logo from '../../../../public/logo.png';
+import Logo from './sizedlogo.png'
 
-function SupplyQR() {
+function FoodQR() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const location = useLocation(); // Get current route
-
-  const fromFoodPage = location.state?.fromFoodPage; 
-
-  const [data, setData] = useState(null);
+  const [food, setFood] = useState(null);
   const [filename, setFilename] = useState('');
   const [isQRGenerated, setQRGenerated] = useState(false);
   const [loading, setLoading] = useState(true);
   const canvasRef = useRef(null);
 
   useEffect(() => {
-    async function fetchData() {
-      const endpoint = fromFoodPage
-        ? `https://kvhdoqjcua.execute-api.us-east-1.amazonaws.com/dev/food/${id}`
-        : `https://z40lajab6h.execute-api.us-east-1.amazonaws.com/dev/medications/${id}`;
-
+    async function getFood() {
       try {
-        const response = await http.get(endpoint);
-        const itemData = response.data;
-        setData(itemData);
-        setFilename(`${itemData.name}.png`);
+        const response = await http.get(`https://kvhdoqjcua.execute-api.us-east-1.amazonaws.com/dev/food/${id}`);
+        const foodData = response.data[0];
+        console.log(foodData);
+        setFood(foodData);
+        setFilename(`${foodData.name}.png`);
         setLoading(false);
       } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error('Error fetching food:', error);
         setLoading(false);
       }
     }
-    fetchData();
-  }, [id, fromFoodPage]);
+    getFood();
+  }, [id]);
 
   useEffect(() => {
-    if (data && canvasRef.current) {
+    if (food && canvasRef.current) {
       const canvas = canvasRef.current;
-
-      const qrContent = fromFoodPage
-        ? `https://dev.d1hih7jskxsvbh.amplifyapp.com/fooddetails/${id}`  // Change this URL for food
-        : `https://dev.d1hih7jskxsvbh.amplifyapp.com/meddetails/${id}`;
-
       try {
         new QrCodeWithLogo({
           canvas: canvas,
-          content: qrContent,
+          content: `https://dev.d1hih7jskxsvbh.amplifyapp.com/animaldata/${id}`, //adjust the url here, now it leads to amplify app
           width: 300
         });
         setQRGenerated(true);
@@ -65,23 +54,25 @@ function SupplyQR() {
       } catch (err) {
         console.error("Error generating QR code:", err);
       }
+    } else {
+      console.log("Food or canvasRef not ready yet.");
     }
-  }, [data]);
+  }, [food]);
 
-  const drawLogoOverQRCode = () => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    const logoImg = new Image();
-    logoImg.src = Logo;
-    logoImg.onload = () => {
-      const logoWidth = 100;
-      const logoHeight = 100;
-      const centerX = (canvas.width - logoWidth) / 2;
-      const centerY = (canvas.height - logoHeight) / 2;
-      ctx.drawImage(logoImg, centerX, centerY, logoWidth, logoHeight);
-    };
-  };
+    const drawLogoOverQRCode = () => {
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        const logoImg = new Image();
+        logoImg.src = Logo;
+        logoImg.onload = () => {
+          const logoWidth = 100;
+          const logoHeight = 100;
+          const centerX = (canvas.width - logoWidth) / 2;
+          const centerY = (canvas.height - logoHeight) / 2;
+          ctx.drawImage(logoImg, centerX, centerY, logoWidth, logoHeight);
+        };
+      };
 
   const downloadQRCode = () => {
     const qrcodeImage = canvasRef.current;
@@ -98,17 +89,13 @@ function SupplyQR() {
     <Box sx={{ width: "100%", textAlign: "center" }}>
       <Grid container alignItems="center" spacing={2} justifyContent="center">
         <Grid item>
-          <IconButton
-            component={Link}
-            to={fromFoodPage ? "/admin/viewfood" : "/admin/viewmedications"}
-            color="inherit"
-          >
+          <IconButton component={Link} to="/admin/viewfood" color="inherit">
             <ArrowBack />
           </IconButton>
         </Grid>
         <Grid item>
           <Typography variant="h4" sx={{ my: 2 }}>
-            QR Code for {data?.name} ({fromFoodPage ? "Food" : "Medication"})
+            QR Code for {food?.name}
           </Typography>
         </Grid>
       </Grid>
@@ -152,4 +139,4 @@ function SupplyQR() {
   );
 }
 
-export default SupplyQR;
+export default FoodQR;

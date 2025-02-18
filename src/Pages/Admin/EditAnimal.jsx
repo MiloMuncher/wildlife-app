@@ -65,6 +65,7 @@ function EditAnimal() {
     "Healthy",
     "Recovering",
     "Critical Condition",
+    "To be updated",
   ];
 
   const currentHealthStatus = [
@@ -75,6 +76,7 @@ function EditAnimal() {
     "Improving",
     "Deteriorating",
     "In Treatment",
+    "To be updated",
   ];
 
   const outcomeTypes = [
@@ -88,20 +90,30 @@ function EditAnimal() {
     "To be quarantined",
     "Released",
     "Deceased",
+    "To be updated",
   ];
 
   const { id } = useParams();
   const [u, setU] = useState({
+    species: "",
     weight: "",
     age_class: "",
+    date_of_rescue: "",
+    initial_condition: "",
+    location_found: "",
     outcome_type: "",
     current_health_status: "",
     case_status: "",
     required_food_amount: "",
     profile_pic: "",
+    required_dosage: 0,
     transcript_ID: "",
     medication_ID: "",
     food_ID: "",
+    weight_kg: 0,
+    weight_g: 0,
+    food_kg: 0,
+    food_g: 0,
   });
 
   const [transcriptList, setTranscriptList] = useState([]);
@@ -149,6 +161,7 @@ function EditAnimal() {
       )
       .then((res) => {
         setMedicationList(res.data);
+        console.log(res.data.dosage);
       });
   };
 
@@ -161,7 +174,20 @@ function EditAnimal() {
         `https://i1mu51yxbd.execute-api.us-east-1.amazonaws.com/dev/animal_CRUD/animals?animal_ID=${id}`
       )
       .then((res) => {
-        setU(res.data);
+        const animalData = res.data;
+        const weight = parseInt(animalData.weight, 10) || 0;
+        const food_amount = parseInt(animalData.required_food_amount, 10) || 0;
+
+        setU({
+          ...animalData,
+          weight_kg: weight >= 1000 ? Math.floor(weight / 1000) : 0,
+          weight_g: weight >= 1000 ? weight % 1000 : weight,
+          food_kg: food_amount >= 1000 ? Math.floor(food_amount / 1000) : 0,
+          food_g: food_amount >= 1000 ? food_amount % 1000 : food_amount,
+          medication_ID: animalData.medication_ID ?? "To be assigned",
+          food_ID: animalData.food_ID ?? "To be assigned",
+          transcript_ID: animalData.transcript_ID ?? "To be assigned",
+        });
       });
   }, [id]);
 
@@ -170,16 +196,40 @@ function EditAnimal() {
     initialValues: u,
     enableReinitialize: true,
     validationSchema: yup.object({
-      species: yup
-        .string()
-        .trim()
-        .min(2, "Species name must be at least 2 characters")
-        .max(50, "Species name must be at most 50 characters")
-        .required("Species is required"),
-      weight: yup
+      weight_kg: yup
         .number()
         .typeError("Weight must be a number")
-        .positive("Weight must be positive")
+        .min(0, "Weight cannot be negative")
+        .test(
+          "at-least-one",
+          "Either weight (kg) or weight (g) must be greater than 0",
+          function (value) {
+            const weight_g = this.parent.weight_g;
+            return value > 0 || weight_g > 0;
+          }
+        )
+        .required("Weight is required"),
+      weight_g: yup
+        .number()
+        .typeError("Weight must be a number")
+        .min(0, "Weight cannot be negative")
+        .test(
+          "at-least-one",
+          "Either weight (kg) or weight (g) must be greater than 0",
+          function (value) {
+            const weight_kg = this.parent.weight_kg;
+            return value > 0 || weight_kg > 0;
+          }
+        ),
+      food_kg: yup
+        .number()
+        .typeError("Weight must be a number")
+        .min(0, "Weight cannot be negative")
+        .required("Weight is required"),
+      food_g: yup
+        .number()
+        .typeError("Weight must be a number")
+        .min(0, "Weight cannot be negative")
         .required("Weight is required"),
       age_class: yup
         .string()
@@ -188,45 +238,45 @@ function EditAnimal() {
           "Invalid age class selected"
         )
         .required("Age class is required"),
-      date_of_rescue: yup.date().required("Date of rescue is required"),
       initial_condition: yup
         .string()
         .trim()
         .min(2, "Initial condition must be at least 2 characters")
         .max(100, "Initial condition must be at most 100 characters")
         .required("Initial condition is required"),
-      location_found: yup
-        .string()
-        .trim()
-        .min(2, "Location found must be at least 2 characters")
-        .max(100, "Location found must be at most 100 characters")
-        .required("Location found is required"),
       outcome_type: yup
         .string()
         .trim()
         .min(2, "Outcome type must be at least 2 characters")
         .max(50, "Outcome type must be at most 50 characters")
         .required("Outcome type is required"),
-      required_food_amount: yup
-        .number()
-        .typeError("Required food amount must be a number")
-        .positive("Required food amount must be positive")
-        .required("Required food amount is required"),
-      transcript_ID: yup.number().required("Vet transcript is required"),
-      medication_ID: yup.number().required("Medication is required"),
-      food_ID: yup.number().required("Food is required"),
       case_status: yup
         .string()
         .oneOf(["Open", "Closed"], "Invalid age class selected")
         .required("Case Status is required"),
     }),
     onSubmit: (data) => {
-      console.log(data);
+      if (data.transcript_ID == "To be assigned") {
+        data.transcript_ID = null;
+      }
+
+      if (data.food_ID == "To be assigned") {
+        data.food_ID = null;
+      }
+
+      if (data.medication_ID == "To be assigned") {
+        data.medication_ID = null;
+        data.required_dosage = null;
+      }
       data.profile_pic = base64;
+
+      const { weight_kg, weight_g, food_kg, food_g, ...filteredData } = data;
+      console.log(filteredData);
+
       http
         .put(
           `https://i1mu51yxbd.execute-api.us-east-1.amazonaws.com/dev/animal_CRUD/animals?animal_ID=${id}`,
-          data
+          filteredData
         )
         .then((res) => {
           console.log(res.data);
@@ -235,6 +285,76 @@ function EditAnimal() {
         .catch((err) => console.log(err));
     },
   });
+
+  const calculateTotalWeight = (e) => {
+    // const { name, value } = e.target;
+
+    // Get kilogram and gram values from formik state
+    const kg = parseFloat(formik.values.weight_kg) || 0;
+    const g = parseFloat(formik.values.weight_g) || 0;
+
+    // Calculate total weight in grams
+    const totalWeight = kg * 1000 + g;
+
+    // Set the total weight into the formik state 'weight'
+    formik.setFieldValue("weight", totalWeight);
+    console.log(formik.values.weight);
+  };
+
+  const calculateFoodAmount = (e) => {
+    // const { name, value } = e.target;
+
+    // Get kilogram and gram values from formik state
+    const kg = parseFloat(formik.values.food_kg) || 0;
+    const g = parseFloat(formik.values.food_g) || 0;
+
+    // Calculate total weight in grams
+    const totalWeight = kg * 1000 + g;
+
+    // Set the total weight into the formik state 'weight'
+    formik.setFieldValue("required_food_amount", totalWeight);
+    console.log(formik.values.required_food_amount);
+  };
+
+  const calculateDosage = (e) => {
+    const kg = parseFloat(formik.values.weight_kg) || 0;
+    const g = parseFloat(formik.values.weight_g) || 0;
+
+    // Calculate total weight in grams
+    const totalWeight = kg + g / 1000;
+
+    const medicationId = e.target.value; // Get the selected medication ID
+    const selectedMedication = medicationList.find(
+      (med) => med.medication_ID === medicationId
+    ); // Find the selected medication
+
+    console.log(selectedMedication);
+
+    if (selectedMedication) {
+      // Remove 'mg' from the dosage and convert to number
+      const dosageString = selectedMedication.dosage; // Remove 'mg' and trim any extra spaces
+      console.log(dosageString);
+      const dosage = parseFloat(dosageString); // Convert the string to a number
+
+      if (isNaN(dosage)) {
+        // Handle the case where the dosage is not a valid number
+        console.error("Invalid dosage value");
+        return;
+      }
+      const calculation = totalWeight * dosage; // Calculate the required dosage in mg
+      formik.setFieldValue("required_dosage", calculation); // Update formik state with calculated dosage
+    }
+  };
+
+  useEffect(() => {
+    calculateTotalWeight();
+    calculateFoodAmount();
+  }, [
+    formik.values.weight_kg,
+    formik.values.weight_g,
+    formik.values.food_kg,
+    formik.values.food_g,
+  ]);
 
   return (
     <Container maxWidth="lg">
@@ -261,26 +381,112 @@ function EditAnimal() {
                 </Typography>
 
                 <Typography style={{ marginBottom: "5px" }}>
-                  <strong>Initial Condition:</strong> &nbsp;
-                  {formik.values.initial_condition}
-                </Typography>
-
-                <Typography style={{ marginBottom: "5px" }}>
                   <strong>Location Found:</strong> &nbsp;
                   {formik.values.location_found}
                 </Typography>
               </Grid>
               <Grid item xs={12}>
+                <Grid container spacing={2} alignItems="center">
+                  <Grid item xs={2.5}>
+                    <TextField
+                      fullWidth
+                      label="Weight (kg)"
+                      name="weight_kg"
+                      type="number"
+                      onChange={(e) => {
+                        formik.handleChange(e);
+                        calculateTotalWeight(e);
+                        calculateDosage(e);
+                      }}
+                      value={formik.values.weight_kg}
+                      error={
+                        formik.touched.weight_kg &&
+                        Boolean(formik.errors.weight_kg)
+                      }
+                      helperText={
+                        formik.touched.weight_kg && formik.errors.weight_kg
+                      }
+                    />
+                  </Grid>
+                  <Grid
+                    item
+                    xs={0.5}
+                    style={{ textAlign: "center", alignSelf: "center" }}
+                  >
+                    <Typography variant="body1">kg</Typography>
+                  </Grid>
+                  <Grid item xs={2.5}>
+                    <TextField
+                      fullWidth
+                      label="Weight (g)"
+                      name="weight_g"
+                      type="number"
+                      onChange={(e) => {
+                        formik.handleChange(e);
+                        calculateTotalWeight(e);
+                        calculateDosage(e);
+                      }}
+                      value={formik.values.weight_g}
+                      error={
+                        formik.touched.weight_g &&
+                        Boolean(formik.errors.weight_g)
+                      }
+                      helperText={
+                        formik.touched.weight_g && formik.errors.weight_g
+                      }
+                    />
+                  </Grid>
+                  <Grid
+                    item
+                    xs={0.5}
+                    style={{ textAlign: "center", alignSelf: "center" }}
+                  >
+                    <Typography variant="body1">g</Typography>
+                  </Grid>
+                </Grid>
+              </Grid>
+              <Grid item xs={12}>
                 <TextField
                   fullWidth
-                  label="Weight (g)"
-                  name="weight"
-                  type="number"
+                  select
+                  label="Initial Condition"
+                  name="initial_condition"
                   onChange={formik.handleChange}
-                  value={formik.values.weight}
-                  error={formik.touched.weight && Boolean(formik.errors.weight)}
-                  helperText={formik.touched.weight && formik.errors.weight}
-                />
+                  value={formik.values.initial_condition}
+                  error={
+                    formik.touched.initial_condition &&
+                    Boolean(formik.errors.initial_condition)
+                  }
+                  helperText={
+                    formik.touched.initial_condition &&
+                    formik.errors.initial_condition
+                  }
+                  SelectProps={{
+                    MenuProps: {
+                      anchorOrigin: {
+                        vertical: "bottom",
+                        horizontal: "left",
+                      },
+                      transformOrigin: {
+                        vertical: "top",
+                        horizontal: "left",
+                      },
+                      disablePortal: true, // Ensures the dropdown remains within the form structure
+                      PaperProps: {
+                        style: {
+                          maxHeight: 200, // Set the max height for the dropdown
+                          overflowY: "auto", // Enables scrolling when content overflows
+                        },
+                      },
+                    },
+                  }}
+                >
+                  {initialConditions.map((initial_condition) => (
+                    <MenuItem key={initial_condition} value={initial_condition}>
+                      {initial_condition}
+                    </MenuItem>
+                  ))}
+                </TextField>
               </Grid>
               <Grid item xs={12}>
                 <TextField
@@ -319,6 +525,9 @@ function EditAnimal() {
                     },
                   }}
                 >
+                  {/* Option to return null */}
+                  <MenuItem value="To be assigned">To be assigned</MenuItem>
+
                   {transcriptList.map((vet) => (
                     <MenuItem key={vet.transcript_ID} value={vet.transcript_ID}>
                       Transcript:&nbsp;<strong>{vet.description}</strong>
@@ -327,6 +536,7 @@ function EditAnimal() {
                   ))}
                 </TextField>
               </Grid>
+
               <Grid item xs={12}>
                 <TextField
                   fullWidth
@@ -472,6 +682,8 @@ function EditAnimal() {
                     },
                   }}
                 >
+                  {/* Option to return null */}
+                  <MenuItem value="To be assigned">To be assigned</MenuItem>
                   {foodList.map((food) => (
                     <MenuItem key={food.food_ID} value={food.food_ID}>
                       {food.name}
@@ -480,33 +692,70 @@ function EditAnimal() {
                 </TextField>
               </Grid>
               <Grid item xs={6}>
-                <TextField
-                  fullWidth
-                  label="Required Food Amount (g)"
-                  name="required_food_amount"
-                  type="number"
-                  onChange={formik.handleChange}
-                  value={formik.values.required_food_amount}
-                  error={
-                    formik.touched.required_food_amount &&
-                    Boolean(formik.errors.required_food_amount)
-                  }
-                  helperText={
-                    formik.touched.required_food_amount &&
-                    formik.errors.required_food_amount
-                  }
-                />
+                <Grid container spacing={2} alignItems="center">
+                  <Grid item xs={5}>
+                    <TextField
+                      fullWidth
+                      label="Food Amount (kg)"
+                      name="food_kg"
+                      type="number"
+                      onChange={(e) => {
+                        formik.handleChange(e);
+                        calculateTotalWeight(e);
+                      }}
+                      value={formik.values.food_kg}
+                      error={
+                        formik.touched.food_kg && Boolean(formik.errors.food_kg)
+                      }
+                      helperText={
+                        formik.touched.food_kg && formik.errors.food_kg
+                      }
+                    />
+                  </Grid>
+                  <Grid
+                    item
+                    xs={1}
+                    style={{ textAlign: "center", alignSelf: "center" }}
+                  >
+                    <Typography variant="body1">kg</Typography>
+                  </Grid>
+                  <Grid item xs={5}>
+                    <TextField
+                      fullWidth
+                      label="Food Amount (g)"
+                      name="food_g"
+                      type="number"
+                      onChange={(e) => {
+                        formik.handleChange(e);
+                        calculateTotalWeight(e);
+                      }}
+                      value={formik.values.food_g}
+                      error={
+                        formik.touched.food_g && Boolean(formik.errors.food_g)
+                      }
+                      helperText={formik.touched.food_g && formik.errors.food_g}
+                    />
+                  </Grid>
+                  <Grid
+                    item
+                    xs={1}
+                    style={{ textAlign: "center", alignSelf: "center" }}
+                  >
+                    <Typography variant="body1">g</Typography>
+                  </Grid>
+                </Grid>
               </Grid>
 
-              <Grid item xs={12}>
+              <Grid item xs={6}>
                 <TextField
                   fullWidth
                   select
                   label="Assign Medication"
                   name="medication_ID"
-                  onChange={(e) =>
-                    formik.setFieldValue("medication_ID", e.target.value)
-                  }
+                  onChange={(e) => {
+                    formik.setFieldValue("medication_ID", e.target.value);
+                    calculateDosage(e);
+                  }}
                   value={formik.values.medication_ID}
                   error={
                     formik.touched.medication_ID &&
@@ -535,6 +784,8 @@ function EditAnimal() {
                     },
                   }}
                 >
+                  {/* Option to return null */}
+                  <MenuItem value="To be assigned">To be assigned</MenuItem>
                   {medicationList.map((medication) => (
                     <MenuItem
                       key={medication.medication_ID}
@@ -544,6 +795,27 @@ function EditAnimal() {
                     </MenuItem>
                   ))}
                 </TextField>
+              </Grid>
+
+              <Grid item xs={6}>
+                <TextField
+                  fullWidth
+                  label="Calculated Dosage"
+                  name="required_dosage"
+                  type="number"
+                  value={formik.values.required_dosage}
+                  error={
+                    formik.touched.required_dosage &&
+                    Boolean(formik.errors.required_dosage)
+                  }
+                  helperText={
+                    formik.touched.required_dosage &&
+                    formik.errors.required_dosage
+                  }
+                  InputProps={{
+                    readOnly: true,
+                  }}
+                />
               </Grid>
 
               <Grid item xs={6}>

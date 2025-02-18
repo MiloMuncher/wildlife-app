@@ -46,8 +46,7 @@ function AnimalQR() {
       try {
         new QrCodeWithLogo({
           canvas: canvas,
-          // content: `https://dev.d1hih7jskxsvbh.amplifyapp.com/animaldata/${id}`, //adjust the url here, now it leads to amplify app
-          content: `http://192.168.11.1:5173/animaldata/${id}`,
+          content: `https://dev.d1hih7jskxsvbh.amplifyapp.com/animaldata/${id}`,
           width: 300
         });
         setQRGenerated(true);
