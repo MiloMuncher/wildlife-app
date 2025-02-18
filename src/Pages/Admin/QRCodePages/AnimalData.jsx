@@ -269,7 +269,7 @@ function AnimalData() {
     http.put(`https://8zjp8vpeub.execute-api.us-east-1.amazonaws.com/dev/animals/${id}`, {
       fed: animalData.fed,
       medicated: animalData.medicated,
-      surgeryTranscript: animalData.transcript.transcription,
+      surgeryTranscript: animalData.surgeryTranscript,
     })
       .then(() => navigate(-1))
       .catch((err) => console.error("Error updating data:", err));

@@ -45,10 +45,10 @@ function HowWeOperate() {
                 <Box sx={{ my: 6, textAlign: "center", color: "black" }}>
                     <Typography variant="h4" fontWeight="bold">Meet Our Team</Typography>
                     <Grid container spacing={4} justifyContent="center" sx={{ mt: 3 }}>
-                        {[{ name: "Maryam", role: "Founder", img: "team1.jpg" }, { name: "Chong Xie Hong", role: "Veterinarian", img: "team2.jpg" }, { name: "Rhaylene", role: "Operations Manager", img: "team2.jpg" }].map((item, index) => (
+                        {[{ name: "Maryam", role: "Founder", img: "team1.jpg" }, { name: "Chong Xie Hong", role: "Veterinarian", img: "team.png" }, { name: "Rhaylene", role: "Operations Manager", img: "team2.jpg" }].map((item, index) => (
                             <Grid item xs={12} sm={6} md={4} key={index}>
                                 <Card sx={{ boxShadow: 5, borderRadius: 3 }}>
-                                    <img src={item.img} alt={item.name} style={{ width: "100%", height: "200px", objectFit: "cover" }} />
+                                    <img src={item.img} alt={item.name} style={{ width: "100%", maxHeight:'700px', objectFit: "cover" }} />
                                     <CardContent sx={{ textAlign: "center" }}>
                                         <Typography variant="h5" fontWeight="bold">{item.name}</Typography>
                                         <Typography variant="body1" color="textSecondary">{item.role}</Typography>
@@ -63,7 +63,7 @@ function HowWeOperate() {
                 <Box sx={{ my: 6, textAlign: "center", color: "black" }}>
                     <Typography variant="h4" fontWeight="bold">Our Partners and Sponsors</Typography>
                     <Grid container spacing={3} justifyContent="center" sx={{ mt: 3 }}>
-                        {[{ name: "Wildlife Org", img: "partner1.png" }, { name: "Eco Foundation", img: "partner2.png" }].map((item, index) => (
+                        {[{ name: "Wildlife Org", img: "7794285-logo.jpg" }, { name: "Eco Foundation", img: "Picture1-1.png" }].map((item, index) => (
                             <Grid item xs={12} sm={6} md={4} key={index}>
                                 <img src={item.img} alt={item.name} style={{ maxWidth: "150px", margin: "0 auto", display: "block" }} />
                             </Grid>
