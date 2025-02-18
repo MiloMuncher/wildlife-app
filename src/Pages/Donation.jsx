@@ -305,7 +305,7 @@ const CheckoutForm = () => {
                       }}
                     />
                     <div>
-                      {customAmount && customAmount <= 1 && (
+                      {customAmount && customAmount < 1 && (
                         <Typography
                           color="error"
                           variant="body2"
@@ -313,7 +313,7 @@ const CheckoutForm = () => {
                           paddingTop={1}
                           fontWeight={600}
                         >
-                          Amount must be greater than $1
+                          Min. donation amount is $1
                         </Typography>
                       )}
                     </div>
@@ -538,7 +538,6 @@ function ContactUs() {
     checkAuthSession();
     console.log(email);
   }, []);
-
 
   return (
     <div>
