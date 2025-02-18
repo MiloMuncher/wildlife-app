@@ -23,6 +23,7 @@ function Navbar() {
 
 
     useEffect(() => {
+        sessionStorage.setItem('previousPage', location.pathname);
         const checkAuthSession = async () => {
             try {
                 await fetchAuthSession();
@@ -32,7 +33,7 @@ function Navbar() {
             }
         };
         checkAuthSession();
-    }, []);
+    }, [location.pathname]);
 
     const toggleDrawer = (open) => (event) => {
         if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
