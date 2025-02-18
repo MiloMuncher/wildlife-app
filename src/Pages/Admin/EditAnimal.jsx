@@ -92,6 +92,7 @@ function EditAnimal() {
     "Released",
     "Deceased",
     "To be updated",
+    "Released to Sanctuary",
   ];
 
   const { id } = useParams();
@@ -139,25 +140,45 @@ function EditAnimal() {
     }
   };
 
-  const getTranscripts = () => {
+  const [animalList, setAnimalList] = useState([]);
+  const getAnimals = () => {
+    http
+      .get(
+        `https://i1mu51yxbd.execute-api.us-east-1.amazonaws.com/dev/animal_CRUD`
+      )
+      .then((res) => {
+        setAnimalList(res.data);
+      });
+  };
+
+  const getTranscripts = (u) => {
     http
       .get(
         "https://0ylgzr9mv6.execute-api.us-east-1.amazonaws.com/dev/gettranscripts"
       )
       .then((res) => {
-        setTranscriptList(res.data); // Update state
+        const availableTranscripts = res.data.filter((transcript) => {
+          if (u && u.transcript_ID === transcript.transcript_ID) {
+            return true;
+          }
+          // Filter out any transcript that's already assigned to an animal
+          return !animalList.some(
+            (animal) => animal.transcript_ID === transcript.transcript_ID
+          );
+        });
+
+        setTranscriptList(availableTranscripts);
       });
   };
+
   const getFood = () => {
     http
       .get(`https://kvhdoqjcua.execute-api.us-east-1.amazonaws.com/dev/food`)
       .then((res) => {
-        console.log("food", res.data);
         const filteredFood = res.data.filter(
           (item) => item.batch_number !== "INTAKE"
         );
         setFoodList(filteredFood);
-        console.log(filteredFood);
       });
   };
 
@@ -167,7 +188,6 @@ function EditAnimal() {
         `https://z40lajab6h.execute-api.us-east-1.amazonaws.com/dev/medications`
       )
       .then((res) => {
-        console.log("meds", res.data);
         const filteredMedications = res.data.filter(
           (item) => item.batch_number !== "INTAKE"
         );
@@ -176,7 +196,8 @@ function EditAnimal() {
   };
 
   useEffect(() => {
-    getTranscripts();
+    getAnimals();
+
     getFood();
     getMedication();
     http
@@ -199,7 +220,8 @@ function EditAnimal() {
           transcript_ID: animalData.transcript_ID ?? "To be assigned",
         });
       });
-  }, [id]);
+    getTranscripts(u);
+  }, [id, animalList]);
 
   const navigate = useNavigate();
   const formik = useFormik({
@@ -289,7 +311,6 @@ function EditAnimal() {
           filteredData
         )
         .then((res) => {
-          console.log(res.data);
           navigate("/admin/viewanimals");
         })
         .catch((err) => console.log(err));
@@ -308,7 +329,6 @@ function EditAnimal() {
 
     // Set the total weight into the formik state 'weight'
     formik.setFieldValue("weight", totalWeight);
-    console.log(formik.values.weight);
   };
 
   const calculateFoodAmount = (e) => {
@@ -323,7 +343,6 @@ function EditAnimal() {
 
     // Set the total weight into the formik state 'weight'
     formik.setFieldValue("required_food_amount", totalWeight);
-    console.log(formik.values.required_food_amount);
   };
 
   const calculateDosage = () => {
@@ -334,7 +353,6 @@ function EditAnimal() {
     const totalWeight = kg + g / 1000;
 
     const medicationId = formik.values.medication_ID; // Get the selected medication ID
-    console.log("id", medicationId);
     const selectedMedication = medicationList.find(
       (med) => med.medication_ID === medicationId
     ); // Find the selected medication
@@ -342,7 +360,6 @@ function EditAnimal() {
     if (selectedMedication) {
       // Remove 'mg' from the dosage and convert to number
       const dosageString = selectedMedication.dosage.replace("mg", "").trim(); // Remove 'mg' and trim any extra spaces
-      console.log(dosageString);
       const dosage = parseFloat(dosageString); // Convert the string to a number
 
       if (isNaN(dosage)) {
@@ -351,9 +368,8 @@ function EditAnimal() {
         return;
       }
       const calculation = totalWeight * dosage; // Calculate the required dosage in mg
-      console.log(totalWeight);
-      console.log(calculation);
-      formik.setFieldValue("required_dosage", calculation); // Update formik state with calculated dosage
+      const roundedCalculation = Math.round(calculation);
+      formik.setFieldValue("required_dosage", roundedCalculation); // Update formik state with calculated dosage
     } else {
       formik.setFieldValue("required_dosage", null);
     }
@@ -819,7 +835,7 @@ function EditAnimal() {
                   label="Calculated Dosage in milligrams"
                   name="required_dosage"
                   type="number"
-                  value={formik.values.required_dosage}
+                  value={formik.values.required_dosage || ""}
                   error={
                     formik.touched.required_dosage &&
                     Boolean(formik.errors.required_dosage)
