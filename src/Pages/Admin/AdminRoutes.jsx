@@ -31,12 +31,6 @@ import AnimalProfile from './AnimalProfile';
 import AddMedication from './AddMedication';
 
 // Icons
-import DashboardIcon from '@mui/icons-material/Dashboard';
-import { fetchAuthSession } from 'aws-amplify/auth';
-import UploadTranscripts from './UploadTranscripts';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import ExpandLessIcon from '@mui/icons-material/ExpandLess';
-import { Logout } from '@mui/icons-material';
 import CreateIcon from "@mui/icons-material/Create";
 import EventIcon from "@mui/icons-material/Event";
 import ChatBubbleIcon from "@mui/icons-material/ChatBubble";
@@ -48,7 +42,6 @@ import InventoryIcon from "@mui/icons-material/Inventory";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import { Logout } from "@mui/icons-material";
-
 
 function ProfileRoutes() {
   const [openUsers, setOpenUsers] = useState(false);
