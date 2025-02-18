@@ -25,7 +25,7 @@ function Navbar() {
     useEffect(() => {
         sessionStorage.setItem('previousPage', location.pathname);
         localStorage.clear();
-        sessionStorage.clear();
+        
         const checkAuthSession = async () => {
             try {
                 await fetchAuthSession();   
@@ -48,6 +48,7 @@ function Navbar() {
     };
     const handleLogout = () => {
         // Handle logout logic (e.g., clear session, redirect)
+        sessionStorage.clear();
         setIsSignedIn(false);
         console.log('Logged out');
     };

@@ -106,18 +106,14 @@ function UploadTranscripts() {
     await http.get(`https://0ylgzr9mv6.execute-api.us-east-1.amazonaws.com/dev/gettranscripts/${id}`)
       .then((res) => {
         setTranscript(res.data[0]); // Ensure state is updated
-        console.log(transcript);
-
-        // setOpenViewDialog(true); // Open the modal after data is set
       })
       .catch((error) => console.error("Error fetching transcript details", error));
   };
   useEffect(() => {
     if (transcript) {
-      console.log(transcript); // Logs after state update
       setOpenViewDialog(true); // Open the dialog only when transcript is set
     }
-  }, [transcript]); // Runs when transcript changes
+  }, [transcript]);
 
   const closeViewDialog = () => {
     setOpenViewDialog(false);

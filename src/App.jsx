@@ -13,7 +13,6 @@ import Login from './Pages/Login'
 import HowWeOperate from './Pages/HowWeOperate.jsx';
 
 //Other routes
-import MerchantRoutes from './Pages/Merchant/MerchantRoutes';
 import AdminRoutes from './Pages/Admin/AdminRoutes';
 
 //QR Code pages
