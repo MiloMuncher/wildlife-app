@@ -31,14 +31,9 @@ import AnimalProfile from './AnimalProfile';
 import AddMedication from './AddMedication';
 
 // Icons
-import CreateIcon from '@mui/icons-material/Create';
-import EventIcon from '@mui/icons-material/Event';
-import ChatBubbleIcon from '@mui/icons-material/ChatBubble';
-import ConfirmationNumberIcon from '@mui/icons-material/ConfirmationNumber';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import { fetchAuthSession } from 'aws-amplify/auth';
 import UploadTranscripts from './UploadTranscripts';
-import InventoryIcon from '@mui/icons-material/Inventory';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import { Logout } from '@mui/icons-material';
@@ -65,9 +60,6 @@ function ProfileRoutes() {
         const { tokens } = await fetchAuthSession();
         const groups = tokens.accessToken.payload['cognito:groups'];
 
-        console.log(tokens);
-        console.log(groups);
-
         if (!groups || groups.length === 0) {
           const previousPage = sessionStorage.getItem('previousPage') || '/';
           navigate(previousPage); // Navigate back to the previous page
@@ -85,7 +77,7 @@ function ProfileRoutes() {
   const handleLogout = async () => {
     try {
       localStorage.clear();
-      sessionStorage, clear();
+      sessionStorage.clear();
     } catch (error) {
       console.error('Error signing out:', error);
     }
