@@ -34,8 +34,6 @@ import AddMedication from './AddMedication';
 import ViewAnimalsInSanctuary from "./ViewAnimalsInSanctuary";
 import EditAnimalInSanctuary from "./EditAnimalSanctuaryDetails";
 
-
-
 // Icons
 import CreateIcon from "@mui/icons-material/Create";
 import EventIcon from "@mui/icons-material/Event";
