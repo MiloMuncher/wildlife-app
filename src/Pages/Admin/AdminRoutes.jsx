@@ -3,31 +3,31 @@ import { Container, List, ListItem, ListItemButton, ListItemIcon, ListItemText, 
 import { Link, Routes, Route, useNavigate, useLocation } from 'react-router-dom'
 
 // Pages
-import UserView from './UserView';
-import UserEdit from './UserEdit';
-import AddMerchant from './AddMerchant';
-import OrdersView from './OrdersView';
-import OrderItems from './OrderItems';
-import PostsView from './PostsView';
-import AddAdminPost from './AddAdminPost';
-import AdminEditPost from './AdminEditPost';
-import CustomerServiceTickets from './CustomerServiceTickets';
-import Dashboard from './Dashboard';
-import EditMerchant from './EditMerchant';
-import AddEmployee from './AddEmployee';
-import FoodView from './FoodView'
-import ShiftView from './ShiftView'
-import PayrollView from './PayrollView'
-import ShiftEdit from './ShiftEdit'
-import MedicationView from './MedicationView';
-import AddFood from './AddFood';
-import AnimalQR from './QRCodePages/AnimalQR';
+import UserView from "./UserView";
+import UserEdit from "./UserEdit";
+import AddMerchant from "./AddMerchant";
+import OrdersView from "./OrdersView";
+import OrderItems from "./OrderItems";
+import PostsView from "./PostsView";
+import AddAdminPost from "./AddAdminPost";
+import AdminEditPost from "./AdminEditPost";
+import CustomerServiceTickets from "./CustomerServiceTickets";
+import Dashboard from "./Dashboard";
+import EditMerchant from "./EditMerchant";
+import AddEmployee from "./AddEmployee";
+import FoodView from "./FoodView";
+import ShiftView from "./ShiftView";
+import PayrollView from "./PayrollView";
+import ShiftEdit from "./ShiftEdit";
+import MedicationView from "./MedicationView";
+import AddFood from "./AddFood";
+import AnimalQR from "./QRCodePages/AnimalQR";
 import SupplyQR from './QRCodePages/SupplyQR';
-import SupplyDetails from './QRCodePages/SupplyDetails';
-import AddAnimal from './AddAnimal';
-import ViewAnimals from './ViewAnimals';
-import EditAnimal from './EditAnimal';
-import AnimalProfile from './AnimalProfile';
+import SupplyDetails from "./QRCodePages/FoodDetails";
+import AddAnimal from "./AddAnimal";
+import ViewAnimals from "./ViewAnimals";
+import EditAnimal from "./EditAnimal";
+import AnimalProfile from "./AnimalProfile";
 import AddMedication from './AddMedication';
 import ViewAnimalsInSanctuary from "./ViewAnimalsInSanctuary";
 import EditAnimalInSanctuary from "./EditAnimalSanctuaryDetails";
@@ -66,9 +66,6 @@ function ProfileRoutes() {
         const { tokens } = await fetchAuthSession();
         const groups = tokens.accessToken.payload['cognito:groups'];
 
-        console.log(tokens);
-        console.log(groups);
-
         if (!groups || groups.length === 0) {
           const previousPage = sessionStorage.getItem('previousPage') || '/';
           navigate(previousPage); // Navigate back to the previous page
@@ -86,7 +83,7 @@ function ProfileRoutes() {
   const handleLogout = async () => {
     try {
       localStorage.clear();
-      sessionStorage, clear();
+      sessionStorage.clear();
     } catch (error) {
       console.error("Error signing out:", error);
     }
@@ -338,12 +335,12 @@ function ProfileRoutes() {
                   element={<UploadTranscripts />}
                 />
                 <Route path="/viewmedications" element={<MedicationView />} />
-                {/* <Route path="/addmedication" element={<AddMedication />} /> */}
+                <Route path="/addmedication" element={<AddMedication />} />
                 <Route path="/viewfood" element={<FoodView />} />
                 <Route path="/addfood" element={<AddFood />} />
 
                 <Route path="/supplydetails/:id" element={<SupplyDetails />} />
-                <Route path="/supply-qr/:id" element={<SupplyQR />} />
+                <Route path="/supply-qr/:id" element={<SupplyQR /> } />
                 <Route path="/viewanimals" element={<ViewAnimals />} />
                 <Route path="/addanimal" element={<AddAnimal />} />
                 <Route path="/viewanimals/edit/:id" element={<EditAnimal />} />
@@ -356,13 +353,18 @@ function ProfileRoutes() {
                 <Route path="/viewsanctuary/edit/:id" element={<EditAnimalInSanctuary />} />
               </>
             )}
-            {userGroup === 'Vets' && <Route path="/uploadtranscripts" element={<UploadTranscripts />} />}
+            {userGroup === "Vets" && (
+              <Route
+                path="/uploadtranscripts"
+                element={<UploadTranscripts />}
+              />
+            )}
 
-            {userGroup === 'Suppliers' && (
+            {userGroup === "Suppliers" && (
               <>
                 <Route path="/viewmedications" element={<MedicationView />} />
                 <Route path="/viewfood" element={<FoodView />} />
-                <Route path="/supply-qr/:id" element={<SupplyQR />} />
+                <Route path="/supply-qr/:id" element={<SupplyQR /> } />
               </>
             )}
           </Routes>

@@ -19,6 +19,9 @@ import AdminRoutes from './Pages/Admin/AdminRoutes';
 
 //QR Code pages
 import AnimalData from './Pages/Admin/QRCodePages/AnimalData.jsx';
+import FoodDetails from './Pages/Admin/QRCodePages/FoodDetails.jsx';
+import MedicationDetails from './Pages/Admin/QRCodePages/MedicationDetails.jsx';
+import SupplySuccess from './Pages/Admin/QRCodePages/SuccessPage.jsx';
 
 // Import components
 import Navbar from './Components/Navbar';
@@ -54,6 +57,9 @@ function App() {
         <Route path="/howweoperate" element={<HowWeOperate />} />
         <Route path="/oursanctuary" element={<OurSanctuary />} />
         <Route path="/animaldata/:id" element={<AnimalData />} />
+        <Route path="/fooddetails/:id" element={<FoodDetails />} />
+        <Route path="/meddetails/:id" element={<MedicationDetails />} />
+        <Route path="/supply-success" element={<SupplySuccess />} />
         {
           isCustomer && (
             <Route path="/profile/*" element={<ProfileRoutes />} />
