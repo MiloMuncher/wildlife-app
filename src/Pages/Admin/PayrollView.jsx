@@ -90,15 +90,17 @@ function PayrollView() {
         name: `${payroll.fname} ${payroll.lname}`, 
         payroll_month: payroll.payroll_month,
         total_hours: payroll.total_hours,
+        amount_processed: payroll.payroll_processed ? `$${payroll.payroll_processed.toFixed(2)}` : 'N/A',
         payroll_processed: payroll.payroll_processed ? 'Yes' : 'No',  // Convert boolean to Yes/No for readability
     }));
 
     const columns = [
-        { field: 'id', headerName: 'Payroll ID', width: 130 },
-        { field: 'employee_id', headerName: 'Employee ID', width: 150 },
-        { field: 'name', headerName: 'Name', width: 200 },
-        { field: 'payroll_month', headerName: 'Month', width: 150 },
-        { field: 'total_hours', headerName: 'Total Hours', width: 180 },
+        { field: 'id', headerName: 'Payroll ID', width: 100 },
+        { field: 'employee_id', headerName: 'Employee ID', width: 120 },
+        { field: 'name', headerName: 'Name', width: 180 },
+        { field: 'payroll_month', headerName: 'Month', width: 120 },
+        { field: 'total_hours', headerName: 'Total Hours', width: 120 },
+        { field: "amount_processed", headerName: 'Amount Processed', width: 180},
         { field: 'payroll_processed', headerName: 'Processed', width: 180 },
     ];
 
@@ -106,6 +108,7 @@ function PayrollView() {
         http.get(`https://v9c358horj.execute-api.us-east-1.amazonaws.com/dev/payroll`).then((res) => {
             console.log(res.data);
             setPayrollList(res.data);
+            console.log(payrollList)
         });
     };
 
