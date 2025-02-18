@@ -1,17 +1,6 @@
-import React, { useState, useEffect } from "react";
-import {
-  Container,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-  Divider,
-  Grid,
-  Card,
-  Collapse,
-} from "@mui/material";
-import { Link, Routes, Route, useNavigate  } from "react-router-dom";
+import React, { useState, useEffect } from 'react'
+import { Container, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Divider, Grid, Card, Collapse } from '@mui/material'
+import { Link, Routes, Route, useNavigate, useLocation } from 'react-router-dom'
 
 // Pages
 import UserView from './UserView';
@@ -67,17 +56,22 @@ function ProfileRoutes() {
   const handleToggle = (setOpen) => {
     setOpen((prev) => !prev);
   };
+
+  const location = useLocation();
+
   useEffect(() => {
+    
     const checkAuthSession = async () => {
       try {
         const { tokens } = await fetchAuthSession();
         const groups = tokens.accessToken.payload['cognito:groups'];
-  
+
         console.log(tokens);
         console.log(groups);
-  
+
         if (!groups || groups.length === 0) {
-          navigate('/'); // Redirect to homepage if no groups
+          const previousPage = sessionStorage.getItem('previousPage') || '/';
+          navigate(previousPage); // Navigate back to the previous page
         } else {
           setUserGroup(groups[0]); // Assuming the user belongs to a single group
         }
@@ -86,12 +80,13 @@ function ProfileRoutes() {
         navigate('/'); // Redirect in case of an error (e.g., session expired)
       }
     };
-  
+
     checkAuthSession();
   }, [navigate]);
   const handleLogout = async () => {
     try {
       localStorage.clear();
+      sessionStorage, clear();
     } catch (error) {
       console.error("Error signing out:", error);
     }
