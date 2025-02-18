@@ -46,11 +46,43 @@ const CheckoutForm = () => {
     backgroundColor: "#FF4E00",
   };
 
-  const [showChatbot, setShowChatbot] = useState(false);
+  const [userEmail, setUserEmail] = useState("");
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // Track if the user is logged in
 
-  const toggleChatbot = () => {
-    setShowChatbot(!showChatbot);
+  const checkAuthSession = async () => {
+    try {
+      const session = await fetchAuthSession();
+      if (!session || !session.tokens) {
+        console.log("No session found. Continuing without session.");
+        return; // If there's no valid session, just continue
+      }
+
+      const { tokens } = session;
+      const userEmail = tokens.idToken.payload["email"];
+      setUserEmail(userEmail);
+      console.log(userEmail);
+      setIsLoggedIn(true);
+    } catch (error) {
+      if (error.name === "NotAuthorizedException") {
+        console.log("User is unauthenticated. Continuing without session.");
+      } else {
+        console.error("Error fetching the session or user data", error);
+      }
+    }
   };
+
+  // Check session on mount
+  useEffect(() => {
+    const getAuthSession = async () => {
+      const isAuthenticated = await checkAuthSession();
+      if (isAuthenticated) {
+        setIsLoggedIn(true);
+      }
+      console.log(isLoggedIn);
+    };
+
+    getAuthSession();
+  }, []);
 
   const stripe = useStripe();
   const elements = useElements();
@@ -65,21 +97,30 @@ const CheckoutForm = () => {
 
   const formik = useFormik({
     initialValues: {
-      email: "",
+      email: userEmail || "",
       donationAmount: "",
+      auth: "",
     },
     validationSchema: yup.object({
-      email: yup
-        .string()
-        .trim()
-        .email("Email must be valid")
-        .max(50, "Email must be at most 50 characters")
-        .required("Email is required"),
+      email: isLoggedIn
+        ? yup
+            .string()
+            .email("Email must be valid")
+            .max(50, "Email must be at most 50 characters")
+        : yup
+            .string()
+            .trim()
+            .required("Email is required")
+            .email("Email must be valid")
+            .max(50, "Email must be at most 50 characters"),
       donationAmount: yup.string().required("Please select a donation amount"),
     }),
+
     onSubmit: async (values) => {
-      values.email = values.email.trim();
+      console.log("log", isLoggedIn);
+      values.email = isLoggedIn ? userEmail : values.email.trim();
       values.donationAmount = values.donationAmount.trim();
+      values.auth = isLoggedIn;
       // Handle custom amount
       if (values.donationAmount === "custom") {
         values.donationAmount = customAmount.trim();
@@ -114,6 +155,7 @@ const CheckoutForm = () => {
         }, // Get payment method from token
         email: values.email,
         amount: values.donationAmount, // Stripe requires amount in cents
+        auth: values.auth,
       };
 
       console.log("Payment data:", paymentData);
@@ -354,22 +396,24 @@ const CheckoutForm = () => {
                   <Card>
                     <CardContent>
                       <Grid container spacing={1}>
-                        <Grid item xs={12} md={12}>
-                          <TextField
-                            label="Email"
-                            name="email"
-                            fullWidth
-                            onChange={formik.handleChange}
-                            value={formik.values.email}
-                            error={
-                              formik.touched.email &&
-                              Boolean(formik.errors.email)
-                            }
-                            helperText={
-                              formik.touched.email && formik.errors.email
-                            }
-                          />
-                        </Grid>
+                        {!isLoggedIn && (
+                          <Grid item xs={12} md={12}>
+                            <TextField
+                              label="Email"
+                              name="email"
+                              fullWidth
+                              onChange={formik.handleChange}
+                              value={formik.values.email}
+                              error={
+                                formik.touched.email &&
+                                Boolean(formik.errors.email)
+                              }
+                              helperText={
+                                formik.touched.email && formik.errors.email
+                              }
+                            />
+                          </Grid>
+                        )}
 
                         <Grid item xs={12} md={12}>
                           <div
@@ -446,7 +490,7 @@ const CheckoutForm = () => {
                 flexDirection: "column",
               }}
             >
-              <img src="public\success.jpg" alt="" style={{ width: "20%" }} />
+              <img src="/success.jpg" alt="" style={{ width: "20%" }} />
               <Typography variant="h6" color="green">
                 <strong>Thank you for your gift!</strong> <br />
                 Your donation will help local wildlife thrive.
@@ -476,7 +520,7 @@ const CheckoutForm = () => {
                 flexDirection: "column",
               }}
             >
-              <img src="public\fail.png" alt="" style={{ width: "20%" }} />
+              <img src="/fail.png" alt="" style={{ width: "20%" }} />
               <Typography variant="h6" color="red" style={{ paddingTop: 40 }}>
                 <strong>Donation Failed</strong> <br />
                 Something went wrong.
@@ -516,29 +560,6 @@ const CheckoutForm = () => {
 };
 
 function ContactUs() {
-  const [email, setEmail] = useState("");
-  const [userGroup, setUserGroup] = useState(null);
-  const [modal, setModal] = useState(false);
-
-  const [load, setLoad] = useState(true);
-
-  const checkAuthSession = async () => {
-    try {
-      const { tokens } = await fetchAuthSession();
-      const groups = tokens.accessToken.payload["cognito:groups"];
-      setUserGroup(groups ? groups[0] : null);
-      const userEmail = tokens.idToken.payload["email"];
-      setEmail(userEmail);
-    } catch (error) {
-      console.error("Error fetching the session or user data", error);
-    }
-  };
-
-  useEffect(() => {
-    checkAuthSession();
-    console.log(email);
-  }, []);
-
   return (
     <div>
       <Elements stripe={stripePromise}>

@@ -150,13 +150,17 @@ function ViewAnimalsInSanctuary() {
       headerName: "Description",
       width: 210,
       renderCell: (params) => (
-        <strong
+        <div
           style={{
             fontWeight: params.value === "To be updated" ? "bold" : "normal",
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            width: "100%", // Ensure the container takes full available width
           }}
         >
           {params.value}
-        </strong>
+        </div>
       ),
     },
     {
