@@ -167,14 +167,14 @@ function AnimalData() {
     setTranscript(null); // Reset the data when closing the modal
   };
   const handleUpload = async () => {
-    if (!audioBase64 || !description) {
+    if (!audioBase64 || !description || !email) {
       alert('Please record audio and enter a description.');
       return;
     }
 
     const data = {
       id: id,
-      email: 'vet@gmail.com',
+      email,
       description,
       file: audioBase64,
     };
@@ -191,6 +191,7 @@ function AnimalData() {
       );
       console.log('Transcription started:', response.data);
       setOpenDialog(false);
+      location.reload()
     } catch (error) {
       console.error('Error starting transcription:', error);
     }
