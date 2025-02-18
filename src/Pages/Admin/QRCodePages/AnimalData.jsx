@@ -167,14 +167,14 @@ function AnimalData() {
     setTranscript(null); // Reset the data when closing the modal
   };
   const handleUpload = async () => {
-    if (!audioBase64 || !description || !email) {
+    if (!audioBase64 || !description) {
       alert('Please record audio and enter a description.');
       return;
     }
 
     const data = {
       id: id,
-      email,
+      email: 'vet@gmail.com',
       description,
       file: audioBase64,
     };
