@@ -51,7 +51,7 @@ function RenderButton(props) {
                         size="small"
                         style={{ backgroundColor: '#6CA0DC' }}
                         component={Link}
-                        to={`/admin/viewusers/edit/${food.id}`}
+                        to={`/admin/viewfood/edit/${food.id}`}
                     >
                         Edit
                     </Button>

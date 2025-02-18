@@ -2,27 +2,39 @@ import React, { useState, useEffect } from 'react'
 import { Container, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Divider, Grid, Card, Collapse } from '@mui/material'
 import { Link, Routes, Route, useNavigate, useLocation } from 'react-router-dom'
 
+
+
 // Pages
 import UserView from "./UserView";
 import UserEdit from "./UserEdit";
 import OrderItems from "./OrderItems";
 import PostsView from "./PostsView";
 import Dashboard from "./Dashboard";
+
+// Employee Pages
 import AddEmployee from "./AddEmployee";
-import FoodView from "./FoodView";
 import ShiftView from "./ShiftView";
 import PayrollView from "./PayrollView";
 import ShiftEdit from "./ShiftEdit";
-import MedicationView from "./MedicationView";
-import AddFood from "./AddFood";
-import AnimalQR from "./QRCodePages/AnimalQR";
-import SupplyQR from './QRCodePages/SupplyQR';
-import SupplyDetails from "./QRCodePages/FoodDetails";
+
+// Animal Pages
 import AddAnimal from "./AddAnimal";
 import ViewAnimals from "./ViewAnimals";
 import EditAnimal from "./EditAnimal";
 import AnimalProfile from "./AnimalProfile";
+import AnimalQR from "./QRCodePages/AnimalQR";
+
+// Inventory Pages
+import FoodView from "./FoodView";
+import AddFood from "./AddFood";
+import FoodEdit from './FoodEdit';
+
+import MedicationView from "./MedicationView";
 import AddMedication from './AddMedication';
+import MedicationEdit from './MedicationEdit';
+import SupplyQR from './QRCodePages/SupplyQR';
+
+
 
 // Icons
 import CreateIcon from "@mui/icons-material/Create";
@@ -70,6 +82,7 @@ function ProfileRoutes() {
 
     checkAuthSession();
   }, [navigate]);
+
   const handleLogout = async () => {
     try {
       localStorage.clear();
@@ -84,7 +97,11 @@ function ProfileRoutes() {
         <Grid item xs={12} sm={3}>
           <Card>
             <List>
-              <ListItem>
+
+              {/* Admin-specific items */}
+              {userGroup === "Admins" && (
+                <>
+                <ListItem>
                 <ListItemIcon>
                   <DashboardIcon color="primary" />
                 </ListItemIcon>
@@ -93,9 +110,6 @@ function ProfileRoutes() {
                 </ListItemButton>
               </ListItem>
               <Divider />
-              {/* Admin-specific items */}
-              {userGroup === "Admins" && (
-                <>
                   <ListItemButton
                     onClick={() => handleToggle(setOpenUsers)}
                     sx={{ padding: "17px", height: "auto" }}
@@ -293,10 +307,10 @@ function ProfileRoutes() {
         </Grid>
         <Grid item xs={12} sm={9}>
           <Routes>
-            <Route path="/dashboard" element={<Dashboard />} />
             {/* Admin-specific routes */}
             {userGroup === "Admins" && (
               <>
+              <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/viewusers/edit/:id" element={<UserEdit />} />
                 <Route path="/viewusers" element={<UserView />} />
                 <Route path="/viewshifts" element={<ShiftView />} />
@@ -313,9 +327,9 @@ function ProfileRoutes() {
                 <Route path="/addmedication" element={<AddMedication />} />
                 <Route path="/viewfood" element={<FoodView />} />
                 <Route path="/addfood" element={<AddFood />} />
+                <Route path="/viewfood/edit/:id" element={<FoodEdit />} />
+                <Route path="/viewmedications/edit/:id" element={<MedicationEdit />} />
 
-                <Route path="/supplydetails/:id" element={<SupplyDetails />} />
-                <Route path="/supply-qr/:id" element={<SupplyQR /> } />
                 <Route path="/viewanimals" element={<ViewAnimals />} />
                 <Route path="/addanimal" element={<AddAnimal />} />
                 <Route path="/viewanimals/edit/:id" element={<EditAnimal />} />

@@ -14,6 +14,7 @@ import HowWeOperate from './Pages/HowWeOperate.jsx';
 
 //Other routes
 import AdminRoutes from './Pages/Admin/AdminRoutes';
+import SupplierRoutes from './Pages/Admin/SupplierRoutes.jsx';
 
 //QR Code pages
 import AnimalData from './Pages/Admin/QRCodePages/AnimalData.jsx';

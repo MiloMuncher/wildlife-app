@@ -1,14 +1,30 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { withAuthenticator } from '@aws-amplify/ui-react';
 import { useNavigate } from 'react-router-dom';
-import '@aws-amplify/ui-react/styles.css'; // This should be in your main entry point (e.g., App.js or index.js)
+import { fetchAuthSession } from 'aws-amplify/auth';
+import '@aws-amplify/ui-react/styles.css'; // Ensure this is imported globally
 
 function Login() {
     const navigate = useNavigate();
 
-    // Redirect the user to the dashboard after login
-    React.useEffect(() => {
-        navigate('/admin/dashboard');
+    useEffect(() => {
+        const checkUserGroup = async () => {
+            try {
+                const { tokens } = await fetchAuthSession();
+                const groups = tokens.accessToken.payload['cognito:groups'] || [];
+
+                if (groups.includes('Suppliers')) {
+                    navigate('/admin/viewmedications');
+                } else {
+                    navigate('/admin/dashboard');
+                }
+            } catch (error) {
+                console.error('Error fetching user groups:', error);
+                navigate('/'); // Default navigation if an error occurs
+            }
+        };
+
+        checkUserGroup();
     }, [navigate]);
 
     return (
@@ -19,11 +35,9 @@ function Login() {
             justifyContent: 'center',
             backgroundColor: '#000',
             color: '#fff',
-        }}
-        >
+        }}>
         </div>
     );
 }
 
-// Wrap the LoginPage with the Authenticator
-export default withAuthenticator(Login, { className:'custom-login' });
+export default withAuthenticator(Login, { className: 'custom-login' });
