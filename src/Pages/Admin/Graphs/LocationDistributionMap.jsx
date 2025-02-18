@@ -80,10 +80,10 @@ const LocationDistributionMap = ({ selectedYears }) => {
   // Color mapping for years
   const yearColors = {
     "2021": "purple",
-    "2022": "orange",
+    "2022": "yellow",
     "2023": "green",
-    "2024": "blue",
-    "2025": "red",
+    "2024": "orange",
+    "2025": "skyblue",
   };
 
   return (
