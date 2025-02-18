@@ -24,8 +24,7 @@ function Navbar() {
 
     useEffect(() => {
         sessionStorage.setItem('previousPage', location.pathname);
-        localStorage.clear();
-        
+        localStorage.clear();    
         const checkAuthSession = async () => {
             try {
                 await fetchAuthSession();   

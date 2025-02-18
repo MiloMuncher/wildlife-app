@@ -26,7 +26,8 @@ function UploadTranscripts() {
     { field: 'name', headerName: 'Vet Email', width: 200 },
     { field: 'description', headerName: 'Description', width: 250 },
     { field: 'date', headerName: 'Date', width: 150 },
-    { field: 'transcription', headerName: 'Transcription', width: 300 },
+    { field: 'transcription', headerName: 'Transcription', width: 200 },
+    { field: 'animal_id', headerName: 'Animal ID', width: 100 },
     {
       field: "actions",
       headerName: "Actions",
@@ -61,6 +62,7 @@ function UploadTranscripts() {
     description: event.description,
     date: new Date(event.date).toLocaleDateString(),
     transcription: event.transcription,
+    animal_id: event.animal_id
   }));
 
   useEffect(() => {
@@ -89,7 +91,7 @@ function UploadTranscripts() {
       );
       console.log("Delete response:", response.data);
       alert("Transcript deleted successfully");
-      window.reload()
+      location.reload();
     } catch (error) {
       console.error("Error deleting transcript:", error);
       alert("Failed to delete transcript");
@@ -103,7 +105,7 @@ function UploadTranscripts() {
   };
 
   const handleView = async (id) => {
-    await http.get(`https://0ylgzr9mv6.execute-api.us-east-1.amazonaws.com/dev/gettranscripts/${id}`)
+    await http.get(`https://0ylgzr9mv6.execute-api.us-east-1.amazonaws.com/dev/gettranscripts?${id}`)
       .then((res) => {
         setTranscript(res.data[0]); // Ensure state is updated
       })
