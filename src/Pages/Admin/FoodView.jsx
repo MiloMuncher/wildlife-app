@@ -113,6 +113,7 @@ function FoodView() {
     const getAllFood = () => {
         http.get(`https://kvhdoqjcua.execute-api.us-east-1.amazonaws.com/dev/food`).then((res) => {
             setFoodList(res.data);
+            console.log(foodList)
         });
     };
 
@@ -145,7 +146,7 @@ function FoodView() {
         <>
             {userGroup === "Admins" && (
                 <>
-                    <Button variant='contained' style={{ ...btnstyle, marginRight: '20px' }} component={Link} to={`/admin/addmedication`}>New Medication</Button>
+                    <Button variant='contained' style={{ ...btnstyle, marginRight: '20px' }} component={Link} to={`/admin/addfood`}>New Food Variety</Button>
                     <FormControlLabel
                         control={<Switch checked={showIntakeOnly} onChange={() => setShowIntakeOnly(prev => !prev)} />}
                         label="Show Batches"
