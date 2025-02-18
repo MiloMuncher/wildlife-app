@@ -31,6 +31,8 @@ import FoodEdit from './FoodEdit';
 
 import MedicationView from "./MedicationView";
 import AddMedication from './AddMedication';
+import ViewAnimalsInSanctuary from "./ViewAnimalsInSanctuary";
+import EditAnimalInSanctuary from "./EditAnimalSanctuaryDetails";
 import MedicationEdit from './MedicationEdit';
 import SupplyQR from './QRCodePages/SupplyQR';
 
