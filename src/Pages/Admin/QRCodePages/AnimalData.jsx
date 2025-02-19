@@ -269,6 +269,45 @@ function AnimalData() {
   };
 
   const handleSubmit = () => {
+    let finalQuantities = {
+      final_weight_per_quantity: animalData.food?.weight_per_quantity,
+      final_food_quantity: animalData.food?.available_quantity,
+      final_medication_quantity: animalData.medication?.available_quantity,
+    };
+
+    console.log("Initial Final Quantities:", finalQuantities);
+
+    // If food checkbox is checked, perform food calculation
+    if (animalData.fed) {
+      const foodValues = calculateFood();
+      finalQuantities.final_weight_per_quantity = foodValues.final_weight_per_quantity;
+      finalQuantities.final_food_quantity = foodValues.final_food_quantity;
+      console.log("Updated Final Quantities after Food Calculation:", finalQuantities);
+    }
+
+    // If medication checkbox is checked, perform medication calculation
+    if (animalData.medicated) {
+      const medicationValue = calculateMedication();
+      finalQuantities.final_medication_quantity = medicationValue;
+      console.log("Updated Final Quantities after Medication Calculation:", finalQuantities);
+    }
+
+    // Proceed with PUT request only if the calculations are made
+    http.put(`https://8zjp8vpeub.execute-api.us-east-1.amazonaws.com/dev/animal/${id}`, {
+      updated_weight_per_quantity: finalQuantities.final_weight_per_quantity,
+      updated_food_quantity: finalQuantities.final_food_quantity,
+      updated_medication_quantity: finalQuantities.final_medication_quantity
+    })
+      .then(() => {
+        setSuccessMessage("Animal data successfully saved!");
+        setOpenSnackbar(true);
+      })
+      .catch((err) => {
+        console.error("Error updating data:", err);
+        setSuccessMessage("Failed to save animal data. Please try again.");
+        setOpenSnackbar(true);
+      });
+      
     http.put(`https://8zjp8vpeub.execute-api.us-east-1.amazonaws.com/dev/animals/${id}`, {
       fed: animalData.fed,
       medicated: animalData.medicated,
