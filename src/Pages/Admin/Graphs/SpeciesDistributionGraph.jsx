@@ -3,62 +3,56 @@ import Plot from "react-plotly.js";
 import http from "../../../http";
 
 const SpeciesDistributionGraph = ({ selectedYears }) => {
-  const [animalList, setAnimalList] = useState([]);
-  const [speciesDistribution, setSpeciesDistribution] = useState([]);
+  const [speciesData, setSpeciesData] = useState({});
 
-  // Color palette for species
+  // Color palette for different years
   const colorPalette = [
-    "skyblue", // 1st species
-    "orange", // 2nd species
-    "green", // 3rd species
-    "red", // 4th species
-    "purple", // 5th species
-    "yellow", // 6th species
-    "pink", // 7th species
-    "brown", // 8th species
-    "cyan", // 9th species
-    "lime", // 10th species
-    "magenta", // 11th species
-    "blue", // 12th species
+    "skyblue", "orange", "green", "red", "purple", "yellow", "pink",
+    "brown", "cyan", "lime", "magenta", "blue",
   ];
 
-  // Fetch animal data and process it
   useEffect(() => {
     http
-      .get(
-        `https://i1mu51yxbd.execute-api.us-east-1.amazonaws.com/dev/animal_CRUD`
-      )
+      .get(`https://i1mu51yxbd.execute-api.us-east-1.amazonaws.com/dev/animal_CRUD`)
       .then((res) => {
-        setAnimalList(res.data);
+        const data = res.data;
+        const speciesYearCounts = {};
 
-        const speciesCounts = {};
-
-        // Filter animals based on selected years
-        const filteredAnimals = res.data.filter((animal) => {
-          const animalYear = animal.date_of_rescue?.split("-")[0];
-          return selectedYears.includes(parseInt(animalYear));
+        // Initialize structure for each year
+        selectedYears.forEach((year) => {
+          speciesYearCounts[year] = {};
         });
 
-        // Count the animals by species
-        filteredAnimals.forEach((animal) => {
-          const species = animal.species; // Assuming 'species' field exists in the animal data
-          if (species) {
-            speciesCounts[species] = (speciesCounts[species] || 0) + 1;
+        // Count species per year
+        data.forEach((animal) => {
+          const animalYear = animal.date_of_rescue?.split("-")[0];
+          const species = animal.species;
+          if (species && selectedYears.includes(parseInt(animalYear))) {
+            speciesYearCounts[animalYear][species] = 
+              (speciesYearCounts[animalYear][species] || 0) + 1;
           }
         });
 
-        setSpeciesDistribution(Object.entries(speciesCounts)); // Convert to an array of [species, count] pairs
+        setSpeciesData(speciesYearCounts);
       });
   }, [selectedYears]);
 
-  // Prepare data for the graph
-  const speciesNames = speciesDistribution.map(([species]) => species);
-  const speciesCounts = speciesDistribution.map(([_, count]) => count);
-
-  // Generate a color for each species using the colorPalette
-  const barColors = speciesNames.map(
-    (_, index) => colorPalette[index % colorPalette.length]
+  // Extract all unique species names
+  const allSpecies = Array.from(
+    new Set(
+      Object.values(speciesData)
+        .flatMap((yearData) => Object.keys(yearData))
+    )
   );
+
+  // Create traces (bars) for each year
+  const traces = selectedYears.map((year, index) => ({
+    x: allSpecies,
+    y: allSpecies.map((species) => speciesData[year]?.[species] || 0),
+    type: "bar",
+    name: `${year}`,
+    marker: { color: colorPalette[index % colorPalette.length] },
+  }));
 
   return (
     <div>
@@ -66,20 +60,14 @@ const SpeciesDistributionGraph = ({ selectedYears }) => {
         Species Distribution {selectedYears.join(", ")}
       </h2>
       <Plot
-        data={[
-          {
-            x: speciesNames,
-            y: speciesCounts,
-            type: "bar", // Bar chart
-            marker: { color: barColors }, // Use the color palette for each species
-          },
-        ]}
+        data={traces}
         layout={{
           title: `Species Distribution (${selectedYears.join(", ")})`,
-          xaxis: { title: "Species" },
+          xaxis: { title: "Species", tickangle: -45 },
           yaxis: { title: "Number of Animals Rescued" },
-          width: 800, // Adjust width as needed
-          height: 400, // Adjust height as needed
+          barmode: "group", // Grouped bars
+          width: 800,
+          height: 400,
         }}
       />
     </div>

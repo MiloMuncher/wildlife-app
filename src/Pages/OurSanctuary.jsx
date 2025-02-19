@@ -39,7 +39,6 @@ function OurSanctuary() {
       const { tokens } = session;
       const userEmail = tokens.idToken.payload["email"];
       setUserEmail(userEmail);
-      console.log(userEmail);
       setIsLoggedIn(true);
     } catch (error) {
       if (error.name === "NotAuthorizedException") {
@@ -219,6 +218,7 @@ function OurSanctuary() {
           openModal={openSponsorModal}
           setOpenModal={setOpenSponsorModal}
           animal={selectedAnimal}
+          userEmail={userEmail}
         />
 
         {/* Footer */}

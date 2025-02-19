@@ -29,7 +29,7 @@ const stripePromise = loadStripe(
   "pk_test_51Qrdhu2N2ApkaYzFWgke5qVVDsFaUkSywPRo1pdV8dcgbQ94HzPmVz9JjWMSzcANlTPVWqZwknTSI67RFi43pXK700EkYL6JuM"
 );
 
-const Sponsor = ({ openModal, setOpenModal, animal }) => {
+const Sponsor = ({ openModal, setOpenModal, animal, userEmail }) => {
   const btnstyle = {
     margin: "30px 0",
     fontWeight: "bold",
@@ -50,13 +50,27 @@ const Sponsor = ({ openModal, setOpenModal, animal }) => {
 
   const formik = useFormik({
     initialValues: {
+      email: userEmail || "",
       donationAmount: "",
     },
     validationSchema: yup.object({
       donationAmount: yup.string().required("Please select a donation amount"),
     }),
     onSubmit: async (values) => {
-      if (!stripe || !elements) return;
+      values.email = userEmail;
+      values.donationAmount = values.donationAmount.trim();
+      // Handle custom amount
+      if (values.donationAmount === "custom") {
+        values.donationAmount = customAmount.trim();
+        values.donationAmount = parseInt(values.donationAmount) * 100;
+      } else {
+        values.donationAmount =
+          parseInt(values.donationAmount.replace("$", ""), 10) * 100;
+      }
+
+      if (!stripe || !elements) {
+        return; // Make sure Stripe and Elements are loaded
+      }
 
       const cardElement = elements.getElement(CardElement);
       const { token, error } = await stripe.createToken(cardElement);
@@ -66,23 +80,35 @@ const Sponsor = ({ openModal, setOpenModal, animal }) => {
         return;
       }
 
+      setOpenStatusModal(true);
       setLoadingMessage("Processing your donation...");
-      setDonationStatus(null);
-
+      // Send payment method and donation info to the backend (API Gateway URL)
       const paymentData = {
         payment_method_data: {
           type: "card",
-          card: { token: token.id },
+          card: {
+            token: token.id,
+          },
         },
-        amount: parseInt(values.donationAmount.replace("$", "")) * 100,
+        animal_name: animal.animal_name,
+        sanctuary_ID: animal.id,
+        email: values.email,
+        amount: values.donationAmount, // Stripe requires amount in cents
       };
 
+      console.log("Payment data:", paymentData);
+
       setTimeout(async () => {
-        const response = await fetch("YOUR_BACKEND_ENDPOINT", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(paymentData),
-        });
+        const response = await fetch(
+          "https://pn0ridlp81.execute-api.us-east-1.amazonaws.com/dev/sponsor",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(paymentData),
+          }
+        );
 
         if (response.ok) {
           setLoadingMessage("Donation successful!");
@@ -91,13 +117,13 @@ const Sponsor = ({ openModal, setOpenModal, animal }) => {
           setLoadingMessage("Donation failed. Please try again later.");
           setDonationStatus("failure");
         }
-      }, 2000);
+      }, 2000); // Simulating delay for loading
     },
   });
 
   const handleCloseStatusModal = () => {
     setOpenStatusModal(false);
-    formik.resetForm();
+    setOpenModal(false);
     if (donationStatus === "success") {
       toast.success("Thank you for your donation! 🎉", {
         position: "bottom-right",
@@ -110,8 +136,8 @@ const Sponsor = ({ openModal, setOpenModal, animal }) => {
       });
       navigate("/oursanctuary");
     } else if (donationStatus === "failure") {
-      // Optional: Redirect after failure
-      window.location.reload();
+      setOpenStatusModal(false);
+      setOpenModal(false);
     }
   };
 
@@ -126,8 +152,16 @@ const Sponsor = ({ openModal, setOpenModal, animal }) => {
             flexDirection={"column"}
           >
             <Box display={"flex"} flexDirection={"column"}>
-              <Grid container spacing={0} marginTop={5} justifyContent="center">
-                <Grid item xs={12} md={5}>
+              <Typography variant="h4" marginTop={2}>
+                <span style={{ color: "green", fontStyle: "italic" }}>
+                  Sponsor &nbsp;
+                </span>
+                <span style={{ fontWeight: "bold" }}>
+                  {animal?.animal_name}
+                </span>
+              </Typography>
+              <Grid container spacing={0} marginTop={3} justifyContent="center">
+                <Grid item xs={12} md={12}>
                   <Box
                     style={{
                       backgroundSize: "cover",
@@ -329,7 +363,7 @@ const Sponsor = ({ openModal, setOpenModal, animal }) => {
             onClose={handleCloseStatusModal}
             sx={{
               "& .MuiPaper-root": {
-                width: "50%", // Applying border-radius to the dialog
+                width: "20%", // Applying border-radius to the dialog
               },
             }}
           >
@@ -358,7 +392,7 @@ const Sponsor = ({ openModal, setOpenModal, animal }) => {
                   </Typography>
                   <DialogActions style={{ paddingTop: 50 }}>
                     <Button
-                      onClick={handleCloseModal}
+                      onClick={handleCloseStatusModal}
                       color="primary"
                       style={{
                         backgroundColor: "#228B22",
@@ -394,7 +428,7 @@ const Sponsor = ({ openModal, setOpenModal, animal }) => {
                   </Typography>
                   <DialogActions style={{ paddingTop: 50 }}>
                     <Button
-                      onClick={handleCloseModal}
+                      onClick={handleCloseStatusModal}
                       color="primary"
                       style={{
                         backgroundColor: "#DC143C",
@@ -430,13 +464,14 @@ const Sponsor = ({ openModal, setOpenModal, animal }) => {
   );
 };
 
-const SponsorWrapper = ({ openModal, setOpenModal, animal }) => {
+const SponsorWrapper = ({ openModal, setOpenModal, animal, userEmail }) => {
   return (
     <Elements stripe={stripePromise}>
       <Sponsor
         openModal={openModal}
         setOpenModal={setOpenModal}
         animal={animal}
+        userEmail={userEmail}
       />
     </Elements>
   );
