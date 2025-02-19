@@ -16,6 +16,9 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+  Divider,
+  Snackbar,
+  Alert
 } from "@mui/material";
 import { Fastfood, Medication, Description, Mic, Stop } from "@mui/icons-material";
 import { useNavigate, useParams } from "react-router-dom";
@@ -28,9 +31,8 @@ function AnimalData() {
   const { id, email } = useParams();
   const navigate = useNavigate();
   const [tabIndex, setTabIndex] = useState(0);
-  console.log("Params:", useParams());
-  console.log("ID:", id);
-  console.log("Email:", email)
+  const [successMessage, setSuccessMessage] = useState("");
+  const [openSnackbar, setOpenSnackbar] = useState(false);
 
   const [animalData, setAnimalData] = useState({
     food: null,
@@ -58,7 +60,7 @@ function AnimalData() {
       .then((res) => {
         const responseData = res.data;
         console.log(responseData);
-        
+
         setAnimalData({
           food: responseData.food,
           required_food_amount: responseData.required_food_medication.required_food_amount,
@@ -155,6 +157,9 @@ function AnimalData() {
   const closeViewDialog = () => {
     setOpenViewDialog(false);
     setTranscript(null); // Reset the data when closing the modal
+  };
+  const handleCloseSnackbar = () => {
+    setOpenSnackbar(false);
   };
   const handleUpload = async () => {
     if (!audioBase64 || !description || !email) {
@@ -295,11 +300,10 @@ function AnimalData() {
         setSuccessMessage("Failed to save animal data. Please try again.");
         setOpenSnackbar(true);
       });
-      
-    http.put(`https://8zjp8vpeub.execute-api.us-east-1.amazonaws.com/dev/animals/${id}`, {
+
+    http.put(`https://8zjp8vpeub.execute-api.us-east-1.amazonaws.com/dev/animal/${id}`, {
       fed: animalData.fed,
       medicated: animalData.medicated,
-      surgeryTranscript: animalData.surgeryTranscript,
     })
       .then(() => navigate(-1))
       .catch((err) => console.error("Error updating data:", err));
@@ -324,29 +328,54 @@ function AnimalData() {
 
           <Box flex={1} overflow="auto" p={2}>
             {tabIndex === 0 && animalData.food && (
-              <>
-                <Typography variant="h6">{animalData.food.name}</Typography>
-                <Typography>Available: {animalData.food.available_quantity}</Typography>
-                <Typography>Expires: {animalData.food.expiration_date}</Typography>
+              <Box>
+                <Typography variant="h6">
+                  {animalData.food.name} <Typography variant="body2" component="span">({animalData.food.batch_number})</Typography>
+                </Typography>
+                <Typography>{animalData.food.description}</Typography>
+                <Divider sx={{ my: 1 }} />
+                <Typography>Available Quantity: {animalData.food.available_quantity}</Typography>
+                <Typography>Batch Expiry: {animalData.food.expiration_date}</Typography>
+                <Typography sx={{ fontWeight: "bold", color: "#d32f2f" }} >
+                  Required Amount: {animalData.required_food_amount}g
+                </Typography>
                 <FormControlLabel
-                  control={<Checkbox checked={animalData.fed} onChange={handleInputChange} name="fed" />}
+                  control={
+                    <Checkbox
+                      checked={animalData.fed}
+                      onChange={handleInputChange}
+                      name="fed"
+                    />
+                  }
                   label="Fed the animal"
                 />
-              </>
+              </Box>
             )}
 
             {tabIndex === 1 && animalData.medication && (
-              <>
-                <Typography variant="h6">{animalData.medication.name}</Typography>
+              <Box>
+                <Typography variant="h6">
+                  {animalData.medication.name} <Typography variant="body2" component="span">({animalData.medication.batch_number})</Typography>
+                </Typography>
                 <Typography>{animalData.medication.description}</Typography>
+                <Divider sx={{ my: 1 }} />
+                <Typography>Available Quantity: {animalData.medication.available_quantity}</Typography>
                 <Typography>Dosage: {animalData.medication.dosage}</Typography>
-                <Typography>Available: {animalData.medication.available_quantity}</Typography>
-                <Typography>Expires: {animalData.medication.expiration_date}</Typography>
+                <Typography>Batch Expiry: {animalData.medication.expiration_date}</Typography>
+                <Typography sx={{ fontWeight: "bold", color: "#d32f2f" }}>
+                  Required Dosage: {animalData.required_dosage} {animalData.medication.dosage.replace(/[^a-zA-Z]/g, '')}
+                </Typography>
                 <FormControlLabel
-                  control={<Checkbox checked={animalData.medicated} onChange={handleInputChange} name="medicated" />}
+                  control={
+                    <Checkbox
+                      checked={animalData.medicated}
+                      onChange={handleInputChange}
+                      name="medicated"
+                    />
+                  }
                   label="Gave medicine"
                 />
-              </>
+              </Box>
             )}
 
             {tabIndex === 2 && (
@@ -367,6 +396,16 @@ function AnimalData() {
           </Grid>
         </CardContent>
       </Card>
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={3000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      >
+        <Alert onClose={handleCloseSnackbar} severity="success" sx={{ width: "100%" }}>
+          {successMessage}
+        </Alert>
+      </Snackbar>
       {/* Dialog for recording audio */}
       <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
         <DialogTitle>Record Surgery Transcript</DialogTitle>
