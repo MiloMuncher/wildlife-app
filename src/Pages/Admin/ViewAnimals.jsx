@@ -58,7 +58,7 @@ function RenderButton(props) {
         </Button>
       )}
 
-      <Dialog open={openRelease} onClose={handleCloseRelease}>
+      <Dialog open={openRelease} close={handleClose}>
         <DialogTitle>Release Animal to Sanctuary</DialogTitle>
         <DialogContent>
           <DialogContentText>
@@ -69,7 +69,7 @@ function RenderButton(props) {
           <Button
             variant="contained"
             color="inherit"
-            onClick={handleCloseRelease}
+            onClick={handleClose}
           >
             Cancel
           </Button>
