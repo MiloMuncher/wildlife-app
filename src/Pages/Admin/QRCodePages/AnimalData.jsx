@@ -25,9 +25,12 @@ import { FFmpeg } from '@ffmpeg/ffmpeg';
 import { fetchFile } from '@ffmpeg/util'
 
 function AnimalData() {
-  const { id } = useParams();
+  const { id, email } = useParams();
   const navigate = useNavigate();
   const [tabIndex, setTabIndex] = useState(0);
+  console.log("Params:", useParams());
+  console.log("ID:", id);
+  console.log("Email:", email)
 
   const [animalData, setAnimalData] = useState({
     food: null,
@@ -43,7 +46,6 @@ function AnimalData() {
   const [isRecording, setIsRecording] = useState(false);
   const [audioChunks, setAudioChunks] = useState([]);
   const [mediaRecorder, setMediaRecorder] = useState(null);
-  const [email, setEmail] = useState('');
   const [description, setDescription] = useState('');
   const [audioBase64, setAudioBase64] = useState(null);
   const [recordingTime, setRecordingTime] = useState(0);
@@ -56,7 +58,7 @@ function AnimalData() {
       try {
         const { tokens } = await fetchAuthSession();
         const userEmail = tokens.idToken.payload['email'];
-        setEmail(userEmail);
+      
       } catch (error) {
         console.error('Error fetching the session or user data', error);
       }

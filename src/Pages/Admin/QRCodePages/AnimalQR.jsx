@@ -11,11 +11,12 @@ import {
 } from '@mui/material';
 import { ArrowBack } from '@mui/icons-material';
 import QrCodeWithLogo from 'qrcode-with-logos';
-// import Logo from '../../../../public/logo.png';
+import { fetchAuthSession } from 'aws-amplify/auth';
 import Logo from './sizedlogo.png'
 
 function AnimalQR() {
   const { id } = useParams();
+  const [ email , setEmail ] = useState(null);
   const [animal, setAnimal] = useState(null);
   const [filename, setFilename] = useState('');
   const [isQRGenerated, setQRGenerated] = useState(false);
@@ -37,6 +38,17 @@ function AnimalQR() {
   }
 
   useEffect(() => {
+    const checkAuthSession = async () => {
+          try {
+            const { tokens } = await fetchAuthSession();
+            const userEmail = tokens.idToken.payload['email'];
+            setEmail(userEmail);
+          } catch (error) {
+            console.error('Error fetching the session or user data', error);
+          }
+          
+        };
+        checkAuthSession();
     getAnimal();
   }, [id]);
 
@@ -46,7 +58,7 @@ function AnimalQR() {
       try {
         new QrCodeWithLogo({
           canvas: canvas,
-          content: `https://dev.d1hih7jskxsvbh.amplifyapp.com/animaldata/${id}`,
+          content: `https://dev.d1hih7jskxsvbh.amplifyapp.com/animaldata/${id}/${email}`,
           width: 300
         });
         setQRGenerated(true);

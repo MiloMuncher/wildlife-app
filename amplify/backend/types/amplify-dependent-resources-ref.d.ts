@@ -1,6 +1,6 @@
 export type AmplifyDependentResourcesAttributes = {
   "auth": {
-    "wildlifeapp02467b3a": {
+    "wildlifeappf34ac4d6": {
       "AppClientID": "string",
       "AppClientIDWeb": "string",
       "IdentityPoolId": "string",
@@ -8,12 +8,6 @@ export type AmplifyDependentResourcesAttributes = {
       "UserPoolArn": "string",
       "UserPoolId": "string",
       "UserPoolName": "string"
-    }
-  },
-  "storage": {
-    "wildlifegraphdataresource": {
-      "BucketName": "string",
-      "Region": "string"
     }
   }
 }

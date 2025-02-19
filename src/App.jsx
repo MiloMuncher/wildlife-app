@@ -55,7 +55,7 @@ function App() {
         <Route path="/supportus" element={<Donation />} />
         <Route path="/howweoperate" element={<HowWeOperate />} />
         <Route path="/oursanctuary" element={<OurSanctuary />} />
-        <Route path="/animaldata/:id" element={<AnimalData />} />
+        <Route path="/animaldata/:id/:email" element={<AnimalData />} />
         <Route path="/fooddetails/:id" element={<FoodDetails />} />
         <Route path="/meddetails/:id" element={<MedicationDetails />} />
         <Route path="/supply-success" element={<SupplySuccess />} />
