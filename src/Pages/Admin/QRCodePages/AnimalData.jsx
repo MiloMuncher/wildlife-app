@@ -54,22 +54,9 @@ function AnimalData() {
   const [transcript, setTranscript] = useState('');
 
   useEffect(() => {
-    const checkAuthSession = async () => {
-      try {
-        const { tokens } = await fetchAuthSession();
-        const userEmail = tokens.idToken.payload['email'];
-      
-      } catch (error) {
-        console.error('Error fetching the session or user data', error);
-      }
-    };
-
-    checkAuthSession();
-    
     http.get(`https://8zjp8vpeub.execute-api.us-east-1.amazonaws.com/dev/animal/${id}`)
       .then((res) => {
         const responseData = res.data;
-        console.log(res.data);
         
         setAnimalData({
           food: responseData.food,
