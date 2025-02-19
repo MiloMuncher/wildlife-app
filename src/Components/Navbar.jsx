@@ -24,14 +24,9 @@ function Navbar() {
 
     useEffect(() => {
         sessionStorage.setItem('previousPage', location.pathname);
-        localStorage.clear();    
         const checkAuthSession = async () => {
-            try {
-                await fetchAuthSession();   
-                setIsSignedIn(true);  // Set user as signed in
-            } catch {
-                console.log('Error fetching the session');
-            }
+            await fetchAuthSession();
+            setIsSignedIn(true);  // Set user as signed in
         };
         checkAuthSession();
     }, [location.pathname]);
