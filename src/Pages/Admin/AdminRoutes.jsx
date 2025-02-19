@@ -347,6 +347,7 @@ function ProfileRoutes() {
                 <Route path="/animal-qr/:id" element={<AnimalQR />} />
                 <Route path="/viewsanctuary" element={<ViewAnimalsInSanctuary />} />
                 <Route path="/viewsanctuary/edit/:id" element={<EditAnimalInSanctuary />} />
+                <Route path="/supply-qr/:id" element={<SupplyQR /> } />
               </>
             )}
             {userGroup === "Vets" && (
